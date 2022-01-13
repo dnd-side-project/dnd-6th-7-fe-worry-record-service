@@ -7,7 +7,7 @@
     "ios": "react-native run-ios",
     "start": "react-native start",
     "test": "jest",
-    "lint": "eslint src/**/*.ts*"
+    "lint": "eslint src/**/*.ts*  src/**/*.js"
   },
   "husky": {
     "hooks": {
@@ -23,19 +23,15 @@
     "@babel/core": "^7.16.7",
     "@babel/runtime": "^7.16.7",
     "@react-native-community/eslint-config": "^3.0.1",
-    "@types/jest": "^27.4.0",
-    "@typescript-eslint/eslint-plugin": "^5.9.1",
-    "@typescript-eslint/parser": "^5.9.1",
+    "@types/react": "^17.0.38",
+    "@types/react-native": "^0.66.11",
     "babel-jest": "^27.4.6",
     "eslint": "^8.6.0",
-    "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-prettier": "^4.0.0",
-    "eslint-plugin-react": "^7.28.0",
     "husky": "^7.0.4",
     "jest": "^27.4.7",
     "metro-react-native-babel-preset": "^0.66.2",
-    "prettier": "^2.5.1",
-    "react-test-renderer": "17.0.2"
+    "react-test-renderer": "17.0.2",
+    "typescript": "^4.5.4"
   },
   "jest": {
     "preset": "react-native"
