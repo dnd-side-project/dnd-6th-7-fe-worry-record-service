@@ -1,26 +1,26 @@
 {
-    "root": true,
-    "env": {
-        "browser": true,
-        "es2021": true
-    },
-    "extends": ["@react-native-community"],
-    "ignorePatterns": ["dist/", "node_modules/"],
-    "plugins": ["prettier"],
-    "rules": {
-        "prettier/prettier": [
-            "error",
-            {
-                "printWidth": 80,			
-                "tabWidth": 2,			
-                "useTabs": true,			
-                "semi": true,				
-                "singleQuote": true,			
-                "trailingComma": "all",		
-                "bracketSpacing": true,		
-                "arrowParens": "avoid",		
-                "endOfLine": "lf"
-            }
-        ]
-    }
+  "root": true,
+  "env": {
+    "browser": true,
+    "es2021": true
+  },
+  "extends": ["@react-native-community"],
+  "ignorePatterns": ["dist/", "node_modules/"],
+  "plugins": ["prettier"],
+  "rules": {
+    "prettier/prettier": [
+      "error",
+      {
+        "printWidth": 80,
+        "tabWidth": 2,
+        "useTabs": true,
+        "semi": true,
+        "singleQuote": true,
+        "trailingComma": "all",
+        "bracketSpacing": true,
+        "arrowParens": "avoid",
+        "endOfLine": "lf"
+      }
+    ]
+  }
 }
