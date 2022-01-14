@@ -9,7 +9,7 @@
     "test": "jest",
     "lint": "eslint src/**/*.ts*  src/**/*.js",
     "prepare": "husky install",
-    "lint-staged": "lint-staged --no-reset"
+    "lint-staged": "lint-staged --no-reset --allow-empty"
   },
   "lint-staged": {
     "src/**/*.{ts,tsx}": [
