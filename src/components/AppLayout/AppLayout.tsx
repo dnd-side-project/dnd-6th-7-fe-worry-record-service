@@ -1,19 +1,19 @@
-import * as React from "react";
-import { Text, View, StyleSheet } from "react-native";
+import * as React from 'react';
+import { Text, View, StyleSheet } from 'react-native';
 interface componentNameProps {
-  data: string;
+	data: string;
 }
 
 const componentName = (props: componentNameProps) => {
-  return (
-    <View style={styles.container}>
-      <Text>{props.data}</Text>
-    </View>
-  );
+	return (
+		<View style={styles.container}>
+			<Text>{props.data}</Text>
+		</View>
+	);
 };
 
 export default componentName;
 
 const styles = StyleSheet.create({
-  container: {},
+	container: {},
 });
