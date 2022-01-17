@@ -1,17 +1,15 @@
 import * as React from 'react';
 import { Text, View, StyleSheet, Button } from 'react-native';
-import { HomeNavigaionProps, HomeRouteProp } from '~/types/Navigation';
+import { LoginProps } from '~/types/Navigation';
 
-interface Props {
-	route: HomeRouteProp;
-	navigation: HomeNavigaionProps;
-}
-
-const Login = ({ navigation }: Props) => {
+const Login = ({ navigation }: LoginProps) => {
 	return (
 		<View style={styles.container}>
 			<Text>Login</Text>
-			<Button title="Go to Home" onPress={() => navigation.navigate('Home')} />
+			<Button
+				title="Go to Signup"
+				onPress={() => navigation.navigate('Signup')}
+			/>
 		</View>
 	);
 };

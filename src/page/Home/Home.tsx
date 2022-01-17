@@ -1,10 +1,15 @@
 import * as React from 'react';
-import { Text, View, StyleSheet } from 'react-native';
+import { Text, View, StyleSheet, Button } from 'react-native';
+import { HomeProps } from '~/types/Navigation';
 
-const Home = () => {
+const Home = ({ navigation }: HomeProps) => {
 	return (
 		<View style={styles.container}>
 			<Text>Home</Text>
+			<Button
+				title="Go to Detail"
+				onPress={() => navigation.navigate('Detail')}
+			/>
 		</View>
 	);
 };
