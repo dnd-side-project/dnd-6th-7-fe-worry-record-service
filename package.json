@@ -9,14 +9,14 @@
     "test": "jest",
     "lint": "eslint src/**/*.ts*  src/**/*.js",
     "prepare": "husky install",
-    "lint-staged": "lint-staged --no-reset --allow-empty"
+    "lint-staged": "lint-staged --no-reset --allow-empty",
+    "lint-fix": "eslint --fix",
+    "format": "prettier --write \"src/**/*.{ts,tsx,js,json,html}\""
   },
   "lint-staged": {
-    "src/**/*.{ts,tsx}": [
-      "eslint --ext .tsx --ext .ts ./src --fix"
-    ],
-    "./src/**": [
-      "prettier --write ."
+    "*.{ts,tsx,js,jsx}": [
+        "npm run format",
+        "npm run lint-fix"
     ]
   },
   "dependencies": {
