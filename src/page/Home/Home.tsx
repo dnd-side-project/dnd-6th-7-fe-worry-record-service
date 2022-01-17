@@ -1,19 +1,21 @@
 import * as React from 'react';
 import { Text, View, StyleSheet } from 'react-native';
-interface componentNameProps {
-	data: string;
-}
 
-const componentName = (props: componentNameProps) => {
+const Home = () => {
 	return (
 		<View style={styles.container}>
-			<Text>{props.data}</Text>
+			<Text>Home</Text>
 		</View>
 	);
 };
 
-export default componentName;
+export default Home;
 
 const styles = StyleSheet.create({
-	container: {},
+	container: {
+		flex: 1,
+		justifyContent: 'center',
+		alignItems: 'center',
+		backgroundColor: '#F5FCFF',
+	},
 });
