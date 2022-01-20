@@ -52,7 +52,7 @@ const BeforeLogin: FC = () => {
 };
 
 const App: FC = props => {
-	const [isLoggedIn, setIsLoggedIn] = useState(true);
+	const [isLoggedIn, setIsLoggedIn] = useState(false);
 
 	return (
 		<NavigationContainer>

@@ -4,10 +4,15 @@
     "browser": true,
     "es2021": true
   },
-  "extends": ["@react-native-community"],
+  "extends": ["@react-native-community", 
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
   "ignorePatterns": ["dist/", "node_modules/"],
-  "plugins": ["prettier"],
+  "plugins": ["prettier", "@typescript-eslint"],
   "rules": {
+    "no-unused-vars": "warn",
+    "@typescript-eslint/no-unused-vars": ["warn"],
     "prettier/prettier": [
       "error",
       {
