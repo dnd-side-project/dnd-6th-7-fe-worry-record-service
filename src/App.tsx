@@ -8,46 +8,81 @@ import SignupScreen from '@page/Signup';
 import HomeScreen from '@page/Home';
 import DetailScreen from '@page/Detail';
 import { WithAuthStackParamList, RootStackParamList } from '~/types/Navigation';
+import AuthService from '~/service/auth';
+import { AuthProvider, AuthErrorEventBus } from '~/context/AuthContext';
+import HttpClient from '@lib/api/http';
+import { APP_BASE_URL } from '@env';
+
+const baseURL = APP_BASE_URL;
+const authErrorEventBus = new AuthErrorEventBus();
+const httpClient = new HttpClient(baseURL);
+const authService = new AuthService(httpClient);
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const AuthStack = createNativeStackNavigator<WithAuthStackParamList>();
 
 const AfterLogin: FC = () => {
 	return (
-		<AuthStack.Group>
-			<AuthStack.Screen
-				name="Home"
-				component={HomeScreen}
-				options={{ title: 'HOME' }}
-			/>
-			<AuthStack.Screen
-				name="Detail"
-				component={DetailScreen}
-				options={{ title: 'DETAIL' }}
-			/>
-		</AuthStack.Group>
+		<Stack.Navigator
+			initialRouteName="Login"
+			screenOptions={{
+				headerStyle: {
+					backgroundColor: '#8e9162',
+				},
+				headerTintColor: '#fff',
+				headerTitleStyle: {
+					fontWeight: 'bold',
+				},
+			}}
+		>
+			<AuthStack.Group>
+				<AuthStack.Screen
+					name="Home"
+					component={HomeScreen}
+					options={{ title: 'HOME' }}
+				/>
+				<AuthStack.Screen
+					name="Detail"
+					component={DetailScreen}
+					options={{ title: 'DETAIL' }}
+				/>
+			</AuthStack.Group>
+		</Stack.Navigator>
 	);
 };
 
-const BeforeLogin: FC = () => {
+export const BeforeLogin: FC = () => {
 	return (
-		<Stack.Group>
-			<Stack.Screen
-				name="Login"
-				component={LoginScreen}
-				options={{
-					title: 'LOGIN',
-					headerStyle: {
-						backgroundColor: '#f4511e',
-					},
-					headerTintColor: '#fff',
-					headerTitleStyle: {
-						fontWeight: 'bold',
-					},
-				}}
-			/>
-			<Stack.Screen name="Signup" component={SignupScreen} />
-		</Stack.Group>
+		<Stack.Navigator
+			initialRouteName="Login"
+			screenOptions={{
+				headerStyle: {
+					backgroundColor: '#8e9162',
+				},
+				headerTintColor: '#fff',
+				headerTitleStyle: {
+					fontWeight: 'bold',
+				},
+			}}
+		>
+			<Stack.Group>
+				<Stack.Screen
+					name="Login"
+					component={LoginScreen}
+					options={{
+						title: 'LOGIN',
+						headerStyle: {
+							backgroundColor: '#f4511e',
+						},
+						headerTintColor: '#fff',
+						headerTitleStyle: {
+							fontWeight: 'bold',
+						},
+					}}
+				/>
+				<Stack.Screen name="Signup" component={SignupScreen} />
+			</Stack.Group>
+		</Stack.Navigator>
 	);
 };
 
@@ -56,20 +91,14 @@ const App: FC = props => {
 
 	return (
 		<NavigationContainer>
-			<Stack.Navigator
-				initialRouteName="Login"
-				screenOptions={{
-					headerStyle: {
-						backgroundColor: '#8e9162',
-					},
-					headerTintColor: '#fff',
-					headerTitleStyle: {
-						fontWeight: 'bold',
-					},
-				}}
+			<AuthProvider
+				props={props}
+				authService={authService}
+				authErrorEventBus={authErrorEventBus}
 			>
-				{isLoggedIn ? AfterLogin(props) : BeforeLogin(props)}
-			</Stack.Navigator>
+				{AfterLogin(props)}
+				{/* {isLoggedIn ? AfterLogin(props) : BeforeLogin(props)} */}
+			</AuthProvider>
 		</NavigationContainer>
 	);
 };
