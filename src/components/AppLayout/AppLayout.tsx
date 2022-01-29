@@ -1,19 +1,38 @@
-import * as React from 'react';
-import { Text, View, StyleSheet } from 'react-native';
-interface componentNameProps {
-	data: string;
+import React, { FC, ReactElement } from 'react';
+import styled from 'styled-components/native';
+import Header from '@components/Header';
+interface AppLayoutProps {
+	noHeader?: boolean;
+	headerRight?: ReactElement;
+	headerLeft?: ReactElement;
+	headerCenter?: ReactElement;
+	children: any;
 }
 
-const componentName = (props: componentNameProps) => {
+const AppLayout: FC<AppLayoutProps> = ({
+	noHeader,
+	headerRight,
+	headerLeft,
+	headerCenter,
+	children,
+}) => {
 	return (
-		<View style={styles.container}>
-			<Text>{props.data}</Text>
-		</View>
+		<RootWrapper>
+			{!noHeader ? (
+				<Header
+					headerLeft={headerLeft}
+					headerRight={headerRight}
+					headerCenter={headerCenter}
+				/>
+			) : null}
+			{children}
+		</RootWrapper>
 	);
 };
 
-export default componentName;
+export default AppLayout;
 
-const styles = StyleSheet.create({
-	container: {},
-});
+const RootWrapper = styled.SafeAreaView`
+	flex: 1;
+	margin: 0 10px;
+`;

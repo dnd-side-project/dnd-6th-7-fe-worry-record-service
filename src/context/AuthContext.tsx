@@ -9,7 +9,7 @@ import {
 	useMemo,
 	useState,
 } from 'react';
-import { BeforeLogin } from '~/App';
+import { BeforeLogin } from '@page/Navigation';
 
 const AuthContext = createContext({});
 
@@ -28,7 +28,7 @@ export function AuthProvider({
 	authErrorEventBus,
 	children,
 }: Props): any {
-	const [user, setUser] = useState<any>(false);
+	const [user, setUser] = useState<any>(true);
 
 	useImperativeHandle(tokenRef, () => (user ? user.token : undefined));
 
@@ -76,7 +76,7 @@ export function AuthProvider({
 
 	return (
 		<AuthContext.Provider value={context}>
-			{user ? children : BeforeLogin(props)}
+			{user ? children : <BeforeLogin />}
 		</AuthContext.Provider>
 	);
 }

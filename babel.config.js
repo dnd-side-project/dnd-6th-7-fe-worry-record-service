@@ -4,6 +4,7 @@ module.exports = {
 		'@babel/preset-react',
 		'@babel/preset-typescript',
 	],
+	env: {},
 	plugins: [
 		[
 			'module:react-native-dotenv',
