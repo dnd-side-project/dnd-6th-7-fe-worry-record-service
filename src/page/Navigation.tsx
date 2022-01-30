@@ -8,7 +8,19 @@ import ArchiveScreen from '@page/Archive';
 import WorryScreen from '@page/Worry';
 import { WithAuthStackParamList, RootStackParamList } from '~/types/Navigation';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Button } from 'react-native-elements/dist/buttons/Button';
+
+import {
+	responsiveHeight as hp,
+	responsiveWidth as wp,
+} from '@lib/util/helper';
+
+import IconFillHome from '@assets/image/fill_home.svg';
+import IconHome from '@assets/image/home.svg';
+import IconStorage from '@assets/image/storage.svg';
+import IconFillStorage from '@assets/image/fill_storage.svg';
+
+import { StyleSheet } from 'react-native';
+import { theme } from '~/lib/styles/palette';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const AuthStack = createNativeStackNavigator<WithAuthStackParamList>();
@@ -69,12 +81,84 @@ export const ArchiveScreens: FC = () => {
 export const AfterLogin: FC = () => {
 	return (
 		<Tab.Navigator
-			screenOptions={{
+			screenOptions={({ route }) => ({
+				tabBarActiveTintColor: 'tomato',
+				tabBarInactiveTintColor: 'gray',
 				headerShown: false,
-			}}
+				tabBarStyle: styles.tabBar,
+				tabBarItemStyle: styles.tabBarItem,
+				tabBarShowLabel: false,
+				tabBarIcon: ({ focused }) => {
+					let iconName;
+					switch (route.name) {
+						case 'Homes':
+							iconName = focused ? <IconFillHome /> : <IconHome />;
+							break;
+						case 'Archives':
+							iconName = focused ? <IconFillStorage /> : <IconStorage />;
+							break;
+
+						default:
+							break;
+					}
+					return iconName;
+				},
+			})}
 		>
-			<Tab.Screen name="Homes" component={HomeScreens} />
-			<Tab.Screen name="Archives" component={ArchiveScreens} />
+			<Tab.Screen
+				options={{
+					tabBarIconStyle: styles.leftTabBarIcon,
+					tabBarItemStyle: styles.leftTabBarItem,
+				}}
+				name="Homes"
+				component={HomeScreens}
+			/>
+			<Tab.Screen
+				options={{
+					tabBarIconStyle: styles.rightTabBarIcon,
+					tabBarItemStyle: styles.rightTabBarItem,
+				}}
+				name="Archives"
+				component={ArchiveScreens}
+			/>
 		</Tab.Navigator>
 	);
 };
+
+const styles = StyleSheet.create({
+	tabBar: {
+		paddingHorizontal: wp('15%'),
+		paddingBottom: 10,
+		height: hp('15%'),
+		backgroundColor: theme.color.black['900'],
+	},
+	tabBarItem: {
+		shadowColor: '#fff',
+		shadowOffset: {
+			width: 0,
+			height: 12,
+		},
+		shadowOpacity: 0.58,
+		shadowRadius: 16.0,
+
+		elevation: 24,
+		// justifyContent: 'space-between',
+	},
+
+	leftTabBarItem: {
+		backgroundColor: theme.color.black['100'],
+		borderTopLeftRadius: 25,
+		borderBottomLeftRadius: 25,
+	},
+	leftTabBarIcon: {
+		marginRight: wp('10%'),
+	},
+	rightTabBarIcon: {
+		marginLeft: wp('10%'),
+	},
+	rightTabBarItem: {
+		backgroundColor: theme.color.black['100'],
+		borderTopRightRadius: 25,
+		borderBottomRightRadius: 25,
+	},
+});
