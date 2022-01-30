@@ -2,25 +2,32 @@
 
 ## 아키텍쳐
 
----
-
 ![dnd-6-7-fe drawio](https://user-images.githubusercontent.com/42944883/149341687-ad3f8df0-40ae-4be6-99e5-24d49273ff16.png)
 
 ## 기술 스택
 
----
-
-### React Native
+- React Native
+- typescript
+- React-navigation
+- Styled Component
+- React Native Element
+- Axios
+- React-query (사용가능한지 확인)
 
 ## 디자인 패턴
 
----
-
 - Presentational and Container Component Pattern ([참고](https://velog.io/@holim0/React-Design-Pattern))
+  - 위 디자인 패턴에서 Present 생략 
 
 ## 코딩 컨벤션
+- functional component로 개발 예정
+- 기타 컨벤션은 eslint 룰로 지정
 
----
+## 포매팅
+- eslint
+- Prettier
+- lint-staged
+- husky
 
 ### # 브랜치 관리 전략
 
