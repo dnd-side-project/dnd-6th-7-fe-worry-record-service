@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
 	tabBar: {
 		paddingHorizontal: wp('15%'),
 		paddingBottom: 10,
-		height: hp('15%'),
+		height: 100,
 		backgroundColor: theme.color.black['900'],
 	},
 	tabBarItem: {

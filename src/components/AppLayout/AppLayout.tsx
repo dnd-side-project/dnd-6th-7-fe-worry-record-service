@@ -34,5 +34,5 @@ export default AppLayout;
 
 const RootWrapper = styled.SafeAreaView`
 	flex: 1;
-	margin: 0 10px;
+	// margin: 0 10px;
 `;

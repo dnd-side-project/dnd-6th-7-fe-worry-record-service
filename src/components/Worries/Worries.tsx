@@ -1,7 +1,9 @@
-import React, { FC } from 'react';
-import { FlatList, View, Text } from 'react-native';
-import { Card } from 'react-native-elements';
+import React, { FC, memo } from 'react';
+
 import styled from 'styled-components/native';
+import { responsiveWidth as wp } from '@lib/util/helper';
+import Worry from '@components/Worry';
+import { FlatList } from 'react-native';
 
 export interface WorryProps {
 	id: number;
@@ -14,30 +16,25 @@ interface WorriesProps {
 	worries: WorryProps[];
 }
 
-const renderItem = ({ item }) => (
-	<Card>
-		<Card.Title>{item.title}</Card.Title>
-		<Card.Divider />
-		<BodyConent>
-			<Text>{item.content}</Text>
-		</BodyConent>
-	</Card>
+const renderItem = ({ item, index }: { item: WorryProps; index: number }) => (
+	<Worry item={item} index={index} />
 );
 
 const Worries: FC<WorriesProps> = ({ counts, worries }) => {
 	return (
 		<WorriesWrapper>
 			<InfoText>{counts}가지 걱정이 남았어요.</InfoText>
-			<FlatList
+			<ListWrapper
 				data={worries}
 				renderItem={renderItem}
+				numColumns={2}
 				keyExtractor={(item, index) => item.id.toString()}
 			/>
 		</WorriesWrapper>
 	);
 };
 
-export default Worries;
+export default memo(Worries);
 
 const WorriesWrapper = styled.View`
 	flex: 1;
@@ -45,10 +42,6 @@ const WorriesWrapper = styled.View`
 
 const InfoText = styled.Text``;
 
-const BodyWrapper = styled.View`
-	flex: 1;
-`;
-
-const BodyConent = styled.Text`
-	font-size: 10px;
-`;
+const ListWrapper = styled.FlatList`
+	margin: ${wp('5%')}px;
+` as unknown as typeof FlatList;

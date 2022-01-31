@@ -60,8 +60,8 @@ const Home: FC<ArchiveProps> = ({ navigation }) => {
 };
 
 const Title = styled.Text`
-	font-size: ${fontSizeByValue(24, heightDevicee())};
-	width: ${wp('50%')};
+	font-size: ${fontSizeByValue(24, heightDevicee())}px;
+	width: ${wp('50%')}px;
 `;
 
 export default Home;
