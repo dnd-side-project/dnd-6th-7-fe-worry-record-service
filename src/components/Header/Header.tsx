@@ -1,6 +1,9 @@
 import React, { FC, ReactElement } from 'react';
 import { StyleSheet } from 'react-native';
 import { Header } from 'react-native-elements';
+
+import { responsiveWidth as wp } from '@lib/util/helper';
+
 interface CustomeHeaderProps {
 	headerRight?: ReactElement;
 	headerLeft?: ReactElement;
@@ -28,5 +31,7 @@ const styles = StyleSheet.create({
 	container: {
 		backgroundColor: 'transparent',
 		height: 100,
+		borderBottomWidth: 0,
+		paddingHorizontal: wp('5%'),
 	},
 });

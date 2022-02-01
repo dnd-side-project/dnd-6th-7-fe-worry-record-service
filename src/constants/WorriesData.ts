@@ -6,17 +6,17 @@ export const WORRIES_LEFT: WorryProps[] = [
 	{
 		id: 11,
 		title: getDate(new Date(), 'MM/dd'),
-		content: '진로',
+		content: '#진로',
 	},
 	{
 		id: 21,
 		title: getDate(new Date(), 'MM/dd'),
-		content: '취업',
+		content: '#취업',
 	},
 	{
 		id: 31,
 		title: getDate(new Date(), 'MM/dd'),
-		content: '회사일',
+		content: '#회사일',
 	},
 	{
 		id: 41,

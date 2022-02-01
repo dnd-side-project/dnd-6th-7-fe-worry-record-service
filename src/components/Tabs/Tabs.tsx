@@ -2,6 +2,12 @@ import React, { FC, ReactElement, useState, useCallback, memo } from 'react';
 import { StyleSheet, Text } from 'react-native';
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 import { getWidthDevice } from '@lib/util/helper';
+import { theme } from '@lib/styles/palette';
+import {
+	responsiveFontSizeByValue as fontSizeByValue,
+	getHeightDevice as heightDevice,
+	responsiveWidth as wp,
+} from '@lib/util/helper';
 
 interface TabItemsProps {
 	id: string;
@@ -33,8 +39,10 @@ const CustomeTabs: FC<CustomeTabsProps> = ({
 		props => (
 			<TabBar
 				{...props}
+				indicatorStyle={styles.tabIndicator}
+				style={styles.tabBarWrapper}
 				renderLabel={({ route }) => (
-					<Text style={{ color: 'black' }}>{route.title}</Text>
+					<Text style={styles.tabBarTitle}>{route.title}</Text>
 				)}
 			/>
 		),
@@ -43,6 +51,7 @@ const CustomeTabs: FC<CustomeTabsProps> = ({
 
 	return (
 		<TabView
+			sceneContainerStyle={styles.tabViewWrapper}
 			renderTabBar={renderTabBar}
 			navigationState={{ index, routes }}
 			renderScene={renderScene}
@@ -55,8 +64,17 @@ const CustomeTabs: FC<CustomeTabsProps> = ({
 export default memo(CustomeTabs);
 
 const styles = StyleSheet.create({
-	container: {
-		backgroundColor: 'transparent',
-		height: 100,
+	tabBarWrapper: {
+		backgroundColor: theme.color.black['900'],
+		width: wp('60%'),
 	},
+	tabBarTitle: {
+		fontSize: fontSizeByValue(15, heightDevice()),
+		color: theme.color.white['900'],
+		fontWeight: 'bold',
+	},
+	tabIndicator: {
+		backgroundColor: theme.color.white['900'],
+	},
+	tabViewWrapper: {},
 });

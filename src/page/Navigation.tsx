@@ -84,6 +84,7 @@ export const AfterLogin: FC = () => {
 			screenOptions={({ route }) => ({
 				tabBarActiveTintColor: 'tomato',
 				tabBarInactiveTintColor: 'gray',
+
 				headerShown: false,
 				tabBarStyle: styles.tabBar,
 				tabBarItemStyle: styles.tabBarItem,
@@ -127,6 +128,7 @@ export const AfterLogin: FC = () => {
 
 const styles = StyleSheet.create({
 	tabBar: {
+		borderTopWidth: 0,
 		paddingHorizontal: wp('15%'),
 		paddingBottom: 10,
 		height: 100,
@@ -142,7 +144,6 @@ const styles = StyleSheet.create({
 		shadowRadius: 16.0,
 
 		elevation: 24,
-		// justifyContent: 'space-between',
 	},
 
 	leftTabBarItem: {

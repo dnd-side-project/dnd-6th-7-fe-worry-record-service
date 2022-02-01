@@ -4,8 +4,16 @@ import styled from 'styled-components/native';
 import { GestureResponderEvent } from 'react-native';
 import { theme, StyledColorProps } from '~/lib/styles/palette';
 
+import {
+	responsiveFontSizeByValue as fontSizeByValue,
+	getHeightDevice as heightDevice,
+	responsiveWidth as wp,
+} from '@lib/util/helper';
+
 type StyledButtonProps = StyledColorProps & {
 	isBorder?: boolean;
+	isBorderRadius?: boolean;
+	fontSize?: number;
 };
 
 type ButtonProps = StyledButtonProps & {
@@ -17,7 +25,7 @@ type ButtonProps = StyledButtonProps & {
 const Button: FC<ButtonProps> = ({ title, onPress, ...rest }) => {
 	return (
 		<CustomeButton onPress={onPress} {...rest}>
-			<ButtonName>{title}</ButtonName>
+			<ButtonName {...rest}>{title}</ButtonName>
 		</CustomeButton>
 	);
 };
@@ -37,8 +45,16 @@ const CustomeButton = styled.TouchableOpacity<StyledButtonProps>`
 					]
 			  }`
 			: 'none'};
+
+	border-radius: ${props => (props.isBorderRadius ? '5px' : 0)};
+	padding-vertical: 6px;
+	padding-horizontal: 12px;
+	align-self: flex-start;
 `;
 
-const ButtonName = styled.Text`
-	color: ${theme.color.black['900']};
+const ButtonName = styled.Text<StyledButtonProps>`
+	font-size: ${props =>
+		fontSizeByValue(props.fontSize || 11, heightDevice())}px;
+	color: ${props =>
+		theme.color[props.color?.color || 'white'][props.color?.weight || '900']};
 `;

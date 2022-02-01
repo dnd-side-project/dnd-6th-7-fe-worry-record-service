@@ -13,9 +13,10 @@ import styled from 'styled-components/native';
 
 import {
 	responsiveFontSizeByValue as fontSizeByValue,
-	getHeightDevice as heightDevicee,
+	getHeightDevice as heightDevice,
 	responsiveWidth as wp,
-} from '~/lib/util/helper';
+} from '@lib/util/helper';
+import { theme } from '@lib/styles/palette';
 
 const firstRoute = () => <Worries counts={4} worries={WORRIES_LEFT} />;
 const secondRoute = () => <Worries counts={7} worries={USEFUL_WORRIES} />;
@@ -35,11 +36,11 @@ const DUMMY = [
 
 const Home: FC<ArchiveProps> = ({ navigation }) => {
 	const [tabs, setTabs] = useState(DUMMY);
-	const [index, setIndex] = useState(1);
+	const [index, setIndex] = useState(0);
 
 	return (
 		<AppLayout
-			headerLeft={<Title>걱정보관함</Title>}
+			headerLeft={<Title>걱정 보관함</Title>}
 			headerRight={<Switch value={true} />}
 		>
 			<CustomeTabs
@@ -60,8 +61,10 @@ const Home: FC<ArchiveProps> = ({ navigation }) => {
 };
 
 const Title = styled.Text`
-	font-size: ${fontSizeByValue(24, heightDevicee())}px;
+	font-size: ${fontSizeByValue(25, heightDevice())}px;
 	width: ${wp('50%')}px;
+	color: ${theme.color.white['900']};
+	font-weight: bold;
 `;
 
 export default Home;
