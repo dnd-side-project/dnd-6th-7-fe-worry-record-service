@@ -1,5 +1,6 @@
 import React, { FC, memo } from 'react';
 import styled from 'styled-components/native';
+import { StyleSheet } from 'react-native';
 import CustomeButton from '@components/Button';
 
 import {
@@ -12,6 +13,8 @@ import IconCloseLock from '@assets/image/close_lock.svg';
 import IconArchive from '@assets/image/archive.svg';
 
 import { theme } from '@lib/styles/palette';
+
+import GradientWrapper from '@components/GradientWrapper';
 
 export interface WorryEachProps {
 	id: number;
@@ -27,37 +30,60 @@ interface WorryProps {
 const Worries: FC<WorryProps> = ({ item, index }) => {
 	return (
 		<CardWrapper index={index}>
-			<IconArchive
-				style={{ position: 'absolute', left: 0, top: 10, zIndex: 10 }}
-			/>
+			<IconArchive style={styles.iconWrapper} />
 			<CardTitle />
-			<CardConents>
+			<GradientWrapper
+				style={styles.cardContents}
+				colors={[
+					theme.color.grey['900'],
+					theme.color.blueGrey['700'],
+					theme.color.black['50'],
+				]}
+			>
 				<CardConent>
 					<Date>{item.title}</Date>
 					<CustomeButton
 						title={item.content}
 						isBorderRadius
-						backgroundColor={{
-							color: 'grey',
-							weight: '600',
+						gradientWrapper={{
+							isGradient: true,
+							colors: [
+								theme.color.purple['900'],
+								theme.color.red['900'],
+								theme.color.orange['900'],
+							],
+							style: styles.buttonWrapper,
 						}}
 						color={{
 							color: 'white',
 							weight: '900',
 						}}
-						fontSize={11}
+						fontSize={9}
 					/>
 					<DateLeftWrapper>
 						<IconCloseLock />
 						<DateLeft>7일 후 잠금해제</DateLeft>
 					</DateLeftWrapper>
 				</CardConent>
-			</CardConents>
+			</GradientWrapper>
 		</CardWrapper>
 	);
 };
 
 export default memo(Worries);
+
+const styles = StyleSheet.create({
+	iconWrapper: { position: 'absolute', left: 0, top: 10, zIndex: 10 },
+	cardContents: {
+		borderRadius: 16,
+	},
+	buttonWrapper: {
+		flex: 0,
+		alignSelf: 'flex-start',
+		justifySelf: 'flex-start',
+		borderRadius: 5,
+	},
+});
 
 const CardWrapper = styled.View<{ index: number }>`
 	height: ${(wp('100%') - wp('15%')) / 2}px;
@@ -74,11 +100,6 @@ const CardTitle = styled.Text`
 	flex: 0.3;
 `;
 
-const CardConents = styled.View`
-	flex: 1;
-	background: ${theme.color.grey['800']};
-	border-radius: 15px;
-`;
 const CardConent = styled.View`
 	flex: 1;
 	padding: ${wp('5%')}px;
