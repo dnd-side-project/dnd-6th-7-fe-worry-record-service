@@ -1,21 +1,18 @@
 import * as React from 'react';
 import { Text, View, StyleSheet, Button } from 'react-native';
 import AppLayout from '@components/AppLayout';
-import { SignupProps } from '~/types/Navigation';
+import { WorryProps } from '~/types/Navigation';
 
-const Signup = ({ navigation }: SignupProps) => {
+const Worry = ({ navigation }: WorryProps) => {
 	return (
 		<AppLayout>
-			<Text>Signup</Text>
-			<Button
-				title="Go back to Login"
-				onPress={() => navigation.navigate('Login')}
-			/>
+			<Text>Worry</Text>
+			<Button title="Go back to Archive" onPress={() => navigation.goBack()} />
 		</AppLayout>
 	);
 };
 
-export default Signup;
+export default Worry;
 
 const styles = StyleSheet.create({
 	container: {

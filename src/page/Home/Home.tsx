@@ -1,26 +1,24 @@
-import * as React from 'react';
-import { Text, View, StyleSheet, Button } from 'react-native';
+import React, { FC } from 'react';
+import { Switch } from 'react-native-elements';
+
+import CustomeButton from '@components/Button';
+import AppLayout from '@components/AppLayout';
+
 import { HomeProps } from '~/types/Navigation';
 
-const Home = ({ navigation }: HomeProps) => {
+const Home: FC<HomeProps> = ({ navigation }) => {
 	return (
-		<View style={styles.container}>
-			<Text>Home</Text>
-			<Button
+		<AppLayout>
+			<CustomeButton
 				title="Go to Detail"
 				onPress={() => navigation.navigate('Detail')}
+				backgroundColor={{
+					color: 'indigo',
+					weight: '400',
+				}}
 			/>
-		</View>
+		</AppLayout>
 	);
 };
 
 export default Home;
-
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		justifyContent: 'center',
-		alignItems: 'center',
-		backgroundColor: '#F5FCFF',
-	},
-});
