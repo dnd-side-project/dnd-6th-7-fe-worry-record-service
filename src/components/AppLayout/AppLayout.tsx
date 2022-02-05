@@ -1,6 +1,7 @@
 import React, { FC, ReactElement } from 'react';
 import styled from 'styled-components/native';
 import Header from '@components/Header';
+import { theme } from '@lib/styles/palette';
 interface AppLayoutProps {
 	noHeader?: boolean;
 	headerRight?: ReactElement;
@@ -34,5 +35,6 @@ export default AppLayout;
 
 const RootWrapper = styled.SafeAreaView`
 	flex: 1;
-	margin: 0 10px;
+	background: ${theme.color.black['900']};
+	// margin: 0 10px;
 `;
