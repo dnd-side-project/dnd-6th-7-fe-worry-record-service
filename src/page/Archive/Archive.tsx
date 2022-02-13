@@ -63,7 +63,7 @@ const Home: FC<ArchiveProps> = ({ navigation }) => {
 const Title = styled.Text`
 	font-size: ${fontSizeByValue(25, heightDevice())}px;
 	width: ${wp('50%')}px;
-	color: ${theme.color.white['900']};
+	color: ${theme.color.white};
 	font-weight: bold;
 `;
 
