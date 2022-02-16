@@ -46,6 +46,7 @@ export default AppLayout;
 const RootWrapper = styled.SafeAreaView`
 	flex: 1;
 	background: ${theme.color.black};
+	font-family: 'SUIT-Regular';
 `;
 const RootImageWrapper = styled.ImageBackground`
 	width: 100%;

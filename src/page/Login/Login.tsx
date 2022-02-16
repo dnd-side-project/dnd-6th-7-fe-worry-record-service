@@ -6,14 +6,6 @@ import LoginCP from '@components/Login';
 
 import IconLogin from '@assets/image/icon_login.svg';
 
-import {
-	responsiveFontSizeByValue as fontSizeByValue,
-	getHeightDevice as heightDevice,
-	responsiveWidth as wp,
-	responsiveHeight as hp,
-} from '@lib/util/helper';
-import { theme } from '~/lib/styles/palette';
-
 const Login: FC<LoginProps> = ({ navigation }) => {
 	return (
 		<AppLayout noHeader>

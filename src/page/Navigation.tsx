@@ -23,8 +23,6 @@ import IconAdd from '@assets/image/add.svg';
 
 import { StyleSheet } from 'react-native';
 import { theme } from '@lib/styles/palette';
-import Modal from '@components/Modal';
-import AddWorry from '@components/AddWorry';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const AuthStack = createNativeStackNavigator<WithAuthStackParamList>();
@@ -86,21 +84,10 @@ export const ArchiveScreens: FC = () => {
 
 const Add = () => null;
 
-// export const AddScreens: FC = ({ navigation }) => {
-//   return (
-//     <Modal visible={true}>
-//       <AddWorry navigation={navigation} />
-//     </Modal>
-//   );
-// };
-
 export const AfterLogin: FC = () => {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
-        tabBarActiveTintColor: 'tomato',
-        tabBarInactiveTintColor: 'gray',
-
         headerShown: false,
         tabBarStyle: styles.tabBar,
         tabBarItemStyle: styles.tabBarItem,
@@ -162,10 +149,11 @@ export const AfterLogin: FC = () => {
 const styles = StyleSheet.create({
   tabBar: {
     borderTopWidth: 0,
-    paddingHorizontal: wp('15%'),
-    paddingBottom: 10,
-    height: 100,
-    backgroundColor: theme.color.black,
+    paddingHorizontal: wp('18%'),
+    marginBottom: hp('5%'),
+    height: 73,
+    backgroundColor: 'transparent',
+    position: 'absolute',
   },
   tabBarItem: {
     shadowColor: '#fff',
@@ -179,12 +167,13 @@ const styles = StyleSheet.create({
     elevation: 24,
   },
   centerTabBarItem: {
-    backgroundColor: theme.color.gray,
+    backgroundColor: 'rgba(15, 15, 21, 1)',
+    zIndex: 100,
   },
   leftTabBarItem: {
-    backgroundColor: theme.color.gray,
-    borderTopLeftRadius: 25,
-    borderBottomLeftRadius: 25,
+    backgroundColor: 'rgba(15, 15, 21, 1)',
+    borderTopLeftRadius: 20,
+    borderBottomLeftRadius: 20,
   },
   centerTabBarIcon: {
     position: 'absolute',
@@ -193,8 +182,8 @@ const styles = StyleSheet.create({
   leftTabBarIcon: {},
   rightTabBarIcon: {},
   rightTabBarItem: {
-    backgroundColor: theme.color.gray,
-    borderTopRightRadius: 25,
-    borderBottomRightRadius: 25,
+    backgroundColor: 'rgba(15, 15, 21, 1)',
+    borderTopRightRadius: 20,
+    borderBottomRightRadius: 20,
   },
 });
