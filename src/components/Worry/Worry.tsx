@@ -34,11 +34,7 @@ const Worries: FC<WorryProps> = ({ item, index }) => {
 			<CardTitle />
 			<GradientWrapper
 				style={styles.cardContents}
-				colors={[
-					theme.color.grey['900'],
-					theme.color.blueGrey['700'],
-					theme.color.black['50'],
-				]}
+				colors={[theme.color.gray, theme.color.blue, theme.color.black]}
 			>
 				<CardConent>
 					<Date>{item.title}</Date>
@@ -47,16 +43,11 @@ const Worries: FC<WorryProps> = ({ item, index }) => {
 						isBorderRadius
 						gradientWrapper={{
 							isGradient: true,
-							colors: [
-								theme.color.purple['900'],
-								theme.color.red['900'],
-								theme.color.orange['900'],
-							],
+							colors: [theme.color.gray, theme.color.blue, theme.color.black],
 							style: styles.buttonWrapper,
 						}}
 						color={{
 							color: 'white',
-							weight: '900',
 						}}
 						fontSize={9}
 					/>
@@ -88,7 +79,7 @@ const styles = StyleSheet.create({
 const CardWrapper = styled.View<{ index: number }>`
 	height: ${(wp('100%') - wp('15%')) / 2}px;
 	flex: 1;
-	border: 2px solid ${theme.color.grey['800']};
+	border: 2px solid ${theme.color.gray};
 
 	border-radius: 19px;
 	margin-right: ${props => (props.index % 2 === 0 ? wp('5%') : 0)}px;
@@ -120,5 +111,5 @@ const DateLeftWrapper = styled.View`
 const DateLeft = styled.Text`
 	font-size: ${fontSizeByValue(10, heightDevice())}px;
 	margin-left: 5px;
-	color: ${theme.color.grey['300']};
+	color: ${theme.color.gray};
 `;
