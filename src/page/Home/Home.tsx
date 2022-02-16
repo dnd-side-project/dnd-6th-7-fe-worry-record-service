@@ -4,7 +4,7 @@ import { Switch } from 'react-native-elements';
 import { Text } from 'react-native-elements';
 
 import AppLayout from '@components/AppLayout';
-import Home from '~/components/Home';
+import Home from '@components/Home';
 import { HomeProps } from '~/types/Navigation';
 import styled from 'styled-components/native';
 
@@ -18,9 +18,9 @@ import IconSetting from '@assets/image/settings.svg';
 
 const HomePage: FC<HomeProps> = ({ navigation }) => {
 	return (
-		// <AppLayout headerRight={<IconSetting />}>
-		<AppLayout>
-			<Home username="유저" worryRatio={98} worryTerm={10} />
+		<AppLayout headerRight={<IconSetting />}>
+			{/* // <AppLayout> */}
+			<Home username="유저" worryRatio={98} worryTerm={10} numWorries={7} />
 
 			{/* <CustomeButton
 				title="Go to Detail"

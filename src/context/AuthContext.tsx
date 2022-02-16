@@ -76,7 +76,7 @@ export function AuthProvider({
 
 	return (
 		<AuthContext.Provider value={context}>
-			{user ? children : <BeforeLogin />}
+			{true ? children : <BeforeLogin />}
 		</AuthContext.Provider>
 	);
 }
