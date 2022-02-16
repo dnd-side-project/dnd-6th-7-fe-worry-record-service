@@ -2,16 +2,10 @@ import React, { FC } from 'react';
 import { StyleSheet } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 
-interface DirectionProps {
-	x: number;
-	y: number;
-}
-
 export interface GradientWrapperProps {
 	children: any;
 	colors: string[];
-	start?: DirectionProps;
-	end?: DirectionProps;
+	angle?: number;
 	style?: any;
 	[rest: string]: any;
 }
@@ -19,8 +13,7 @@ export interface GradientWrapperProps {
 const GradientWrapper: FC<GradientWrapperProps> = ({
 	children,
 	colors,
-	start,
-	end,
+	angle,
 	style,
 	...rest
 }) => {
@@ -29,8 +22,8 @@ const GradientWrapper: FC<GradientWrapperProps> = ({
 			{...rest}
 			style={[styles.container, style]}
 			colors={colors}
-			start={start}
-			end={end}
+			angle={angle}
+			useAngle={true}
 		>
 			{children}
 		</LinearGradient>

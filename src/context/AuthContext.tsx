@@ -28,7 +28,7 @@ export function AuthProvider({
 	authErrorEventBus,
 	children,
 }: Props): any {
-	const [user, setUser] = useState<any>(false);
+	const [user, setUser] = useState<any>(true);
 
 	useImperativeHandle(tokenRef, () => (user ? user.token : undefined));
 

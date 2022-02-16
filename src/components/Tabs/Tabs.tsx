@@ -31,22 +31,28 @@ const CustomeTabs: FC<CustomeTabsProps> = ({
 		{},
 	);
 	const renderScene = SceneMap(converToObj);
+
 	const [routes] = useState(
 		tabItems.map(item => ({ key: item.id, title: item.title })),
 	);
 
-	const renderTabBar = useCallback(
-		props => (
-			<TabBar
-				{...props}
-				indicatorStyle={styles.tabIndicator}
-				style={styles.tabBarWrapper}
-				renderLabel={({ route }) => (
-					<Text style={styles.tabBarTitle}>{route.title}</Text>
-				)}
-			/>
-		),
-		[],
+	const renderTabBar = props => (
+		<TabBar
+			{...props}
+			indicatorStyle={styles.tabIndicator}
+			style={styles.tabBarWrapper}
+			tabStyle={styles.tabStyle}
+			activeColor={theme.color.black}
+			renderLabel={({ route }) => (
+				<Text
+					style={
+						+route.key === index ? styles.tabBarTitle : styles.tabBarActiveTitle
+					}
+				>
+					{route.title}
+				</Text>
+			)}
+		/>
 	);
 
 	return (
@@ -65,16 +71,30 @@ export default memo(CustomeTabs);
 
 const styles = StyleSheet.create({
 	tabBarWrapper: {
-		backgroundColor: theme.color.black,
+		backgroundColor: 'transparent',
 		width: wp('60%'),
+		// borderColor: 'pink',
+		// borderWidth: 1,
+	},
+	tabStyle: {
+		padding: 0,
+		margin: 0,
+	},
+	tabBarActiveTitle: {
+		fontSize: fontSizeByValue(26, heightDevice()),
+		color: theme.color.gray,
+		fontWeight: 'bold',
 	},
 	tabBarTitle: {
-		fontSize: fontSizeByValue(15, heightDevice()),
+		fontSize: fontSizeByValue(26, heightDevice()),
 		color: theme.color.white,
 		fontWeight: 'bold',
 	},
 	tabIndicator: {
-		backgroundColor: theme.color.white,
+		backgroundColor: 'transparent',
 	},
-	tabViewWrapper: {},
+	tabViewWrapper: {
+		// borderColor: 'pink',
+		// borderWidth: 1,
+	},
 });

@@ -1,7 +1,6 @@
 import React, { FC, useState } from 'react';
 import { Switch } from 'react-native-elements';
 
-import CustomeButton from '@components/Button';
 import CustomeTabs from '@components/Tabs';
 import AppLayout from '@components/AppLayout';
 import Worries from '@components/Worries';
@@ -23,13 +22,13 @@ const secondRoute = () => <Worries counts={7} worries={USEFUL_WORRIES} />;
 
 const DUMMY = [
 	{
-		id: '1',
-		title: '남은 걱정',
+		id: '0',
+		title: '요즘 걱정,',
 		component: firstRoute,
 	},
 	{
-		id: '2',
-		title: '쓸모있는 걱정',
+		id: '1',
+		title: '지난 걱정',
 		component: secondRoute,
 	},
 ];
@@ -39,23 +38,12 @@ const Home: FC<ArchiveProps> = ({ navigation }) => {
 	const [index, setIndex] = useState(0);
 
 	return (
-		<AppLayout
-			headerLeft={<Title>걱정 보관함</Title>}
-			headerRight={<Switch value={true} />}
-		>
+		<AppLayout noHeader>
 			<CustomeTabs
 				tabItems={tabs}
 				index={index}
 				onChangeIndex={i => setIndex(i)}
 			/>
-			{/* <CustomeButton
-				title="Go to worry"
-				onPress={() => navigation.navigate('Worry')}
-				backgroundColor={{
-					color: 'indigo',
-					weight: '400',
-				}}
-			/> */}
 		</AppLayout>
 	);
 };

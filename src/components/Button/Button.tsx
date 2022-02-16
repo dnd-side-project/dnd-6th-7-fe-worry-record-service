@@ -8,6 +8,7 @@ import {
 	responsiveFontSizeByValue as fontSizeByValue,
 	getHeightDevice as heightDevice,
 	responsiveWidth as wp,
+	responsiveHeight as hp,
 } from '@lib/util/helper';
 import { GradientWrapperProps } from '@components/GradientWrapper/GradientWrapper';
 import GradientWrapper from '@components/GradientWrapper';
@@ -17,15 +18,12 @@ type StyledButtonProps = StyledColorProps & {
 	isBold?: boolean;
 	isBorderRadius?: boolean;
 	fontSize?: number;
-	width: number;
-	height: number;
 	icon?: any;
+	isFlex?: boolean;
+	opacity?: number;
 };
 
-type GButtonProps = Pick<
-	GradientWrapperProps,
-	'colors' | 'start' | 'end' | 'style'
-> & {
+type GButtonProps = Pick<GradientWrapperProps, 'colors' | 'angle' | 'style'> & {
 	isGradient: boolean;
 };
 
@@ -48,9 +46,8 @@ const Button: FC<ButtonProps> = ({
 			{gradientWrapper?.isGradient ? (
 				<GradientWrapper
 					style={gradientWrapper.style}
-					start={gradientWrapper.start}
-					end={gradientWrapper.end}
 					colors={gradientWrapper.colors}
+					angle={gradientWrapper.angle}
 				>
 					<TransparentButton onPress={onPress} {...rest}>
 						<ButtonName {...rest}>{title}</ButtonName>
@@ -71,9 +68,8 @@ const Button: FC<ButtonProps> = ({
 export default Button;
 
 const DefaultButton = styled.TouchableOpacity<StyledButtonProps>`
-	padding-vertical: 5px;
-	padding-horizontal: 5px;
-	align-self: flex-start;
+	padding-vertical: ${hp(0.8)}px;
+	padding-horizontal: ${hp(0.8)}px;
 	border-radius: ${props => (props.isBorderRadius ? '10px' : 0)};
 	align-items: center;
 	justify-content: center;
@@ -86,8 +82,7 @@ const CustomeButton = styled(DefaultButton)`
 		props.isBorder
 			? `1px solid ${theme.color[props.backgroundColor?.color || 'white']}`
 			: 'none'};
-	width: ${props => props?.width || 100}%;
-	height: ${props => props?.height || 100}%;
+	opacity: ${props => props.opacity || 1};
 `;
 
 const TransparentButton = styled(DefaultButton)`
@@ -98,15 +93,14 @@ const ButtonWrapper = styled.View<StyledButtonProps>`
 	flex-direction: row;
 	align-items: center;
 	justify-content: center;
-	width: 100%;
-	padding: 0 20px;
+	padding: ${hp(1)}px ${hp(2)}px;
 `;
 
 const ButtonName = styled.Text<StyledButtonProps>`
 	font-size: ${props =>
 		fontSizeByValue(props.fontSize || 11, heightDevice())}px;
 	color: ${props => theme.color[props.color?.color || 'white']};
-	font-weight: ${props => (props?.isBold ? 'bold' : 'normal')};
+	font-weight: ${props => (props?.isBold ? 'bold' : '600')};
 	text-align: center;
-	flex: 1;
+	flex: ${props => (props.isFlex ? 1 : 'none')};
 `;

@@ -8,13 +8,13 @@ import {
 } from '@react-native-seoul/kakao-login';
 
 import CustomeButton from '@components/Button';
-import { h5_fontSize } from '~/lib/styles/_variable';
+import { h5_fontSize } from '@lib/styles/_variable';
 import {
 	Header1_bold,
 	Header1_normal,
 	Header5_normal,
-} from '~/lib/styles/_mixin';
-import { theme } from '~/lib/styles/palette';
+} from '@lib/styles/_mixin';
+import { theme } from '@lib/styles/palette';
 
 import IconKakao from '@assets/image/kakaotalk.svg';
 import IconApple from '@assets/image/apple.svg';
@@ -63,12 +63,11 @@ const Login: FC<LoginProps> = props => {
 					color={{
 						color: 'black',
 					}}
+					isFlex
 					icon={<IconKakao />}
 					isBold
 					isBorderRadius
 					fontSize={h5_fontSize}
-					width={100}
-					height={45}
 				/>
 				<Space />
 				<CustomeButton
@@ -79,13 +78,12 @@ const Login: FC<LoginProps> = props => {
 					}}
 					icon={<IconApple />}
 					isBold
+					isFlex
 					color={{
 						color: 'black',
 					}}
 					isBorderRadius
 					fontSize={h5_fontSize}
-					width={100}
-					height={45}
 				/>
 			</ButtonWrapper>
 		</LoginWrapper>
