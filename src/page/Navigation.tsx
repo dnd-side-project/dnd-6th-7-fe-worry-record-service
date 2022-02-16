@@ -18,9 +18,12 @@ import IconFillHome from '@assets/image/fill_home.svg';
 import IconHome from '@assets/image/home.svg';
 import IconStorage from '@assets/image/storage.svg';
 import IconFillStorage from '@assets/image/fill_storage.svg';
+import IconAdd from '@assets/image/add.svg';
 
 import { StyleSheet } from 'react-native';
-import { theme } from '~/lib/styles/palette';
+import { theme } from '@lib/styles/palette';
+import Modal from '@components/Modal';
+import AddWorry from '@components/AddWorry';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const AuthStack = createNativeStackNavigator<WithAuthStackParamList>();
@@ -52,6 +55,7 @@ export const HomeScreens: FC = () => {
 		>
 			<AuthStack.Group>
 				<AuthStack.Screen name="Home" component={HomeScreen} options={{}} />
+				<AuthStack.Screen name="CreatePosts0" component={AddScreens} />
 				<AuthStack.Screen name="Detail" component={DetailScreen} options={{}} />
 			</AuthStack.Group>
 		</AuthStack.Navigator>
@@ -72,9 +76,20 @@ export const ArchiveScreens: FC = () => {
 					component={ArchiveScreen}
 					options={{}}
 				/>
+				<AuthStack.Screen name="CreatePosts2" component={AddScreens} />
 				<AuthStack.Screen name="Worry" component={WorryScreen} options={{}} />
 			</AuthStack.Group>
 		</AuthStack.Navigator>
+	);
+};
+
+const Add = () => null;
+
+export const AddScreens: FC = ({ navigation }) => {
+	return (
+		<Modal visible={true}>
+			<AddWorry navigation={navigation} />
+		</Modal>
 	);
 };
 
@@ -98,6 +113,9 @@ export const AfterLogin: FC = () => {
 						case 'Archives':
 							iconName = focused ? <IconFillStorage /> : <IconStorage />;
 							break;
+						case 'Add':
+							iconName = <IconAdd />;
+							break;
 
 						default:
 							break;
@@ -113,6 +131,20 @@ export const AfterLogin: FC = () => {
 				}}
 				name="Homes"
 				component={HomeScreens}
+			/>
+			<Tab.Screen
+				options={{
+					tabBarIconStyle: styles.centerTabBarIcon,
+					tabBarItemStyle: styles.centerTabBarItem,
+				}}
+				component={Add}
+				name="Add"
+				listeners={({ navigation }) => ({
+					tabPress: e => {
+						e.preventDefault();
+						navigation.navigate(`CreatePosts${navigation.getState().index}`);
+					},
+				})}
 			/>
 			<Tab.Screen
 				options={{
@@ -132,7 +164,7 @@ const styles = StyleSheet.create({
 		paddingHorizontal: wp('15%'),
 		paddingBottom: 10,
 		height: 100,
-		backgroundColor: theme.color.black['900'],
+		backgroundColor: theme.color.black,
 	},
 	tabBarItem: {
 		shadowColor: '#fff',
@@ -145,20 +177,22 @@ const styles = StyleSheet.create({
 
 		elevation: 24,
 	},
-
+	centerTabBarItem: {
+		backgroundColor: theme.color.gray,
+	},
 	leftTabBarItem: {
-		backgroundColor: theme.color.black['100'],
+		backgroundColor: theme.color.gray,
 		borderTopLeftRadius: 25,
 		borderBottomLeftRadius: 25,
 	},
-	leftTabBarIcon: {
-		marginRight: wp('10%'),
+	centerTabBarIcon: {
+		position: 'absolute',
+		top: 0,
 	},
-	rightTabBarIcon: {
-		marginLeft: wp('10%'),
-	},
+	leftTabBarIcon: {},
+	rightTabBarIcon: {},
 	rightTabBarItem: {
-		backgroundColor: theme.color.black['100'],
+		backgroundColor: theme.color.gray,
 		borderTopRightRadius: 25,
 		borderBottomRightRadius: 25,
 	},

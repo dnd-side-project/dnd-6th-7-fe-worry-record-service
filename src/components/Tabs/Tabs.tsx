@@ -65,16 +65,16 @@ export default memo(CustomeTabs);
 
 const styles = StyleSheet.create({
 	tabBarWrapper: {
-		backgroundColor: theme.color.black['900'],
+		backgroundColor: theme.color.black,
 		width: wp('60%'),
 	},
 	tabBarTitle: {
 		fontSize: fontSizeByValue(15, heightDevice()),
-		color: theme.color.white['900'],
+		color: theme.color.white,
 		fontWeight: 'bold',
 	},
 	tabIndicator: {
-		backgroundColor: theme.color.white['900'],
+		backgroundColor: theme.color.white,
 	},
 	tabViewWrapper: {},
 });
