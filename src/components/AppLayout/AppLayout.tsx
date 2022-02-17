@@ -6,10 +6,14 @@ import { ImageSourcePropType } from 'react-native';
 
 interface AppLayoutProps {
   noHeader?: boolean;
-  name: 'login' | 'worry' | 'chat';
+  name: 'login' | 'worry' | 'chat' | 'home';
   headerRight?: ReactElement;
+  headerRightSidePress?: () => void;
   headerLeft?: ReactElement;
-  headerCenter?: ReactElement;
+  headerLeftSidePress?: () => void;
+  headerTitle?: ReactElement;
+  headerTitleCenter?: boolean;
+  headerTitlePress?: () => void;
   children: any;
 }
 
@@ -17,8 +21,12 @@ const AppLayout: FC<AppLayoutProps> = ({
   name,
   noHeader,
   headerRight,
+  headerRightSidePress,
   headerLeft,
-  headerCenter,
+  headerLeftSidePress,
+  headerTitle,
+  headerTitlePress,
+  headerTitleCenter,
   children,
 }) => {
   const setImage = (): ImageSourcePropType => {
@@ -29,6 +37,8 @@ const AppLayout: FC<AppLayoutProps> = ({
         return require('@assets/image/bg_worry.png');
       case 'chat':
         return require('@assets/image/bg_login.png');
+      case 'home':
+        return require('@assets/image/bg_home.png');
 
       default:
         return require('@assets/image/bg_login.png');
@@ -40,9 +50,13 @@ const AppLayout: FC<AppLayoutProps> = ({
       <RootImageWrapper source={setImage()}>
         {!noHeader ? (
           <Header
-            headerLeft={headerLeft}
-            headerRight={headerRight}
-            headerCenter={headerCenter}
+            title={headerTitle}
+            titlePress={headerTitlePress}
+            leftSide={headerLeft}
+            rightSide={headerRight}
+            rightSidePress={headerRightSidePress}
+            leftSidePress={headerLeftSidePress}
+            titleCenter={headerTitleCenter}
           />
         ) : null}
         {children}
@@ -61,5 +75,6 @@ const RootWrapper = styled.SafeAreaView`
 const RootImageWrapper = styled.ImageBackground`
   width: 100%;
   height: 100%;
-  padding: 32px 24px 32px 24px;
+  padding: 0 24px 0 24px;
+  // border: pink 1px;
 `;

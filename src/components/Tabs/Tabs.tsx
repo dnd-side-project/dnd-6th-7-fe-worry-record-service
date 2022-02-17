@@ -77,6 +77,7 @@ const styles = StyleSheet.create({
   tabStyle: {
     padding: 0,
     margin: 0,
+    marginTop: 20,
   },
   tabBarActiveTitle: {
     fontSize: fontSizeByValue(26, heightDevice()),

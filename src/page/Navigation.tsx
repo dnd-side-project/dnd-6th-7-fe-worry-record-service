@@ -51,7 +51,7 @@ export const HomeScreens: FC = () => {
     >
       <AuthStack.Group>
         <AuthStack.Screen name="Home" component={HomeScreen} options={{}} />
-        <AuthStack.Screen name="CreatePosts0" component={AddWorryScreen} />
+        <AuthStack.Screen name="AddWorry" component={AddWorryScreen} />
         <AuthStack.Screen name="Detail" component={DetailScreen} options={{}} />
       </AuthStack.Group>
     </AuthStack.Navigator>
@@ -121,12 +121,12 @@ export const AfterLogin: FC = () => {
           tabBarIconStyle: styles.centerTabBarIcon,
           tabBarItemStyle: styles.centerTabBarItem,
         }}
-        component={Add}
+        component={HomeScreens}
         name="Add"
         listeners={({ navigation }) => ({
           tabPress: e => {
             e.preventDefault();
-            navigation.navigate(`CreatePosts${navigation.getState().index}`);
+            navigation.navigate('AddWorry');
           },
         })}
       />

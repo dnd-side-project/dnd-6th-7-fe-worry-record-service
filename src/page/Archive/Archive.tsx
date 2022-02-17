@@ -16,6 +16,7 @@ import {
   responsiveWidth as wp,
 } from '@lib/util/helper';
 import { theme } from '@lib/styles/palette';
+import IconSetting from '@assets/image/settings.svg';
 
 const firstRoute = () => <Worries counts={4} worries={WORRIES_LEFT} />;
 const secondRoute = () => <Worries counts={7} worries={USEFUL_WORRIES} />;
@@ -47,12 +48,5 @@ const Home: FC<ArchiveProps> = ({ navigation }) => {
     </AppLayout>
   );
 };
-
-const Title = styled.Text`
-  font-size: ${fontSizeByValue(25, heightDevice())}px;
-  width: ${wp('50%')}px;
-  color: ${theme.color.white};
-  font-weight: bold;
-`;
 
 export default Home;

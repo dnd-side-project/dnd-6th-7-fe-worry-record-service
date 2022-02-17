@@ -8,7 +8,7 @@ export type RootStackParamList = {
 export type WithAuthStackParamList = {
   Home: undefined;
   Detail: undefined;
-  CreatePosts0: undefined;
+  AddWorry: undefined;
   CreatePosts2: undefined;
   Archive: undefined;
 };

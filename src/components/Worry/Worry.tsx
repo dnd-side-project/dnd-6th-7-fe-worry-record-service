@@ -9,12 +9,6 @@ import {
 } from '@lib/util/helper';
 
 import IconCloseLock from '@assets/image/close_lock.svg';
-import IconJinro from '@assets/image/jinro.svg';
-import IconRelationship from '@assets/image/relationship.svg';
-import IconEconomy from '@assets/image/economy.svg';
-import IconStudy from '@assets/image/study.svg';
-import IconWork from '@assets/image/work.svg';
-import IconFamily from '@assets/image/family.svg';
 
 import { theme } from '@lib/styles/palette';
 import { Header2_600, Header6_bold, Header6_normal } from '@lib/styles/_mixin';
@@ -27,6 +21,12 @@ export interface WorryEachProps {
   content: string;
   isOpen: boolean;
 }
+
+// TODO: 모든걱정, 의미있는 걱정, 의미없는 걱정 태그 만들기
+// TODO: 기타 태그, 아이콘 넣기
+// TODO: 필터 구현하기
+// TODO: 후기 작성 조건 한줄 만들기
+// TODO: 편집하기 클릭 > 체크박스 표출하기
 
 interface WorryProps {
   item: WorryEachProps;

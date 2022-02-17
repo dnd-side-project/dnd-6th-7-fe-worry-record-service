@@ -1,37 +1,64 @@
 import React, { FC, ReactElement } from 'react';
-import { StyleSheet } from 'react-native';
-import { Header } from 'react-native-elements';
+import styled from 'styled-components/native';
+import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
 
-import { responsiveWidth as wp } from '@lib/util/helper';
-
-interface CustomeHeaderProps {
-  headerRight?: ReactElement;
-  headerLeft?: ReactElement;
-  headerCenter?: ReactElement;
+interface AppHeaderProps {
+  title?: ReactElement;
+  titlePress?: () => void;
+  titleCenter?: boolean;
+  rightSide?: ReactElement;
+  rightSidePress?: () => void;
+  leftSide?: ReactElement;
+  leftSidePress?: () => void;
 }
 
-const CustomeHeader: FC<CustomeHeaderProps> = ({
-  headerRight,
-  headerLeft,
-  headerCenter,
+const AppHeader: FC<AppHeaderProps> = ({
+  title,
+  titlePress,
+  titleCenter,
+  rightSide,
+  rightSidePress,
+  leftSide,
+  leftSidePress,
 }) => {
   return (
-    <Header
-      containerStyle={styles.container}
-      leftComponent={headerLeft}
-      centerComponent={headerCenter}
-      rightComponent={headerRight}
-    />
+    <HeaderWrapper>
+      {leftSide && <LeftButton onPress={leftSidePress}>{leftSide}</LeftButton>}
+      <CenterWrapper titleCenter={titleCenter}>
+        <CenterButton onPress={titlePress} disabled={titlePress ? false : true}>
+          {title}
+        </CenterButton>
+      </CenterWrapper>
+      {rightSide && (
+        <RightButton onPress={rightSidePress}>{rightSide}</RightButton>
+      )}
+    </HeaderWrapper>
   );
 };
 
-export default CustomeHeader;
+const HeaderWrapper = styled.View`
+  border: pink;
+  flex-direction: row;
+  height: 71px;
+`;
 
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: 'transparent',
-    height: 100,
-    borderBottomWidth: 0,
-    paddingHorizontal: wp('5%'),
-  },
-});
+const CenterWrapper = styled.View<AppHeaderProps>`
+  justify-content: center;
+  margin: 0 21px;
+  flex: 1;
+  ${({ titleCenter }) => titleCenter && 'align-items: center;'}
+`;
+
+const CenterButton = styled.TouchableOpacity`
+  justify-content: center;
+`;
+
+const LeftButton = styled.TouchableOpacity`
+  justify-content: center;
+`;
+
+const RightButton = styled.TouchableOpacity`
+  justify-content: center;
+`;
+
+export default AppHeader;
