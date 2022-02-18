@@ -1,11 +1,9 @@
 import React, { FC } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginScreen from '@page/Login';
-import SignupScreen from '@page/Signup';
 import HomeScreen from '@page/Home';
 import DetailScreen from '@page/Detail';
 import ArchiveScreen from '@page/Archive';
-import WorryScreen from '@page/Worry';
 import AddWorryScreen from '@page/AddWorry';
 import { WithAuthStackParamList, RootStackParamList } from '~/types/Navigation';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -38,7 +36,6 @@ export const BeforeLogin: FC = () => {
     >
       <Stack.Group>
         <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="Signup" component={SignupScreen} />
       </Stack.Group>
     </Stack.Navigator>
   );
@@ -54,7 +51,7 @@ export const HomeScreens: FC = () => {
     >
       <AuthStack.Group>
         <AuthStack.Screen name="Home" component={HomeScreen} options={{}} />
-        <AuthStack.Screen name="CreatePosts0" component={AddWorryScreen} />
+        <AuthStack.Screen name="AddWorry" component={AddWorryScreen} />
         <AuthStack.Screen name="Detail" component={DetailScreen} options={{}} />
       </AuthStack.Group>
     </AuthStack.Navigator>
@@ -76,7 +73,6 @@ export const ArchiveScreens: FC = () => {
           options={{}}
         />
         <AuthStack.Screen name="CreatePosts2" component={AddWorryScreen} />
-        <AuthStack.Screen name="Worry" component={WorryScreen} options={{}} />
       </AuthStack.Group>
     </AuthStack.Navigator>
   );
@@ -125,12 +121,12 @@ export const AfterLogin: FC = () => {
           tabBarIconStyle: styles.centerTabBarIcon,
           tabBarItemStyle: styles.centerTabBarItem,
         }}
-        component={Add}
+        component={HomeScreens}
         name="Add"
         listeners={({ navigation }) => ({
           tabPress: e => {
             e.preventDefault();
-            navigation.navigate(`CreatePosts${navigation.getState().index}`);
+            navigation.navigate('AddWorry');
           },
         })}
       />
@@ -151,7 +147,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 0,
     paddingHorizontal: wp('18%'),
     marginBottom: hp('5%'),
-    height: 73,
+    height: 90,
     backgroundColor: 'transparent',
     position: 'absolute',
   },
@@ -167,11 +163,12 @@ const styles = StyleSheet.create({
     elevation: 24,
   },
   centerTabBarItem: {
-    backgroundColor: 'rgba(15, 15, 21, 1)',
+    backgroundColor: 'rgba(15, 15, 21, 0.5)',
+
     zIndex: 100,
   },
   leftTabBarItem: {
-    backgroundColor: 'rgba(15, 15, 21, 1)',
+    backgroundColor: 'rgba(15, 15, 21, 0.5)',
     borderTopLeftRadius: 20,
     borderBottomLeftRadius: 20,
   },
@@ -182,7 +179,7 @@ const styles = StyleSheet.create({
   leftTabBarIcon: {},
   rightTabBarIcon: {},
   rightTabBarItem: {
-    backgroundColor: 'rgba(15, 15, 21, 1)',
+    backgroundColor: 'rgba(15, 15, 21, 0.5)',
     borderTopRightRadius: 20,
     borderBottomRightRadius: 20,
   },

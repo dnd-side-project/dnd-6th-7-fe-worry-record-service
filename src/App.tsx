@@ -16,19 +16,19 @@ const httpClient = new HttpClient(baseURL);
 const authService = new AuthService(httpClient);
 
 const App: FC = props => {
-	return (
-		<ThemeProvider theme={theme}>
-			<NavigationContainer>
-				<AuthProvider
-					props={props}
-					authService={authService}
-					authErrorEventBus={authErrorEventBus}
-				>
-					<AfterLogin />
-				</AuthProvider>
-			</NavigationContainer>
-		</ThemeProvider>
-	);
+  return (
+    <ThemeProvider theme={theme}>
+      <NavigationContainer>
+        <AuthProvider
+          props={props}
+          authService={authService}
+          authErrorEventBus={authErrorEventBus}
+        >
+          <AfterLogin />
+        </AuthProvider>
+      </NavigationContainer>
+    </ThemeProvider>
+  );
 };
 
 export default App;

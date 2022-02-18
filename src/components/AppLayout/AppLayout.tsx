@@ -2,54 +2,79 @@ import React, { FC, ReactElement } from 'react';
 import styled from 'styled-components/native';
 import Header from '@components/Header';
 import { theme } from '@lib/styles/palette';
-
-import {
-	responsiveFontSizeByValue as fontSizeByValue,
-	getHeightDevice as heightDevice,
-	responsiveWidth as wp,
-	responsiveHeight as hp,
-} from '@lib/util/helper';
+import { ImageSourcePropType } from 'react-native';
 
 interface AppLayoutProps {
-	noHeader?: boolean;
-	headerRight?: ReactElement;
-	headerLeft?: ReactElement;
-	headerCenter?: ReactElement;
-	children: any;
+  noHeader?: boolean;
+  name: 'login' | 'worry' | 'chat' | 'home';
+  headerRight?: ReactElement;
+  headerRightSidePress?: () => void;
+  headerLeft?: ReactElement;
+  headerLeftSidePress?: () => void;
+  headerTitle?: ReactElement;
+  headerTitleCenter?: boolean;
+  headerTitlePress?: () => void;
+  children: any;
 }
 
 const AppLayout: FC<AppLayoutProps> = ({
-	noHeader,
-	headerRight,
-	headerLeft,
-	headerCenter,
-	children,
+  name,
+  noHeader,
+  headerRight,
+  headerRightSidePress,
+  headerLeft,
+  headerLeftSidePress,
+  headerTitle,
+  headerTitlePress,
+  headerTitleCenter,
+  children,
 }) => {
-	return (
-		<RootWrapper>
-			<RootImageWrapper source={require('@assets/image/bg_login.png')}>
-				{!noHeader ? (
-					<Header
-						headerLeft={headerLeft}
-						headerRight={headerRight}
-						headerCenter={headerCenter}
-					/>
-				) : null}
-				{children}
-			</RootImageWrapper>
-		</RootWrapper>
-	);
+  const setImage = (): ImageSourcePropType => {
+    switch (name) {
+      case 'login':
+        return require('@assets/image/bg_login.png');
+      case 'worry':
+        return require('@assets/image/bg_worry.png');
+      case 'chat':
+        return require('@assets/image/bg_login.png');
+      case 'home':
+        return require('@assets/image/bg_home.png');
+
+      default:
+        return require('@assets/image/bg_login.png');
+    }
+  };
+
+  return (
+    <RootWrapper>
+      <RootImageWrapper source={setImage()}>
+        {!noHeader ? (
+          <Header
+            title={headerTitle}
+            titlePress={headerTitlePress}
+            leftSide={headerLeft}
+            rightSide={headerRight}
+            rightSidePress={headerRightSidePress}
+            leftSidePress={headerLeftSidePress}
+            titleCenter={headerTitleCenter}
+          />
+        ) : null}
+        {children}
+      </RootImageWrapper>
+    </RootWrapper>
+  );
 };
 
 export default AppLayout;
 
 const RootWrapper = styled.SafeAreaView`
-	flex: 1;
-	background: ${theme.color.black};
-	font-family: 'SUIT-Regular';
+  flex: 1;
+  background: ${theme.color.black};
+  font-family: 'SUIT-Regular';
 `;
 const RootImageWrapper = styled.ImageBackground`
-	width: 100%;
-	height: 100%;
-	padding: ${hp(4)}px ${hp(3)}px ${hp(4)}px ${hp(3)}px;
+  width: 100%;
+  height: 100%;
+  padding: 0 24px 0 24px;
+  // border: pink 1px;
 `;

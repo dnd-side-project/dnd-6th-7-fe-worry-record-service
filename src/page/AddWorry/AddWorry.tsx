@@ -14,22 +14,18 @@ import {
   responsiveWidth as wp,
 } from '@lib/util/helper';
 import { theme } from '@lib/styles/palette';
-import IconSetting from '@assets/image/settings.svg';
+import ArrowLeft from '@assets/image/arrow_left.svg';
 
 const AddWorryPage: FC<HomeProps> = ({ navigation }) => {
+  // <Title>흐릿에 걱정 맡기기</Title>
   return (
-    <AppLayout headerLeft={<Title>흐릿에 걱정 맡기기</Title>}>
-      {/* // <AppLayout> */}
+    <AppLayout
+      name="home"
+      headerLeft={<ArrowLeft />}
+      headerLeftSidePress={() => navigation.goBack()}
+      headerTitle={<Title>흐릿에 걱정 맡기기</Title>}
+    >
       <AddWorry />
-
-      {/* <CustomeButton
-				title="Go to Detail"
-				onPress={() => navigation.navigate('Detail')}
-				backgroundColor={{
-					color: 'indigo',
-					weight: '400',
-				}}
-			/> */}
     </AppLayout>
   );
 };
@@ -37,7 +33,6 @@ const AddWorryPage: FC<HomeProps> = ({ navigation }) => {
 const Title = styled.Text`
   font-size: ${fontSizeByValue(26, heightDevice())}px;
   line-height: ${fontSizeByValue(34, heightDevice())}px;
-  width: ${wp('50%')}px;
   color: ${theme.color.white};
   font-weight: bold;
 `;
