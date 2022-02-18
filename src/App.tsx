@@ -1,37 +1,34 @@
-import React, { FC } from "react";
-import { Platform, StyleSheet, Text, View } from "react-native";
-const instructions = Platform.select({
-  ios: "Press Cmd+R to reload,\n Cmd+D or shake for dev menu",
-  android:
-    "Double tap R on your keyboard to reload,\n Shake or press menu button for dev menu",
-});
-const App: FC = () => {
-  return (
-    <View style={styles.container}>
-      <Text style={styles.welcome}>Welcome to React Native!</Text>
-      <Text style={styles.instructions}>To get started, edit App.tsx</Text>
-      <Text style={styles.instructions}>{instructions}</Text>
-    </View>
-  );
+import React, { FC, useState } from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+
+import { AfterLogin } from '@page/Navigation';
+import AuthService from '@service/auth';
+import { AuthProvider, AuthErrorEventBus } from '@context/AuthContext';
+import HttpClient from '@lib/api/http';
+import { theme } from '@lib/styles/palette';
+
+import { ThemeProvider } from 'styled-components';
+import { APP_BASE_URL } from '@env';
+
+const baseURL = APP_BASE_URL;
+const authErrorEventBus = new AuthErrorEventBus();
+const httpClient = new HttpClient(baseURL);
+const authService = new AuthService(httpClient);
+
+const App: FC = props => {
+	return (
+		<ThemeProvider theme={theme}>
+			<NavigationContainer>
+				<AuthProvider
+					props={props}
+					authService={authService}
+					authErrorEventBus={authErrorEventBus}
+				>
+					<AfterLogin />
+				</AuthProvider>
+			</NavigationContainer>
+		</ThemeProvider>
+	);
 };
 
 export default App;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#F5FCFF",
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: "center",
-    margin: 10,
-  },
-  instructions: {
-    textAlign: "center",
-    color: "#333333",
-    marginBottom: 5,
-  },
-});
