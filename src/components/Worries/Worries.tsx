@@ -3,19 +3,22 @@ import React, { FC, memo, useState } from 'react';
 
 import styled from 'styled-components/native';
 import { FlatList } from 'react-native';
-import { responsiveWidth as wp } from '@lib/util/helper';
 import Worry from '@components/Worry';
 import CustomeButton from '@components/Button';
+import { theme } from '@lib/styles/palette';
+import { Header6_bold } from '@lib/styles/_mixin';
+
+import { useSceneState, useSceneDispatch } from '@context/ArchiveContext';
+
 import _ from 'lodash';
-import { theme } from '~/lib/styles/palette';
-import { Header6_bold } from '~/lib/styles/_mixin';
-import { getDate } from '~/lib/util/date';
-import { heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import { CHANGE_MODE } from '~/context/reducer/archive';
 export interface WorryProps {
-  id: number;
+  id: string | number[];
   title: string;
   content: string;
   isOpen: boolean;
+  isDone: boolean;
+  isChecked: boolean;
 }
 
 interface WorriesProps {
@@ -28,7 +31,17 @@ const renderItem = ({ item, index }: { item: WorryProps; index: number }) => (
 );
 
 const Worries: FC<WorriesProps> = ({ counts, worries }) => {
+  const tag = '[Worries]';
+
+  const { isUpdating } = useSceneState();
+  const dispatch = useSceneDispatch();
+
   const [index, setIndex] = useState<number>(0);
+
+  const onClickEdit = () => {
+    console.log(tag, 'onClickEdit');
+    dispatch({ type: CHANGE_MODE, values: { isUpdating: !isUpdating } });
+  };
 
   return (
     <WorriesWrapper>
@@ -56,8 +69,8 @@ const Worries: FC<WorriesProps> = ({ counts, worries }) => {
         <InfoText>
           총 <Count>{counts}개</Count> 걱정
         </InfoText>
-        <UpdateButton>
-          <ButtonName>편집하기</ButtonName>
+        <UpdateButton onPress={onClickEdit}>
+          <ButtonName>{isUpdating ? '되돌리기' : '편집하기'}</ButtonName>
         </UpdateButton>
       </UpdateWrapper>
 

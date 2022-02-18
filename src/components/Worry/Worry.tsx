@@ -1,12 +1,8 @@
 import React, { FC, memo, ReactElement } from 'react';
 import styled from 'styled-components/native';
+import { CheckBox } from 'react-native-elements/dist/checkbox/CheckBox';
 import { StyleSheet } from 'react-native';
-
-import {
-  responsiveFontSizeByValue as fontSizeByValue,
-  getHeightDevice as heightDevice,
-  responsiveWidth as wp,
-} from '@lib/util/helper';
+import { WorryProps as Worry } from '@components/Worries/Worries';
 
 import IconCloseLock from '@assets/image/close_lock.svg';
 
@@ -14,26 +10,27 @@ import { theme } from '@lib/styles/palette';
 import { Header2_600, Header6_bold, Header6_normal } from '@lib/styles/_mixin';
 
 import GradientWrapper from '@components/GradientWrapper';
-
-export interface WorryEachProps {
-  id: number;
-  title: string;
-  content: string;
-  isOpen: boolean;
-}
+import { useSceneDispatch, useSceneState } from '@context/ArchiveContext';
+import { CLICK_CHECKBOX } from '@context/reducer/archive';
 
 // TODO: 모든걱정, 의미있는 걱정, 의미없는 걱정 태그 만들기
-// TODO: 기타 태그, 아이콘 넣기
-// TODO: 필터 구현하기
+// TODO: 기타 태그, 아이콘 넣기 - 완료
+// TODO: 필터 구현하기 - 진행중
 // TODO: 후기 작성 조건 한줄 만들기
-// TODO: 편집하기 클릭 > 체크박스 표출하기
+// TODO: 편집하기 클릭 > 체크박스 표출하기 - 진행중 (컨텍스트 만들기)
+// TODO: 폰트 적용하기
 
 interface WorryProps {
-  item: WorryEachProps;
+  item: Worry;
   index: number;
 }
 
 const Worries: FC<WorryProps> = ({ item, index }: WorryProps) => {
+  const tag = '[Worries]';
+
+  const { isUpdating } = useSceneState();
+  const dispatch = useSceneDispatch();
+
   const getTagIcon = (): ReactElement | undefined => {
     switch (item.content) {
       case '진로':
@@ -50,15 +47,34 @@ const Worries: FC<WorryProps> = ({ item, index }: WorryProps) => {
         return <IconImage source={require('@assets/image/family.png')} />;
       case '건강':
         return <IconImage source={require('@assets/image/healty.png')} />;
-
+      case '기타':
+        return <IconImage source={require('@assets/image/etc.png')} />;
       default:
         return;
     }
   };
+
+  const onChangeCheck = (): void => {
+    console.log(tag, 'onChangeCheck');
+    dispatch({ type: CLICK_CHECKBOX, values: { id: item.id } });
+  };
+
   return (
     <CardWrapper index={index}>
       {getTagIcon()}
-      <CardTitle />
+      <CardTitle>
+        {isUpdating && (
+          <CheckBoxWorry
+            right
+            size={20}
+            checked={item.isChecked}
+            onPress={onChangeCheck}
+            containerStyle={styles.checkBoxContents}
+          >
+            {item.content}
+          </CheckBoxWorry>
+        )}
+      </CardTitle>
       <GradientWrapper
         style={styles.cardContents}
         angle={117.5}
@@ -101,6 +117,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderStyle: 'solid',
   },
+  checkBoxContents: {
+    padding: 0,
+    margin: 0,
+    paddingTop: 20,
+  },
 });
 
 const CardWrapper = styled.View<{ index: number }>`
@@ -111,9 +132,13 @@ const CardWrapper = styled.View<{ index: number }>`
   margin-right: ${props => (props.index % 2 === 0 ? 24 : 0)}px;
   margin-bottom: ${props => (props.index % 2 === 0 ? 24 : 0)}px;
 `;
+
 const CardTitle = styled.Text`
   flex: 0.4;
+  align-self: flex-end;
 `;
+
+const CheckBoxWorry = styled(CheckBox)``;
 
 const CardConent = styled.View`
   flex: 1;

@@ -4,6 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { AfterLogin } from '@page/Navigation';
 import AuthService from '@service/auth';
 import { AuthProvider, AuthErrorEventBus } from '@context/AuthContext';
+import { ArchiveProvider } from '@context/ArchiveContext';
 import HttpClient from '@lib/api/http';
 import { theme } from '@lib/styles/palette';
 
@@ -24,7 +25,9 @@ const App: FC = props => {
           authService={authService}
           authErrorEventBus={authErrorEventBus}
         >
-          <AfterLogin />
+          <ArchiveProvider>
+            <AfterLogin />
+          </ArchiveProvider>
         </AuthProvider>
       </NavigationContainer>
     </ThemeProvider>
