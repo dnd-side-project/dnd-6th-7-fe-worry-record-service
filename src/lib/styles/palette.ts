@@ -3,6 +3,8 @@ import { DefaultTheme } from 'styled-components/native';
 export const color = {
   black: '#191927',
   darkGray: '#4D4D4D',
+  drawerIcon: '#7D7D7D',
+  drawerBorder: '#4E4E4E',
   gray: '#8C8C93',
   lightGray: '#B1B1B7',
   lightGray2: '#B5B5B5',

@@ -1,10 +1,12 @@
-import React, { FC, memo, ReactElement } from 'react';
+import React, { FC, memo, ReactElement, useCallback } from 'react';
 import styled from 'styled-components/native';
 import { CheckBox } from 'react-native-elements/dist/checkbox/CheckBox';
 import { StyleSheet } from 'react-native';
 import { WorryProps as Worry } from '@components/Worries/Worries';
 
 import IconCloseLock from '@assets/image/close_lock.svg';
+import IconUnchecked from '@assets/image/unchecked.svg';
+import Iconchecked from '@assets/image/checked.svg';
 
 import { theme } from '@lib/styles/palette';
 import { Header2_600, Header6_bold, Header6_normal } from '@lib/styles/_mixin';
@@ -16,10 +18,13 @@ import { CLICK_CHECKBOX } from '@context/reducer/archive';
 // TODO: 모든걱정, 의미있는 걱정, 의미없는 걱정 태그 만들기 - 완료
 // TODO: 기타 태그, 아이콘 넣기 - 완료
 // TODO: 필터 구현하기 - 완료
-// TODO: 후기 작성 조건 한줄 만들기
 // TODO: 편집하기 클릭 > 체크박스 표출하기 - 완료 (컨텍스트 만들기)
-// TODO: 삭제하기 나오기 > 삭제 기능 추가하기
+// TODO: 삭제하기 나오기 > 삭제 기능 추가하기 - 완료
+
+// TODO: 되돌리기 클릭 > 체크된 걱정 init 필요
+// TODO: 후기 작성 조건 한줄 만들기
 // TODO: 폰트 적용하기
+// TODO: immer, reactQuery 적용하기
 
 interface WorryProps {
   item: Worry;
@@ -29,7 +34,7 @@ interface WorryProps {
 const Worries: FC<WorryProps> = ({ item, index }: WorryProps) => {
   const tag = '[Worries]';
 
-  const { isUpdating } = useSceneState();
+  const { isUpdating, worries } = useSceneState();
   const dispatch = useSceneDispatch();
 
   const getTagIcon = (): ReactElement | undefined => {
@@ -55,10 +60,10 @@ const Worries: FC<WorryProps> = ({ item, index }: WorryProps) => {
     }
   };
 
-  const onChangeCheck = (): void => {
+  const onChangeCheck = useCallback((): void => {
     console.log(tag, 'onChangeCheck');
     dispatch({ type: CLICK_CHECKBOX, values: { id: item.id } });
-  };
+  }, [dispatch, item.id]);
 
   return (
     <CardWrapper index={index}>
@@ -71,6 +76,8 @@ const Worries: FC<WorryProps> = ({ item, index }: WorryProps) => {
             checked={item.isChecked}
             onPress={onChangeCheck}
             containerStyle={styles.checkBoxContents}
+            uncheckedIcon={<IconUnchecked />}
+            checkedIcon={<Iconchecked />}
           >
             {item.content}
           </CheckBoxWorry>

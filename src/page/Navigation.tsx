@@ -7,6 +7,7 @@ import ArchiveScreen from '@page/Archive';
 import AddWorryScreen from '@page/AddWorry';
 import { WithAuthStackParamList, RootStackParamList } from '~/types/Navigation';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { useSceneState } from '@context/ArchiveContext';
 
 import {
   responsiveHeight as hp,
@@ -20,7 +21,6 @@ import IconFillStorage from '@assets/image/fill_storage.svg';
 import IconAdd from '@assets/image/add.svg';
 
 import { StyleSheet } from 'react-native';
-import { theme } from '@lib/styles/palette';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const AuthStack = createNativeStackNavigator<WithAuthStackParamList>();
@@ -81,11 +81,12 @@ export const ArchiveScreens: FC = () => {
 const Add = () => null;
 
 export const AfterLogin: FC = () => {
+  const { isUpdating } = useSceneState();
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
         headerShown: false,
-        tabBarStyle: styles.tabBar,
+        tabBarStyle: [isUpdating ? styles.hideTabBar : styles.tabBar],
         tabBarItemStyle: styles.tabBarItem,
         tabBarShowLabel: false,
         tabBarIcon: ({ focused }) => {
@@ -150,6 +151,9 @@ const styles = StyleSheet.create({
     height: 90,
     backgroundColor: 'transparent',
     position: 'absolute',
+  },
+  hideTabBar: {
+    display: 'none',
   },
   tabBarItem: {
     shadowColor: '#fff',

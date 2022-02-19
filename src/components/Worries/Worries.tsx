@@ -1,5 +1,5 @@
 /* eslint-disable no-mixed-spaces-and-tabs */
-import React, { FC, memo, useState } from 'react';
+import React, { FC, memo, useCallback } from 'react';
 
 import styled from 'styled-components/native';
 import { FlatList } from 'react-native';
@@ -30,15 +30,18 @@ const Worries: FC = () => {
   const { isUpdating, worries, tags, activeTags } = useSceneState();
   const dispatch = useSceneDispatch();
 
-  const onPressEdit = () => {
+  const onPressEdit = useCallback(() => {
     console.log(tag, 'onPressEdit');
     dispatch({ type: CHANGE_MODE, values: { isUpdating: !isUpdating } });
-  };
+  }, [dispatch, isUpdating]);
 
-  const onPressTag = (content: string) => {
-    console.log(tag, 'onPressTag');
-    dispatch({ type: FILTER_TAG, values: { tag: content } });
-  };
+  const onPressTag = useCallback(
+    (content: string) => {
+      console.log(tag, 'onPressTag');
+      dispatch({ type: FILTER_TAG, values: { tag: content } });
+    },
+    [dispatch],
+  );
 
   return (
     <WorriesWrapper>

@@ -19,12 +19,15 @@ export type Action =
   | { type: 'INIT'; values?: { idx: number } }
   | { type: 'CHANGE_MODE'; values: { isUpdating: boolean } }
   | { type: 'CLICK_CHECKBOX'; values: { id: string | number[] } }
-  | { type: 'FILTER_TAG'; values: { tag: string } };
+  | { type: 'FILTER_TAG'; values: { tag: string } }
+  | { type: 'DELETE_WORRY' };
 
 export const INIT = 'INIT';
 export const CHANGE_MODE = 'CHANGE_MODE';
 export const CLICK_CHECKBOX = 'CLICK_CHECKBOX';
 export const FILTER_TAG = 'FILTER_TAG';
+
+export const DELETE_WORRY = 'DELETE_WORRY';
 
 export const initialValue: State = {
   index: 0,
@@ -54,6 +57,7 @@ export default function ArchiveReducer(state: State, action: Action) {
         worries: initWorres,
         tags: _.uniqBy(initWorres, 'content'),
         activeTags: '모든걱정',
+        isUpdating: false,
       };
 
     case CHANGE_MODE:
@@ -87,6 +91,14 @@ export default function ArchiveReducer(state: State, action: Action) {
         ...state,
         worries: filterdWorries,
         activeTags: action.values.tag,
+      };
+
+    case DELETE_WORRY:
+      console.log(tag, DELETE_WORRY);
+      const deleteWorry = state.worries.filter(worry => !worry.isChecked);
+      return {
+        ...state,
+        worries: deleteWorry,
       };
   }
 }
