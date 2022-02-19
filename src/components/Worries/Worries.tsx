@@ -10,8 +10,7 @@ import { Header6_bold } from '@lib/styles/_mixin';
 
 import { useSceneState, useSceneDispatch } from '@context/ArchiveContext';
 
-import _ from 'lodash';
-import { CHANGE_MODE } from '~/context/reducer/archive';
+import { CHANGE_MODE, FILTER_TAG } from '~/context/reducer/archive';
 export interface WorryProps {
   id: string | number[];
   title: string;
@@ -21,43 +20,44 @@ export interface WorryProps {
   isChecked: boolean;
 }
 
-interface WorriesProps {
-  counts: number;
-  worries: WorryProps[];
-}
-
 const renderItem = ({ item, index }: { item: WorryProps; index: number }) => (
   <Worry item={item} index={index} />
 );
 
-const Worries: FC<WorriesProps> = ({ counts, worries }) => {
+const Worries: FC = () => {
   const tag = '[Worries]';
 
-  const { isUpdating } = useSceneState();
+  const { isUpdating, worries, tags, activeTags } = useSceneState();
   const dispatch = useSceneDispatch();
 
-  const [index, setIndex] = useState<number>(0);
-
-  const onClickEdit = () => {
-    console.log(tag, 'onClickEdit');
+  const onPressEdit = () => {
+    console.log(tag, 'onPressEdit');
     dispatch({ type: CHANGE_MODE, values: { isUpdating: !isUpdating } });
+  };
+
+  const onPressTag = (content: string) => {
+    console.log(tag, 'onPressTag');
+    dispatch({ type: FILTER_TAG, values: { tag: content } });
   };
 
   return (
     <WorriesWrapper>
       <FilterWrapper>
         {worries.length
-          ? _.uniqBy(worries, 'content').map((item: WorryProps, idx) => (
+          ? tags.map((item: WorryProps) => (
               <ButtonWrapper>
                 <CustomeButton
                   title={item.content}
                   isBorderRadius
-                  onPress={() => setIndex(idx)}
+                  onPress={onPressTag.bind(null, item.content)}
                   backgroundColor={{
-                    color: index === idx ? 'white' : 'lightWhite',
+                    color: item.content === activeTags ? 'white' : 'lightWhite',
                   }}
                   color={{
-                    color: index === idx ? 'originalBlack' : 'lightGray',
+                    color:
+                      item.content === activeTags
+                        ? 'originalBlack'
+                        : 'lightGray',
                   }}
                   fontSize={12}
                 />
@@ -67,15 +67,19 @@ const Worries: FC<WorriesProps> = ({ counts, worries }) => {
       </FilterWrapper>
       <UpdateWrapper>
         <InfoText>
-          총 <Count>{counts}개</Count> 걱정
+          총
+          <Count>
+            {activeTags === '모든걱정' ? worries.length - 1 : worries.length}개
+          </Count>
+          걱정
         </InfoText>
-        <UpdateButton onPress={onClickEdit}>
+        <UpdateButton onPress={onPressEdit}>
           <ButtonName>{isUpdating ? '되돌리기' : '편집하기'}</ButtonName>
         </UpdateButton>
       </UpdateWrapper>
 
       <ListWrapper
-        data={worries}
+        data={worries.filter(item => item.id !== '-1')}
         renderItem={renderItem}
         numColumns={2}
         keyExtractor={(item, index) => item.id.toString()}

@@ -4,6 +4,22 @@ import { getDate } from '@lib/util/date';
 
 export const WORRIES_DATA: WorryProps[] = [
   {
+    id: '-1',
+    title: getDate(new Date(), 'MM/dd'),
+    content: '모든걱정',
+    isOpen: false,
+    isDone: false,
+    isChecked: false,
+  },
+  {
+    id: '-1',
+    title: getDate(new Date(), 'MM/dd'),
+    content: '모든걱정',
+    isOpen: false,
+    isDone: true,
+    isChecked: false,
+  },
+  {
     id: uuid.v4(),
     title: getDate(new Date(), 'MM/dd'),
     content: '경제',

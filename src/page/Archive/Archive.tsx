@@ -1,30 +1,23 @@
-import React, { FC, useState } from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { FC, useEffect, useState } from 'react';
 
 import CustomeTabs from '@components/Tabs';
 import AppLayout from '@components/AppLayout';
 import Worries from '@components/Worries';
 
 import { ArchiveProps } from '~/types/Navigation';
-import { useSceneState } from '@context/ArchiveContext';
+import { useSceneState, useSceneDispatch } from '@context/ArchiveContext';
+
+import { INIT, FILTER_TAG } from '~/context/reducer/archive';
 
 const Archive: FC<ArchiveProps> = ({ navigation }) => {
   const tag = '[Archive]';
 
-  const { worries } = useSceneState();
-  const [index, setIndex] = useState(0);
+  const dispatch = useSceneDispatch();
+  const { index } = useSceneState();
 
-  const firstRoute = () => (
-    <Worries
-      counts={worries.filter(worry => !worry.isDone).length}
-      worries={worries.filter(worry => !worry.isDone)}
-    />
-  );
-  const secondRoute = () => (
-    <Worries
-      counts={worries.filter(worry => worry.isDone).length}
-      worries={worries.filter(worry => worry.isDone)}
-    />
-  );
+  const firstRoute = () => <Worries />;
+  const secondRoute = () => <Worries />;
 
   const DUMMY = [
     {
@@ -39,13 +32,19 @@ const Archive: FC<ArchiveProps> = ({ navigation }) => {
     },
   ];
 
+  const onPressTabs = (idx: number) => {
+    console.log(tag, 'onPressTabs');
+    dispatch({ type: INIT, values: { idx } });
+  };
+
+  useEffect(() => {
+    dispatch({ type: INIT });
+    dispatch({ type: FILTER_TAG, values: { tag: '모든걱정' } });
+  }, []);
+
   return (
     <AppLayout noHeader name="worry">
-      <CustomeTabs
-        tabItems={DUMMY}
-        index={index}
-        onChangeIndex={i => setIndex(i)}
-      />
+      <CustomeTabs tabItems={DUMMY} index={index} onChangeIndex={onPressTabs} />
     </AppLayout>
   );
 };

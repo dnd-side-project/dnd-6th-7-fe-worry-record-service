@@ -13,11 +13,12 @@ import GradientWrapper from '@components/GradientWrapper';
 import { useSceneDispatch, useSceneState } from '@context/ArchiveContext';
 import { CLICK_CHECKBOX } from '@context/reducer/archive';
 
-// TODO: 모든걱정, 의미있는 걱정, 의미없는 걱정 태그 만들기
+// TODO: 모든걱정, 의미있는 걱정, 의미없는 걱정 태그 만들기 - 완료
 // TODO: 기타 태그, 아이콘 넣기 - 완료
-// TODO: 필터 구현하기 - 진행중
+// TODO: 필터 구현하기 - 완료
 // TODO: 후기 작성 조건 한줄 만들기
-// TODO: 편집하기 클릭 > 체크박스 표출하기 - 진행중 (컨텍스트 만들기)
+// TODO: 편집하기 클릭 > 체크박스 표출하기 - 완료 (컨텍스트 만들기)
+// TODO: 삭제하기 나오기 > 삭제 기능 추가하기
 // TODO: 폰트 적용하기
 
 interface WorryProps {
