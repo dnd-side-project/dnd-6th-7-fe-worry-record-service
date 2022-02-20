@@ -1,5 +1,5 @@
 /* eslint-disable no-mixed-spaces-and-tabs */
-import React, { FC, memo, useCallback } from 'react';
+import React, { FC, memo, useCallback, useRef } from 'react';
 
 import styled from 'styled-components/native';
 import { FlatList } from 'react-native';
@@ -8,9 +8,21 @@ import CustomeButton from '@components/Button';
 import { theme } from '@lib/styles/palette';
 import { Header6_bold } from '@lib/styles/_mixin';
 
-import { useSceneState, useSceneDispatch } from '@context/ArchiveContext';
+import {
+  useSceneState,
+  useSceneDispatch,
+  useWorriesApi,
+} from '@context/ArchiveContext';
 
-import { CHANGE_MODE, FILTER_TAG } from '~/context/reducer/archive';
+import {
+  CHANGE_MODE,
+  CHANGE_MODE_REVIEW,
+  FILTER_TAG,
+} from '~/context/reducer/archive';
+import { useQuery } from 'react-query';
+import { ConfirmAlert, RefRbProps } from '~/page/Navigation';
+import { useNavigation } from '@react-navigation/native';
+import { ArchiveScreenNavigationProp } from '~/types/Navigation';
 export interface WorryProps {
   id: string | number[];
   title: string;
@@ -20,15 +32,21 @@ export interface WorryProps {
   isChecked: boolean;
 }
 
-const renderItem = ({ item, index }: { item: WorryProps; index: number }) => (
-  <Worry item={item} index={index} />
-);
-
 const Worries: FC = () => {
   const tag = '[Worries]';
 
+  const navigation = useNavigation<ArchiveScreenNavigationProp>();
+  const refRBSheet = useRef<RefRbProps>(null);
+
   const { isUpdating, worries, tags, activeTags } = useSceneState();
   const dispatch = useSceneDispatch();
+  const worriedApi = useWorriesApi();
+
+  // TODO: 데이터 받아오기 추후 구현 예정
+  // const { data, isLoading } = useQuery(
+  //   ['worries', { tags: activeTags }],
+  //   api.getWorries(),
+  // );
 
   const onPressEdit = useCallback(() => {
     console.log(tag, 'onPressEdit');
@@ -42,6 +60,29 @@ const Worries: FC = () => {
     },
     [dispatch],
   );
+
+  const onPressCancel = (): void => {
+    console.log(tag, 'onPressCancel');
+    if (refRBSheet.current) {
+      refRBSheet.current.close();
+    }
+  };
+
+  const onLongPressUnlock = (): void => {
+    console.log(tag, 'onLongPressUnlock');
+    if (refRBSheet.current) {
+      refRBSheet.current.open();
+    }
+  };
+
+  const onPressConfirm = (): void => {
+    console.log(tag, 'onPressConfirm');
+    if (refRBSheet.current) {
+      refRBSheet.current.close();
+    }
+    dispatch({ type: CHANGE_MODE_REVIEW, values: { isReviewing: true } });
+    navigation.navigate('Review');
+  };
 
   return (
     <WorriesWrapper>
@@ -83,9 +124,19 @@ const Worries: FC = () => {
 
       <ListWrapper
         data={worries.filter(item => item.id !== '-1')}
-        renderItem={renderItem}
+        renderItem={({ item, index }: { item: WorryProps; index: number }) => (
+          <Worry onLongPress={onLongPressUnlock} item={item} index={index} />
+        )}
         numColumns={2}
         keyExtractor={(item, index) => item.id.toString()}
+      />
+      <ConfirmAlert
+        ref={refRBSheet}
+        confrimButtonTitle="잠금 해제"
+        title={'12월 24일에 작성한 #관계 걱정을 잠금 해제 하시겠어요?'}
+        subtitle="잠금 해제한 걱정은 다시 되돌릴 수 없어요."
+        onPressCancel={onPressCancel}
+        onPressConfirm={onPressConfirm}
       />
     </WorriesWrapper>
   );

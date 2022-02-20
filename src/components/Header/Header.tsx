@@ -37,7 +37,7 @@ const AppHeader: FC<AppHeaderProps> = ({
 };
 
 const HeaderWrapper = styled.View`
-  border: pink;
+  // border: pink;
   flex-direction: row;
   height: 71px;
 `;

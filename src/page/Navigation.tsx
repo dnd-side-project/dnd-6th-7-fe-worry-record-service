@@ -1,10 +1,11 @@
-import React, { FC } from 'react';
+import React, { FC, forwardRef, memo } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginScreen from '@page/Login';
 import HomeScreen from '@page/Home';
 import DetailScreen from '@page/Detail';
 import ArchiveScreen from '@page/Archive';
 import AddWorryScreen from '@page/AddWorry';
+import ReviewScreen from '@page/Review';
 import { WithAuthStackParamList, RootStackParamList } from '~/types/Navigation';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useSceneState } from '@context/ArchiveContext';
@@ -21,10 +22,12 @@ import IconFillStorage from '@assets/image/fill_storage.svg';
 import IconAdd from '@assets/image/add.svg';
 
 import { StyleSheet } from 'react-native';
+import BottomDrawer from '@components/BottomDrawer';
+import Confirm from '@components/Confirm';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const AuthStack = createNativeStackNavigator<WithAuthStackParamList>();
-const Tab = createBottomTabNavigator();
+const Tab = createBottomTabNavigator<WithAuthStackParamList>();
 
 export const BeforeLogin: FC = () => {
   return (
@@ -40,6 +43,32 @@ export const BeforeLogin: FC = () => {
     </Stack.Navigator>
   );
 };
+
+export interface RefRbProps {
+  open: () => void;
+  close: () => void;
+}
+interface ConfirmAlertProps {
+  title: string;
+  subtitle: string;
+  confrimButtonTitle: string;
+  onPressCancel: () => void;
+  onPressConfirm: () => void;
+}
+
+export const ConfirmAlert = memo(
+  forwardRef((props: ConfirmAlertProps, ref) => (
+    <BottomDrawer ref={ref}>
+      <Confirm
+        confrimButtonTitle={props.confrimButtonTitle}
+        title={props.title}
+        subtitle={props.subtitle}
+        onPressCancel={props.onPressCancel}
+        onPressConfirm={props.onPressConfirm}
+      />
+    </BottomDrawer>
+  )),
+);
 
 export const HomeScreens: FC = () => {
   return (
@@ -67,38 +96,34 @@ export const ArchiveScreens: FC = () => {
       }}
     >
       <AuthStack.Group>
-        <AuthStack.Screen
-          name="Archive"
-          component={ArchiveScreen}
-          options={{}}
-        />
-        <AuthStack.Screen name="CreatePosts2" component={AddWorryScreen} />
+        <AuthStack.Screen name="Archive" component={ArchiveScreen} />
+        <AuthStack.Screen name="Review" component={ReviewScreen} />
       </AuthStack.Group>
     </AuthStack.Navigator>
   );
 };
 
-const Add = () => null;
-
 export const AfterLogin: FC = () => {
-  const { isUpdating } = useSceneState();
+  const { isUpdating, isReviewing } = useSceneState();
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
         headerShown: false,
-        tabBarStyle: [isUpdating ? styles.hideTabBar : styles.tabBar],
+        tabBarStyle: [
+          isUpdating || isReviewing ? styles.hideTabBar : styles.tabBar,
+        ],
         tabBarItemStyle: styles.tabBarItem,
         tabBarShowLabel: false,
         tabBarIcon: ({ focused }) => {
           let iconName;
           switch (route.name) {
-            case 'Homes':
+            case 'Home':
               iconName = focused ? <IconFillHome /> : <IconHome />;
               break;
-            case 'Archives':
+            case 'Archive':
               iconName = focused ? <IconFillStorage /> : <IconStorage />;
               break;
-            case 'Add':
+            case 'AddWorry':
               iconName = <IconAdd />;
               break;
 
@@ -114,7 +139,7 @@ export const AfterLogin: FC = () => {
           tabBarIconStyle: styles.leftTabBarIcon,
           tabBarItemStyle: styles.leftTabBarItem,
         }}
-        name="Homes"
+        name="Home"
         component={HomeScreens}
       />
       <Tab.Screen
@@ -123,7 +148,7 @@ export const AfterLogin: FC = () => {
           tabBarItemStyle: styles.centerTabBarItem,
         }}
         component={HomeScreens}
-        name="Add"
+        name="AddWorry"
         listeners={({ navigation }) => ({
           tabPress: e => {
             e.preventDefault();
@@ -136,7 +161,7 @@ export const AfterLogin: FC = () => {
           tabBarIconStyle: styles.rightTabBarIcon,
           tabBarItemStyle: styles.rightTabBarItem,
         }}
-        name="Archives"
+        name="Archive"
         component={ArchiveScreens}
       />
     </Tab.Navigator>

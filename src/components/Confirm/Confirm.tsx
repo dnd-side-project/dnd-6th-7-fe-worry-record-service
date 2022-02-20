@@ -4,20 +4,22 @@ import GradientWrapper from '@components/GradientWrapper';
 import CustomeButton from '@components/Button';
 
 import { theme } from '@lib/styles/palette';
-import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
+import { responsiveWidth as wp } from '@lib/util/helper';
 
 interface ConfirmProps {
   title: string;
   subtitle: string;
+  confrimButtonTitle: string;
   onPressCancel: () => void;
-  onPressDelete: () => void;
+  onPressConfirm: () => void;
 }
 
 const Confirm: FC<ConfirmProps> = ({
   title,
   subtitle,
+  confrimButtonTitle,
   onPressCancel,
-  onPressDelete,
+  onPressConfirm,
 }) => {
   return (
     <ConfirmWrapper angle={117.5} colors={['#32323F', '#1F1F2D']}>
@@ -41,9 +43,9 @@ const Confirm: FC<ConfirmProps> = ({
           fontSize={16}
         />
         <CustomeButton
-          title="삭제하기"
+          title={confrimButtonTitle}
           isBorderRadius
-          onPress={onPressDelete}
+          onPress={onPressConfirm}
           backgroundColor={{
             color: 'white',
           }}

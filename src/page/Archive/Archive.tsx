@@ -7,19 +7,13 @@ import CustomeTabs from '@components/Tabs';
 import AppLayout from '@components/AppLayout';
 import Worries from '@components/Worries';
 import { WorryProps } from '@components/Worries/Worries';
-import BottomDrawer from '@components/BottomDrawer';
 
 import { ArchiveProps } from '~/types/Navigation';
 import { useSceneState, useSceneDispatch } from '@context/ArchiveContext';
 
 import { INIT, FILTER_TAG, DELETE_WORRY } from '@context/reducer/archive';
 
-import Confirm from '~/components/Confirm';
-
-interface RefRbProps {
-  open: () => void;
-  close: () => void;
-}
+import { ConfirmAlert, RefRbProps } from '../Navigation';
 
 const Archive: FC<ArchiveProps> = ({ navigation }) => {
   const tag = '[Archive]';
@@ -102,14 +96,14 @@ const Archive: FC<ArchiveProps> = ({ navigation }) => {
               fontSize={16}
             />
           </ButtonWrapper>
-          <BottomDrawer ref={refRBSheet}>
-            <Confirm
-              title={`12월 24일에 작성한 #관계 걱정 및 ${getCheckedNumber()}개를 삭제하시겠어요?`}
-              subtitle="삭제한 걱정은 다시 되돌릴 수 없어요."
-              onPressCancel={onPressCancel}
-              onPressDelete={onPressDelete}
-            />
-          </BottomDrawer>
+          <ConfirmAlert
+            ref={refRBSheet}
+            confrimButtonTitle="삭제 하기"
+            title={`12월 24일에 작성한 #관계 걱정 및 ${getCheckedNumber()}개를 삭제하시겠어요?`}
+            subtitle="삭제한 걱정은 다시 되돌릴 수 없어요."
+            onPressCancel={onPressCancel}
+            onPressConfirm={onPressDelete}
+          />
         </>
       )}
     </AppLayout>
