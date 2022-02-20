@@ -6,7 +6,7 @@ import { ImageSourcePropType } from 'react-native';
 
 interface AppLayoutProps {
   noHeader?: boolean;
-  name: 'login' | 'worry' | 'chat' | 'home';
+  name: 'login' | 'worry' | 'chat' | 'home' | 'review';
   headerRight?: ReactElement;
   headerRightSidePress?: () => void;
   headerLeft?: ReactElement;
@@ -14,6 +14,7 @@ interface AppLayoutProps {
   headerTitle?: ReactElement;
   headerTitleCenter?: boolean;
   headerTitlePress?: () => void;
+  noBackGroundImage: boolean;
   children: any;
 }
 
@@ -27,6 +28,7 @@ const AppLayout: FC<AppLayoutProps> = ({
   headerTitle,
   headerTitlePress,
   headerTitleCenter,
+  noBackGroundImage,
   children,
 }) => {
   const setImage = (): ImageSourcePropType => {
@@ -39,7 +41,8 @@ const AppLayout: FC<AppLayoutProps> = ({
         return require('@assets/image/bg_login.png');
       case 'home':
         return require('@assets/image/bg_home.png');
-
+      case 'review':
+        return require('@assets/image/bg_home.png');
       default:
         return require('@assets/image/bg_login.png');
     }
@@ -47,20 +50,37 @@ const AppLayout: FC<AppLayoutProps> = ({
 
   return (
     <RootWrapper>
-      <RootImageWrapper source={setImage()}>
-        {!noHeader ? (
-          <Header
-            title={headerTitle}
-            titlePress={headerTitlePress}
-            leftSide={headerLeft}
-            rightSide={headerRight}
-            rightSidePress={headerRightSidePress}
-            leftSidePress={headerLeftSidePress}
-            titleCenter={headerTitleCenter}
-          />
-        ) : null}
-        {children}
-      </RootImageWrapper>
+      {!noBackGroundImage ? (
+        <RootImageWrapper source={setImage()}>
+          {!noHeader ? (
+            <Header
+              title={headerTitle}
+              titlePress={headerTitlePress}
+              leftSide={headerLeft}
+              rightSide={headerRight}
+              rightSidePress={headerRightSidePress}
+              leftSidePress={headerLeftSidePress}
+              titleCenter={headerTitleCenter}
+            />
+          ) : null}
+          {children}
+        </RootImageWrapper>
+      ) : (
+        <RootBox>
+          {!noHeader ? (
+            <Header
+              title={headerTitle}
+              titlePress={headerTitlePress}
+              leftSide={headerLeft}
+              rightSide={headerRight}
+              rightSidePress={headerRightSidePress}
+              leftSidePress={headerLeftSidePress}
+              titleCenter={headerTitleCenter}
+            />
+          ) : null}
+          {children}
+        </RootBox>
+      )}
     </RootWrapper>
   );
 };
@@ -77,4 +97,11 @@ const RootImageWrapper = styled.ImageBackground`
   height: 100%;
   padding: 0 24px 0 24px;
   // border: pink 1px;
+`;
+
+const RootBox = styled.View`
+  width: 100%;
+  height: 100%;
+  padding: 0 24px 0 24px;
+  background: ${theme.color.black};
 `;

@@ -118,7 +118,7 @@ const Worries: FC = () => {
           걱정
         </InfoText>
         <UpdateButton onPress={onPressEdit}>
-          <ButtonName>{isUpdating ? '되돌리기' : '편집하기'}</ButtonName>
+          <ButtonName>{isUpdating ? '취소' : '편집하기'}</ButtonName>
         </UpdateButton>
       </UpdateWrapper>
 

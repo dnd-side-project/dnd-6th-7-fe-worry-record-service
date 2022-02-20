@@ -22,11 +22,14 @@ import { CLICK_CHECKBOX } from '@context/reducer/archive';
 // TODO: 삭제하기 나오기 > 삭제 기능 추가하기 - 완료
 // TODO: 되돌리기 클릭 > 체크된 걱정 init 필요 - 완료
 // TODO: 리액트 쿼리 적용하기 - 완료
-
 // TODO: 걱정 후기 작성하기 - 완료
-// TODO: 키보드 클릭시 화면 올라가는 것 셋팅
-// TODO: 후기 배경화면 변경하기
+// TODO: 키보드 클릭시 화면 올라가는 것 셋팅 - 완료
+// TODO: 후기 배경화면 변경하기 - 완료
+
+// TODO: 동일한 12월 24일 걱정을 다중으로 삭제했을때는 가능하지만,
+// 일자가 다른 걱정을 삭제할때는 선택한 항목 중 가장 최근날짜가 알림에 나오도록하기
 // TODO: 후기 작성 조건 한줄 만들기
+// TODO: 후기 버튼 액티브 색상 변경하기
 // TODO: 폰트 적용하기
 // TODO: immer 적용하기
 
@@ -39,7 +42,7 @@ interface WorryProps {
 const Worries: FC<WorryProps> = ({ item, index, onLongPress }: WorryProps) => {
   const tag = '[Worries]';
 
-  const { isUpdating, worries } = useSceneState();
+  const { isUpdating } = useSceneState();
   const dispatch = useSceneDispatch();
 
   const getTagIcon = (): ReactElement | undefined => {
@@ -106,11 +109,14 @@ const Worries: FC<WorryProps> = ({ item, index, onLongPress }: WorryProps) => {
             <Date>{item.title}</Date>
             <DateLeftWrapper>
               {item.isOpen ? (
-                <DefaultButton>
+                <DefaultButton disabled={isUpdating ? true : false}>
                   <Open>걱정을 확인해보세요</Open>
                 </DefaultButton>
               ) : (
-                <DefaultButton onLongPress={onLongPressUnlock}>
+                <DefaultButton
+                  disabled={isUpdating ? true : false}
+                  onLongPress={onLongPressUnlock}
+                >
                   <IconCloseLock />
                   <DateLeft>
                     22년 2월 19일

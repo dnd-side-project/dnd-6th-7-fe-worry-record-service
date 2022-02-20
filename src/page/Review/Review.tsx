@@ -1,5 +1,6 @@
 import React, { FC, useCallback } from 'react';
 import styled from 'styled-components/native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 import AppLayout from '@components/AppLayout';
 import CustomeButton from '@components/Button';
@@ -12,6 +13,7 @@ import ArrowLeft from '@assets/image/arrow_left.svg';
 import { responsiveWidth as wp } from '@lib/util/helper';
 import { CHANGE_MODE_REVIEW } from '@context/reducer/archive';
 import { useSceneDispatch, useSceneState } from '@context/ArchiveContext';
+import { Platform } from 'react-native';
 
 const Review: FC<ReviewProps> = ({ navigation }) => {
   const tag = '[Review]';
@@ -26,12 +28,19 @@ const Review: FC<ReviewProps> = ({ navigation }) => {
 
   return (
     <AppLayout
-      name="chat"
+      name="review"
+      noBackGroundImage={true}
       headerLeft={<ArrowLeft />}
       headerLeftSidePress={onPressBack}
       headerTitle={<Headeritle>12/24 #관계 걱정</Headeritle>}
     >
-      <WithScroll>
+      <WithScroll
+        extraHeight={300}
+        enableOnAndroid={true}
+        enableAutomaticScroll={Platform.OS === 'ios'}
+        resetScrollToCoords={{ x: 0, y: 0 }}
+        scrollEnabled={true}
+      >
         <Label>그땐 그랬지, 이런 걱정 있었어요</Label>
         <CardTextAreaWrapper>
           <ChatBox
@@ -80,7 +89,7 @@ const Review: FC<ReviewProps> = ({ navigation }) => {
         </RowReviewWrapper>
         <ChatBox
           multiline={true}
-          editable={true}
+          editable={false}
           value="아니 내가 뭐 뫄뫄 뫄뫄 때문에 뭐뭐뭐무머 했거든... 근데 또 아니 내가 뭐 뫄뫄 뫄뫄 때문에 뭐뭐뭐무머 했거든... 근데 또 아니 내가 뭐 뫄뫄 뫄뫄 때문에 ...아니 내가 뭐 뫄뫄 뫄뫄 때문에 뭐뭐뭐무머 했거든... 근데 또 아니 내가 뭐 뫄뫄 뫄뫄 때문에 뭐뭐뭐무머 했거든... 근데 또 아니 내가 뭐 뫄뫄 뫄뫄 때문에 ...아니 내가 뭐 뫄뫄 뫄뫄 때문에 뭐뭐뭐무머 했거든... 근데 또 아니 내가 뭐 뫄뫄 뫄뫄 때문에 뭐뭐뭐무머 했거든... 근데"
         />
       </WithScroll>
@@ -88,8 +97,9 @@ const Review: FC<ReviewProps> = ({ navigation }) => {
   );
 };
 
-const WithScroll = styled.ScrollView`
+const WithScroll = styled(KeyboardAwareScrollView)`
   // border: pink;
+  height: -30px;
 `;
 
 const Headeritle = styled.Text`
