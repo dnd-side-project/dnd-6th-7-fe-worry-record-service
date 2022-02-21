@@ -10,26 +10,21 @@ import { ReviewEditProps } from '~/types/Navigation';
 
 import { theme } from '@lib/styles/palette';
 import ArrowLeft from '@assets/image/arrow_left.svg';
-import { responsiveWidth as wp } from '@lib/util/helper';
-// import { CHANGE_MODE_REVIEWEdit } from '@context/reducer/archive';
-import { useSceneDispatch, useSceneState } from '@context/ArchiveContext';
 import { Platform } from 'react-native';
 
 const ReviewEdit: FC<ReviewEditProps> = ({ navigation }) => {
   const tag = '[ReviewEdit]';
 
-  const dispatch = useSceneDispatch();
-
   const onPressBack = useCallback(() => {
     console.log(tag, 'onPressBack');
-    // dispatch({ type: CHANGE_MODE_REVIEWEdit, values: { isReviewEditing: false } });
     navigation.goBack();
   }, [navigation]);
 
   const onPressEdit = useCallback(() => {
     console.log(tag, 'onPressEdit');
-    // dispatch({ type: CHANGE_MODE_REVIEWEdit, values: { isReviewEditing: false } });
-    navigation.navigate('ReviewEdit');
+
+    // mutation 이용해서 업데이트
+    navigation.goBack();
   }, [navigation]);
 
   return (
@@ -75,7 +70,6 @@ const ReviewEdit: FC<ReviewEditProps> = ({ navigation }) => {
 };
 
 const WithScroll = styled(KeyboardAwareScrollView)`
-  // border: pink;
   height: -30px;
 `;
 

@@ -61,6 +61,8 @@ const Worries: FC = () => {
   const onPressTag = useCallback(
     (content: string) => {
       console.log(tag, 'onPressTag');
+
+      // mutate 호출 > 태그 필터
       dispatch({ type: FILTER_TAG, values: { tag: content } });
     },
     [dispatch],
@@ -73,11 +75,13 @@ const Worries: FC = () => {
     }
   };
 
-  const onLongPressUnlock = (): void => {
+  const onLongPressUnlock = (id: string | number[]): void => {
     console.log(tag, 'onLongPressUnlock');
     // if (refRBSheet.current) {
     //   refRBSheet.current.open();
     // }
+
+    // mutate 호출 > 잠금 해제
     dispatch({ type: UNLOCK_WORRY, values: { isUnlock: true } });
   };
 
@@ -86,6 +90,7 @@ const Worries: FC = () => {
     // if (refRBSheet.current) {
     //   refRBSheet.current.close();
     // }
+
     dispatch({ type: UNLOCK_WORRY, values: { isUnlock: false } });
     dispatch({ type: CHANGE_MODE_REVIEW, values: { isReviewing: true } });
     navigation.navigate('Review');

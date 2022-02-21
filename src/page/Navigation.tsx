@@ -149,7 +149,7 @@ export const AfterLogin: FC = () => {
           tabBarIconStyle: styles.centerTabBarIcon,
           tabBarItemStyle: styles.centerTabBarItem,
         }}
-        component={HomeScreens}
+        component={AddWorryScreen}
         name="AddWorry"
         listeners={({ navigation }) => ({
           tabPress: e => {

@@ -42,6 +42,8 @@ const Archive: FC<ArchiveProps> = ({ navigation }) => {
   const onPressTabs = useCallback(
     (idx: number): void => {
       console.log(tag, 'onPressTabs');
+
+      // mutate 호출 > 요즘걱정 및 지난걱정 데이터 가져오기
       dispatch({ type: INIT, values: { idx } });
     },
     [dispatch],
@@ -62,6 +64,8 @@ const Archive: FC<ArchiveProps> = ({ navigation }) => {
   const onPressDelete = useCallback((): void => {
     console.log(tag, 'onPressDelete');
     dispatch({ type: DELETE_WORRY });
+
+    // mutate 호출 > 걱정 삭제
     onPressCancel();
   }, [dispatch]);
 
