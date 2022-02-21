@@ -1,9 +1,12 @@
 import React, { FC, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
+import { QueryClient, QueryClientProvider } from 'react-query';
 
 import { AfterLogin } from '@page/Navigation';
 import AuthService from '@service/auth';
+import WorriesService from '@service/worries';
 import { AuthProvider, AuthErrorEventBus } from '@context/AuthContext';
+import { ArchiveProvider } from '@context/ArchiveContext';
 import HttpClient from '@lib/api/http';
 import { theme } from '@lib/styles/palette';
 
@@ -14,21 +17,27 @@ const baseURL = APP_BASE_URL;
 const authErrorEventBus = new AuthErrorEventBus();
 const httpClient = new HttpClient(baseURL);
 const authService = new AuthService(httpClient);
+const worriesService = new WorriesService(httpClient);
+const queryClient = new QueryClient();
 
 const App: FC = props => {
-	return (
-		<ThemeProvider theme={theme}>
-			<NavigationContainer>
-				<AuthProvider
-					props={props}
-					authService={authService}
-					authErrorEventBus={authErrorEventBus}
-				>
-					<AfterLogin />
-				</AuthProvider>
-			</NavigationContainer>
-		</ThemeProvider>
-	);
+  return (
+    <ThemeProvider theme={theme}>
+      <NavigationContainer>
+        <QueryClientProvider client={queryClient}>
+          <AuthProvider
+            props={props}
+            authService={authService}
+            authErrorEventBus={authErrorEventBus}
+          >
+            <ArchiveProvider worriesService={worriesService}>
+              <AfterLogin />
+            </ArchiveProvider>
+          </AuthProvider>
+        </QueryClientProvider>
+      </NavigationContainer>
+    </ThemeProvider>
+  );
 };
 
 export default App;
