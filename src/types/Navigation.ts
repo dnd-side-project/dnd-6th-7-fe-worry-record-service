@@ -13,6 +13,7 @@ export type WithAuthStackParamList = {
   Archive: undefined;
   Review: undefined;
   ReviewEdit: undefined;
+  Setting: undefined;
 };
 
 export type HomeProps = {
@@ -41,6 +42,11 @@ export type ReviewProps = {
 export type ReviewEditProps = {
   route: RouteProp<WithAuthStackParamList, 'ReviewEdit'>;
   navigation: StackNavigationProp<WithAuthStackParamList, 'ReviewEdit'>;
+};
+
+export type SettingProps = {
+  route: RouteProp<WithAuthStackParamList, 'Setting'>;
+  navigation: StackNavigationProp<WithAuthStackParamList, 'Setting'>;
 };
 
 export type LoginProps = {
@@ -76,4 +82,9 @@ export type ReviewScreenNavigationProp = CompositeNavigationProp<
 export type ReviewEditScreenNavigationProp = CompositeNavigationProp<
   BottomTabNavigationProp<WithAuthStackParamList, 'ReviewEdit'>,
   StackNavigationProp<ReviewEditProps>
+>;
+
+export type SettingScreenNavigationProp = CompositeNavigationProp<
+  BottomTabNavigationProp<WithAuthStackParamList, 'Setting'>,
+  StackNavigationProp<SettingProps>
 >;

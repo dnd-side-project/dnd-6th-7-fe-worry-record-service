@@ -22,7 +22,7 @@ const Review: FC<ReviewProps> = ({ navigation }) => {
   const tag = '[Review]';
 
   const dispatch = useSceneDispatch();
-
+  const { isRealized } = useSceneState();
   const onPressBack = useCallback(() => {
     console.log(tag, 'onPressBack');
 
@@ -75,12 +75,12 @@ const Review: FC<ReviewProps> = ({ navigation }) => {
             isBorderRadius
             onPress={onPressChangeWorry.bind(null, true)}
             backgroundColor={{
-              color: 'white',
+              color: `${!isRealized ? 'lightWhite' : 'white'}`,
             }}
             width={wp('42%')}
             height={44}
             color={{
-              color: 'black',
+              color: `${!isRealized ? 'lightGray' : 'black'}`,
             }}
             fontSize={12}
           />
@@ -89,12 +89,12 @@ const Review: FC<ReviewProps> = ({ navigation }) => {
             isBorderRadius
             onPress={onPressChangeWorry.bind(null, false)}
             backgroundColor={{
-              color: 'lightWhite',
+              color: `${isRealized ? 'lightWhite' : 'white'}`,
             }}
             width={wp('42%')}
             height={44}
             color={{
-              color: 'lightGray',
+              color: `${isRealized ? 'lightGray' : 'black'}`,
             }}
             fontSize={12}
           />

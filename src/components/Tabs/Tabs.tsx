@@ -1,5 +1,5 @@
-import React, { FC, ReactElement, useState, useCallback, memo } from 'react';
-import { StyleSheet, Text } from 'react-native';
+import React, { FC, useState, useCallback, memo } from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 import { getWidthDevice } from '@lib/util/helper';
 import { theme } from '@lib/styles/palette';
@@ -8,7 +8,10 @@ import {
   getHeightDevice as heightDevice,
   responsiveWidth as wp,
 } from '@lib/util/helper';
+import { useNavigation } from '@react-navigation/native';
 
+import IconSetting from '@assets/image/settings.svg';
+import { SettingScreenNavigationProp } from '~/types/Navigation';
 interface TabItemsProps {
   id: string;
   title: string;
@@ -26,33 +29,49 @@ const CustomeTabs: FC<CustomeTabsProps> = ({
   index,
   onChangeIndex,
 }) => {
+  const tag = '[CustomeTabs]';
+
   const converToObj = tabItems.reduce(
     (prev, current) => ({ ...prev, [current.id]: current.component }),
     {},
   );
   const renderScene = SceneMap(converToObj);
 
+  const navigation = useNavigation<SettingScreenNavigationProp>();
+
   const [routes] = useState(
     tabItems.map(item => ({ key: item.id, title: item.title })),
   );
 
-  const renderTabBar = props => (
-    <TabBar
-      {...props}
-      indicatorStyle={styles.tabIndicator}
-      style={styles.tabBarWrapper}
-      tabStyle={styles.tabStyle}
-      activeColor={theme.color.black}
-      renderLabel={({ route }) => (
-        <Text
-          style={
-            +route.key === index ? styles.tabBarTitle : styles.tabBarActiveTitle
-          }
-        >
-          {route.title}
-        </Text>
-      )}
-    />
+  const onPressSetting = useCallback(() => {
+    console.log(tag, 'onPressSetting');
+    navigation.navigate('Setting');
+  }, [navigation]);
+
+  const renderTabBar = (props: any) => (
+    <View style={styles.tabBarBox}>
+      <TabBar
+        {...props}
+        indicatorStyle={styles.tabIndicator}
+        style={styles.tabBarWrapper}
+        tabStyle={styles.tabStyle}
+        activeColor={theme.color.black}
+        renderLabel={({ route }) => (
+          <Text
+            style={
+              +route.key === index
+                ? styles.tabBarTitle
+                : styles.tabBarActiveTitle
+            }
+          >
+            {route.title}
+          </Text>
+        )}
+      />
+      <TouchableOpacity onPress={onPressSetting}>
+        <IconSetting />
+      </TouchableOpacity>
+    </View>
   );
 
   return (
@@ -74,10 +93,15 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     width: wp('50%'),
   },
+  tabBarBox: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 20,
+  },
   tabStyle: {
     padding: 0,
     margin: 0,
-    marginTop: 20,
   },
   tabBarActiveTitle: {
     fontSize: fontSizeByValue(26, heightDevice()),
