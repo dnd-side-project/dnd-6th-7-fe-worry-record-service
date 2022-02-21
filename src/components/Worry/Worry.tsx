@@ -30,6 +30,7 @@ import { CLICK_CHECKBOX } from '@context/reducer/archive';
 // 일자가 다른 걱정을 삭제할때는 선택한 항목 중 가장 최근날짜가 알림에 나오도록하기
 // TODO: 후기 작성 조건 한줄 만들기
 // TODO: 후기 버튼 액티브 색상 변경하기
+// TODO: 일림 기능 만들기
 // TODO: 폰트 적용하기
 // TODO: immer 적용하기
 

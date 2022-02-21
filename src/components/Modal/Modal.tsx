@@ -4,7 +4,7 @@ import Modal from 'react-native-modal';
 
 import { responsiveWidth as wp } from '@lib/util/helper';
 
-interface CustomeModalProps {
+export interface CustomeModalProps {
   children: any;
   visible: boolean;
 }

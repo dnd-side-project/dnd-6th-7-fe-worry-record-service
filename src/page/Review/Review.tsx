@@ -26,6 +26,12 @@ const Review: FC<ReviewProps> = ({ navigation }) => {
     navigation.goBack();
   }, [navigation, dispatch]);
 
+  const onPressEdit = useCallback(() => {
+    console.log(tag, 'onPressEdit');
+    // dispatch({ type: CHANGE_MODE_REVIEW, values: { isReviewing: false } });
+    navigation.navigate('ReviewEdit');
+  }, [navigation]);
+
   return (
     <AppLayout
       name="review"
@@ -83,7 +89,7 @@ const Review: FC<ReviewProps> = ({ navigation }) => {
         </RowWrapper>
         <RowReviewWrapper>
           <Label>걱정 후기를 작성해 보세요</Label>
-          <UpdateButton>
+          <UpdateButton onPress={onPressEdit}>
             <ButtonName>편집하기</ButtonName>
           </UpdateButton>
         </RowReviewWrapper>

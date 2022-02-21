@@ -6,6 +6,7 @@ import DetailScreen from '@page/Detail';
 import ArchiveScreen from '@page/Archive';
 import AddWorryScreen from '@page/AddWorry';
 import ReviewScreen from '@page/Review';
+import ReviewEditScreen from '@page/ReviewEdit';
 import { WithAuthStackParamList, RootStackParamList } from '~/types/Navigation';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useSceneState } from '@context/ArchiveContext';
@@ -98,6 +99,7 @@ export const ArchiveScreens: FC = () => {
       <AuthStack.Group>
         <AuthStack.Screen name="Archive" component={ArchiveScreen} />
         <AuthStack.Screen name="Review" component={ReviewScreen} />
+        <AuthStack.Screen name="ReviewEdit" component={ReviewEditScreen} />
       </AuthStack.Group>
     </AuthStack.Navigator>
   );

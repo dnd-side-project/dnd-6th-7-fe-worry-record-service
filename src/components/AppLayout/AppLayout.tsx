@@ -14,7 +14,7 @@ interface AppLayoutProps {
   headerTitle?: ReactElement;
   headerTitleCenter?: boolean;
   headerTitlePress?: () => void;
-  noBackGroundImage: boolean;
+  noBackGroundImage?: boolean;
   children: any;
 }
 
