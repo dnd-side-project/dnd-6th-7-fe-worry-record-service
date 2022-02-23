@@ -88,7 +88,7 @@ const TextContainer: FC<HomeProps> = ({
   return (
     <>
       <View>
-        <View>
+        <View style={{ marginTop: 45 }}>
           <MainText>{username}님,</MainText>
         </View>
         <View

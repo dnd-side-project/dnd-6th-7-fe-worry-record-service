@@ -6,6 +6,8 @@ import DetailScreen from '@page/Detail';
 import ArchiveScreen from '@page/Archive';
 import AddWorryScreen from '@page/AddWorry';
 import ReviewScreen from '@page/Review';
+import ReviewEditScreen from '@page/ReviewEdit';
+import SettingScreen from '@page/Setting';
 import { WithAuthStackParamList, RootStackParamList } from '~/types/Navigation';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useSceneState } from '@context/ArchiveContext';
@@ -79,9 +81,10 @@ export const HomeScreens: FC = () => {
       }}
     >
       <AuthStack.Group>
-        <AuthStack.Screen name="Home" component={HomeScreen} options={{}} />
+        <AuthStack.Screen name="Home" component={HomeScreen} />
         <AuthStack.Screen name="AddWorry" component={AddWorryScreen} />
-        <AuthStack.Screen name="Detail" component={DetailScreen} options={{}} />
+        <AuthStack.Screen name="Detail" component={DetailScreen} />
+        <AuthStack.Screen name="Setting" component={SettingScreen} />
       </AuthStack.Group>
     </AuthStack.Navigator>
   );
@@ -114,6 +117,8 @@ export const ArchiveScreens: FC = () => {
       <AuthStack.Group>
         <AuthStack.Screen name="Archive" component={ArchiveScreen} />
         <AuthStack.Screen name="Review" component={ReviewScreen} />
+        <AuthStack.Screen name="ReviewEdit" component={ReviewEditScreen} />
+        <AuthStack.Screen name="Setting" component={SettingScreen} />
       </AuthStack.Group>
     </AuthStack.Navigator>
   );
