@@ -11,7 +11,10 @@ import { ReviewProps } from '~/types/Navigation';
 import { theme } from '@lib/styles/palette';
 import ArrowLeft from '@assets/image/arrow_left.svg';
 import { responsiveWidth as wp } from '@lib/util/helper';
-import { CHANGE_MODE_REVIEW } from '@context/reducer/archive';
+import {
+  CHANGE_MODE_REVIEW,
+  CHANGE_MODE_REALIZED,
+} from '@context/reducer/archive';
 import { useSceneDispatch, useSceneState } from '@context/ArchiveContext';
 import { Platform } from 'react-native';
 
@@ -19,12 +22,27 @@ const Review: FC<ReviewProps> = ({ navigation }) => {
   const tag = '[Review]';
 
   const dispatch = useSceneDispatch();
-
+  const { isRealized } = useSceneState();
   const onPressBack = useCallback(() => {
     console.log(tag, 'onPressBack');
+
+    // mutation 이용해서 업데이트
     dispatch({ type: CHANGE_MODE_REVIEW, values: { isReviewing: false } });
     navigation.goBack();
   }, [navigation, dispatch]);
+
+  const onPressEdit = useCallback(() => {
+    console.log(tag, 'onPressEdit');
+    navigation.navigate('ReviewEdit');
+  }, [navigation]);
+
+  const onPressChangeWorry = useCallback(
+    (isRealized: boolean) => {
+      console.log(tag, 'onPressChangeWorry');
+      dispatch({ type: CHANGE_MODE_REALIZED, values: { isRealized } });
+    },
+    [dispatch],
+  );
 
   return (
     <AppLayout
@@ -55,35 +73,35 @@ const Review: FC<ReviewProps> = ({ navigation }) => {
           <CustomeButton
             title="걱정대로 됐어.."
             isBorderRadius
-            // onPress={onPressCancel}
+            onPress={onPressChangeWorry.bind(null, true)}
             backgroundColor={{
-              color: 'white',
+              color: `${!isRealized ? 'lightWhite' : 'white'}`,
             }}
             width={wp('42%')}
             height={44}
             color={{
-              color: 'black',
+              color: `${!isRealized ? 'lightGray' : 'black'}`,
             }}
             fontSize={12}
           />
           <CustomeButton
             title="괜히 걱정했어!"
             isBorderRadius
-            // onPress={onPressDelete}
+            onPress={onPressChangeWorry.bind(null, false)}
             backgroundColor={{
-              color: 'lightWhite',
+              color: `${isRealized ? 'lightWhite' : 'white'}`,
             }}
             width={wp('42%')}
             height={44}
             color={{
-              color: 'lightGray',
+              color: `${isRealized ? 'lightGray' : 'black'}`,
             }}
             fontSize={12}
           />
         </RowWrapper>
         <RowReviewWrapper>
           <Label>걱정 후기를 작성해 보세요</Label>
-          <UpdateButton>
+          <UpdateButton onPress={onPressEdit}>
             <ButtonName>편집하기</ButtonName>
           </UpdateButton>
         </RowReviewWrapper>

@@ -10,36 +10,44 @@ export type State = {
   index: number;
   isUpdating: boolean;
   isReviewing: boolean;
+  isRealized: boolean;
   tags: WorryProps[];
   activeTags: string;
   worries: WorryProps[];
   isDone: boolean;
+  isUnlock: boolean;
 };
 
 export type Action =
   | { type: 'INIT'; values?: { idx: number } }
   | { type: 'CHANGE_MODE'; values: { isUpdating: boolean } }
   | { type: 'CHANGE_MODE_REVIEW'; values: { isReviewing: boolean } }
+  | { type: 'CHANGE_MODE_REALIZED'; values: { isRealized: boolean } }
   | { type: 'CLICK_CHECKBOX'; values: { id: string | number[] } }
   | { type: 'FILTER_TAG'; values: { tag: string } }
+  | { type: 'UNLOCK_WORRY'; values: { isUnlock: boolean } }
   | { type: 'DELETE_WORRY' };
 
 export const INIT = 'INIT';
 export const CHANGE_MODE = 'CHANGE_MODE';
 export const CHANGE_MODE_REVIEW = 'CHANGE_MODE_REVIEW';
+export const CHANGE_MODE_REALIZED = 'CHANGE_MODE_REALIZED';
 export const CLICK_CHECKBOX = 'CLICK_CHECKBOX';
 export const FILTER_TAG = 'FILTER_TAG';
+export const UNLOCK_WORRY = 'UNLOCK_WORRY';
 
 export const DELETE_WORRY = 'DELETE_WORRY';
 
 export const initialValue: State = {
   index: 0,
   isReviewing: false,
+  isRealized: false,
   isUpdating: false,
   tags: [],
   activeTags: '모든걱정',
   worries: WORRIES_DATA,
   isDone: false,
+  isUnlock: false,
 };
 
 const filterdTagDatas = (idx: number, worries: WorryProps[]) =>
@@ -63,6 +71,8 @@ export default function ArchiveReducer(state: State, action: Action) {
         activeTags: '모든걱정',
         isUpdating: false,
         isReviewing: false,
+        isUnlock: false,
+        isRealized: false,
       };
 
     case CHANGE_MODE:
@@ -72,6 +82,20 @@ export default function ArchiveReducer(state: State, action: Action) {
         ...state,
         worries: state.worries.map(worry => ({ ...worry, isChecked: false })),
         isUpdating: action.values.isUpdating,
+      };
+
+    case UNLOCK_WORRY:
+      console.log(tag, UNLOCK_WORRY);
+      return {
+        ...state,
+        isUnlock: action.values.isUnlock,
+      };
+
+    case CHANGE_MODE_REALIZED:
+      console.log(tag, CHANGE_MODE_REALIZED);
+      return {
+        ...state,
+        isRealized: action.values.isRealized,
       };
 
     case CLICK_CHECKBOX:

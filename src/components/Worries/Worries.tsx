@@ -5,6 +5,8 @@ import styled from 'styled-components/native';
 import { FlatList } from 'react-native';
 import Worry from '@components/Worry';
 import CustomeButton from '@components/Button';
+import Modal from '@components/Modal';
+
 import { theme } from '@lib/styles/palette';
 import { Header6_bold } from '@lib/styles/_mixin';
 
@@ -18,11 +20,14 @@ import {
   CHANGE_MODE,
   CHANGE_MODE_REVIEW,
   FILTER_TAG,
+  UNLOCK_WORRY,
 } from '~/context/reducer/archive';
 import { useQuery } from 'react-query';
 import { ConfirmAlert, RefRbProps } from '~/page/Navigation';
 import { useNavigation } from '@react-navigation/native';
 import { ArchiveScreenNavigationProp } from '~/types/Navigation';
+
+import IconUnlock from '@assets/image/unlock.svg';
 export interface WorryProps {
   id: string | number[];
   title: string;
@@ -38,7 +43,7 @@ const Worries: FC = () => {
   const navigation = useNavigation<ArchiveScreenNavigationProp>();
   const refRBSheet = useRef<RefRbProps>(null);
 
-  const { isUpdating, worries, tags, activeTags } = useSceneState();
+  const { isUpdating, worries, tags, activeTags, isUnlock } = useSceneState();
   const dispatch = useSceneDispatch();
   const worriedApi = useWorriesApi();
 
@@ -56,6 +61,8 @@ const Worries: FC = () => {
   const onPressTag = useCallback(
     (content: string) => {
       console.log(tag, 'onPressTag');
+
+      // mutate 호출 > 태그 필터
       dispatch({ type: FILTER_TAG, values: { tag: content } });
     },
     [dispatch],
@@ -68,18 +75,23 @@ const Worries: FC = () => {
     }
   };
 
-  const onLongPressUnlock = (): void => {
+  const onLongPressUnlock = (id: string | number[]): void => {
     console.log(tag, 'onLongPressUnlock');
-    if (refRBSheet.current) {
-      refRBSheet.current.open();
-    }
+    // if (refRBSheet.current) {
+    //   refRBSheet.current.open();
+    // }
+
+    // mutate 호출 > 잠금 해제
+    dispatch({ type: UNLOCK_WORRY, values: { isUnlock: true } });
   };
 
   const onPressConfirm = (): void => {
     console.log(tag, 'onPressConfirm');
-    if (refRBSheet.current) {
-      refRBSheet.current.close();
-    }
+    // if (refRBSheet.current) {
+    //   refRBSheet.current.close();
+    // }
+
+    dispatch({ type: UNLOCK_WORRY, values: { isUnlock: false } });
     dispatch({ type: CHANGE_MODE_REVIEW, values: { isReviewing: true } });
     navigation.navigate('Review');
   };
@@ -130,14 +142,39 @@ const Worries: FC = () => {
         numColumns={2}
         keyExtractor={(item, index) => item.id.toString()}
       />
-      <ConfirmAlert
+      {/* <ConfirmAlert
         ref={refRBSheet}
         confrimButtonTitle="잠금 해제"
         title={'12월 24일에 작성한 #관계 걱정을 잠금 해제 하시겠어요?'}
         subtitle="잠금 해제한 걱정은 다시 되돌릴 수 없어요."
         onPressCancel={onPressCancel}
         onPressConfirm={onPressConfirm}
-      />
+      /> */}
+      <Modal visible={isUnlock}>
+        <ModalWrapper>
+          <ModalTitle>걱정은 어떻게 되었나요?</ModalTitle>
+          <IconWrapper>
+            <IconUnlock />
+          </IconWrapper>
+          <ModalTitle>12월 24일 #관계 걱정이 </ModalTitle>
+          <ModalTitle>잠금 해제되었어요!</ModalTitle>
+        </ModalWrapper>
+        <ModalButtonWrapper>
+          <CustomeButton
+            title="확인"
+            isBorderRadius
+            onPress={onPressConfirm}
+            backgroundColor={{
+              color: 'white',
+            }}
+            height={52}
+            color={{
+              color: 'black',
+            }}
+            fontSize={16}
+          />
+        </ModalButtonWrapper>
+      </Modal>
     </WorriesWrapper>
   );
 };
@@ -154,6 +191,7 @@ const FilterWrapper = styled.View`
   align-items: center;
   margin-top: 20px;
 `;
+
 const ButtonWrapper = styled.View`
   margin-right: 8px;
   margin-bottom: 8px;
@@ -181,3 +219,24 @@ const ButtonName = styled.Text`
 `;
 
 const ListWrapper = styled.FlatList`` as unknown as typeof FlatList;
+
+const IconWrapper = styled.View`
+  margin: 18px 0;
+`;
+
+const ModalTitle = styled.Text`
+  font-size: 20px;
+  font-weight: 700;
+  color: ${theme.color.white};
+  line-height: 28px;
+`;
+
+const ModalWrapper = styled.View`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+`;
+
+const ModalButtonWrapper = styled.View`
+  margin-bottom: 36px;
+`;

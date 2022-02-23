@@ -7,12 +7,20 @@ interface ChatBoxProps {
   multiline?: boolean;
   editable?: boolean;
   height?: number;
+  bgColor?: string;
   value: string;
 }
 
-const ChatBox: FC<ChatBoxProps> = ({ multiline, editable, value, height }) => {
+const ChatBox: FC<ChatBoxProps> = ({
+  multiline,
+  editable,
+  value,
+  height,
+  bgColor,
+}) => {
   return (
     <CardTextArea
+      bgColor={bgColor}
       height={height}
       multiline={multiline}
       editable={editable}
@@ -33,4 +41,5 @@ const CardTextArea = styled.TextInput<ChatBoxProps>`
   line-height: 20px;
   text-align-vertical: top;
   padding: 16px 20px;
+  background-color: ${({ bgColor }) => bgColor || 'transparent'};
 `;
