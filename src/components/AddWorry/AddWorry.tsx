@@ -1,11 +1,16 @@
 import React, { FC } from 'react';
 import styled from 'styled-components/native';
-import { View, Image, Text } from 'react-native';
+import { View, Image, Text, StyleSheet } from 'react-native';
 
-import CustomeButton from '@components/Button';
+import CustomButton from '@components/Button';
+import ChatBox from '@components/ChatBox';
+import ChatBubble from '@components/ChatBubble';
 
-import { responsiveWidth as wp } from '@lib/util/helper';
 import { theme } from '@lib/styles/palette';
+import {
+  responsiveWidth as wp,
+  responsiveHeight as hp,
+} from '@lib/util/helper';
 
 interface AddWorryProps {
   navigation?: any;
@@ -14,16 +19,23 @@ interface AddWorryProps {
 const AddWorry: FC<AddWorryProps> = ({ navigation }) => {
   return (
     <WorriesWrapper>
-      <Text>월월월월</Text>
-      {/* <InfoText>TestModal</InfoText>
-      <CustomeButton
-        isBorder
-        backgroundColor={{
-          color: 'blue',
-        }}
-        title="Go Back"
-        onPress={() => navigation.goBack()}
-      /> */}
+      <View style={style.addWorryContainer}>
+        <View style={style.chatConatiner}>
+          <ChatBubble
+            value="무슨 일 있어?"
+            width={106}
+            height={42}
+            editable={false}
+          />
+        </View>
+        <View style={style.replyBoxConatiner}>
+          <ChatBubble
+            value="걱정이 있ssssssasdasdsadasdsss s나요?"
+            height={42}
+            editable={true}
+          />
+        </View>
+      </View>
     </WorriesWrapper>
   );
 };
@@ -31,10 +43,20 @@ const AddWorry: FC<AddWorryProps> = ({ navigation }) => {
 export default AddWorry;
 
 const WorriesWrapper = styled.View`
-  border: 0px;
-  background: #fff;
+  border: 0;
 `;
 
-const InfoText = styled.Text`
-  color: ${theme.color.black}};
-`;
+const style = StyleSheet.create({
+  addWorryContainer: {
+    flexDirection: 'column',
+    height: '100%',
+  },
+  chatConatiner: {
+    margin: 0,
+  },
+  replyBoxConatiner: {
+    width: '100%',
+    position: 'absolute',
+    bottom: 300,
+  },
+});

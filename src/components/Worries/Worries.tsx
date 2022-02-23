@@ -1,112 +1,183 @@
 /* eslint-disable no-mixed-spaces-and-tabs */
-import React, { FC, memo, useState } from 'react';
+import React, { FC, memo, useCallback, useRef } from 'react';
 
 import styled from 'styled-components/native';
 import { FlatList } from 'react-native';
-import { responsiveWidth as wp } from '@lib/util/helper';
 import Worry from '@components/Worry';
 import CustomeButton from '@components/Button';
-import _ from 'lodash';
-import { theme } from '~/lib/styles/palette';
-import { Header6_bold } from '~/lib/styles/_mixin';
-import { getDate } from '~/lib/util/date';
-import { heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import { theme } from '@lib/styles/palette';
+import { Header6_bold } from '@lib/styles/_mixin';
+
+import {
+  useSceneState,
+  useSceneDispatch,
+  useWorriesApi,
+} from '@context/ArchiveContext';
+
+import {
+  CHANGE_MODE,
+  CHANGE_MODE_REVIEW,
+  FILTER_TAG,
+} from '~/context/reducer/archive';
+import { useQuery } from 'react-query';
+import { ConfirmAlert, RefRbProps } from '~/page/Navigation';
+import { useNavigation } from '@react-navigation/native';
+import { ArchiveScreenNavigationProp } from '~/types/Navigation';
 export interface WorryProps {
-	id: number;
-	title: string;
-	content: string;
-	isOpen: boolean;
+  id: string | number[];
+  title: string;
+  content: string;
+  isOpen: boolean;
+  isDone: boolean;
+  isChecked: boolean;
 }
 
-interface WorriesProps {
-	counts: number;
-	worries: WorryProps[];
-}
+const Worries: FC = () => {
+  const tag = '[Worries]';
 
-const renderItem = ({ item, index }: { item: WorryProps; index: number }) => (
-	<Worry item={item} index={index} />
-);
+  const navigation = useNavigation<ArchiveScreenNavigationProp>();
+  const refRBSheet = useRef<RefRbProps>(null);
 
-const Worries: FC<WorriesProps> = ({ counts, worries }) => {
-	const [index, setIndex] = useState<number>(0);
+  const { isUpdating, worries, tags, activeTags } = useSceneState();
+  const dispatch = useSceneDispatch();
+  const worriedApi = useWorriesApi();
 
-	return (
-		<WorriesWrapper>
-			<FilterWrapper>
-				{worries.length
-					? _.uniqBy(worries, 'content').map((item: WorryProps, idx) => (
-							<ButtonWrapper>
-								<CustomeButton
-									title={item.content}
-									isBorderRadius
-									onPress={() => setIndex(idx)}
-									backgroundColor={{
-										color: index === idx ? 'white' : 'lightWhite',
-									}}
-									color={{
-										color: index === idx ? 'originalBlack' : 'lightGray',
-									}}
-									fontSize={12}
-								/>
-							</ButtonWrapper>
-					  ))
-					: null}
-			</FilterWrapper>
-			<UpdateWrapper>
-				<InfoText>
-					총 <Count>{counts}개</Count> 걱정
-				</InfoText>
-				<UpdateButton>
-					<ButtonName>편집하기</ButtonName>
-				</UpdateButton>
-			</UpdateWrapper>
+  // TODO: 데이터 받아오기 추후 구현 예정
+  // const { data, isLoading } = useQuery(
+  //   ['worries', { tags: activeTags }],
+  //   api.getWorries(),
+  // );
 
-			<ListWrapper
-				data={worries}
-				renderItem={renderItem}
-				numColumns={2}
-				keyExtractor={(item, index) => item.id.toString()}
-			/>
-		</WorriesWrapper>
-	);
+  const onPressEdit = useCallback(() => {
+    console.log(tag, 'onPressEdit');
+    dispatch({ type: CHANGE_MODE, values: { isUpdating: !isUpdating } });
+  }, [dispatch, isUpdating]);
+
+  const onPressTag = useCallback(
+    (content: string) => {
+      console.log(tag, 'onPressTag');
+      dispatch({ type: FILTER_TAG, values: { tag: content } });
+    },
+    [dispatch],
+  );
+
+  const onPressCancel = (): void => {
+    console.log(tag, 'onPressCancel');
+    if (refRBSheet.current) {
+      refRBSheet.current.close();
+    }
+  };
+
+  const onLongPressUnlock = (): void => {
+    console.log(tag, 'onLongPressUnlock');
+    if (refRBSheet.current) {
+      refRBSheet.current.open();
+    }
+  };
+
+  const onPressConfirm = (): void => {
+    console.log(tag, 'onPressConfirm');
+    if (refRBSheet.current) {
+      refRBSheet.current.close();
+    }
+    dispatch({ type: CHANGE_MODE_REVIEW, values: { isReviewing: true } });
+    navigation.navigate('Review');
+  };
+
+  return (
+    <WorriesWrapper>
+      <FilterWrapper>
+        {worries.length
+          ? tags.map((item: WorryProps) => (
+              <ButtonWrapper>
+                <CustomeButton
+                  title={item.content}
+                  isBorderRadius
+                  onPress={onPressTag.bind(null, item.content)}
+                  backgroundColor={{
+                    color: item.content === activeTags ? 'white' : 'lightWhite',
+                  }}
+                  color={{
+                    color:
+                      item.content === activeTags
+                        ? 'originalBlack'
+                        : 'lightGray',
+                  }}
+                  fontSize={12}
+                />
+              </ButtonWrapper>
+            ))
+          : null}
+      </FilterWrapper>
+      <UpdateWrapper>
+        <InfoText>
+          총
+          <Count>
+            {activeTags === '모든걱정' ? worries.length - 1 : worries.length}개
+          </Count>
+          걱정
+        </InfoText>
+        <UpdateButton onPress={onPressEdit}>
+          <ButtonName>{isUpdating ? '취소' : '편집하기'}</ButtonName>
+        </UpdateButton>
+      </UpdateWrapper>
+
+      <ListWrapper
+        data={worries.filter(item => item.id !== '-1')}
+        renderItem={({ item, index }: { item: WorryProps; index: number }) => (
+          <Worry onLongPress={onLongPressUnlock} item={item} index={index} />
+        )}
+        numColumns={2}
+        keyExtractor={(item, index) => item.id.toString()}
+      />
+      <ConfirmAlert
+        ref={refRBSheet}
+        confrimButtonTitle="잠금 해제"
+        title={'12월 24일에 작성한 #관계 걱정을 잠금 해제 하시겠어요?'}
+        subtitle="잠금 해제한 걱정은 다시 되돌릴 수 없어요."
+        onPressCancel={onPressCancel}
+        onPressConfirm={onPressConfirm}
+      />
+    </WorriesWrapper>
+  );
 };
 
 export default memo(Worries);
 
 const WorriesWrapper = styled.View`
-	flex: 1;
+  flex: 1;
 `;
 
 const FilterWrapper = styled.View`
-	flex-direction: row;
-	flex-wrap: wrap;
-	align-items: center;
-	margin-top: ${hp(3)}px;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: 20px;
 `;
 const ButtonWrapper = styled.View`
-	margin-right: ${hp(1)}px;
-	margin-bottom: ${hp(1)}px;
+  margin-right: 8px;
+  margin-bottom: 8px;
 `;
 
 const UpdateWrapper = styled.View`
-	align-items: center;
-	justify-content: space-between;
-	flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: row;
+  margin: 38px 0;
 `;
 
 const InfoText = styled.Text`
-	margin: ${hp(3)}px 0;
-	${Header6_bold(theme.color.lightGray2)}
+  ${Header6_bold(theme.color.lightGray2)}
 `;
 
 const Count = styled.Text`
-	${Header6_bold(theme.color.white)}
+  ${Header6_bold(theme.color.white)}
 `;
 
 const UpdateButton = styled.TouchableOpacity``;
 
 const ButtonName = styled.Text`
-	${Header6_bold(theme.color.lightGray2)}
+  ${Header6_bold(theme.color.lightGray2)}
 `;
 
 const ListWrapper = styled.FlatList`` as unknown as typeof FlatList;

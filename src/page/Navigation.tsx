@@ -1,14 +1,14 @@
-import React, { FC } from 'react';
+import React, { FC, forwardRef, memo } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginScreen from '@page/Login';
-import SignupScreen from '@page/Signup';
 import HomeScreen from '@page/Home';
 import DetailScreen from '@page/Detail';
 import ArchiveScreen from '@page/Archive';
-import WorryScreen from '@page/Worry';
 import AddWorryScreen from '@page/AddWorry';
+import ReviewScreen from '@page/Review';
 import { WithAuthStackParamList, RootStackParamList } from '~/types/Navigation';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { useSceneState } from '@context/ArchiveContext';
 
 import {
   responsiveHeight as hp,
@@ -22,11 +22,12 @@ import IconFillStorage from '@assets/image/fill_storage.svg';
 import IconAdd from '@assets/image/add.svg';
 
 import { StyleSheet } from 'react-native';
-import { theme } from '@lib/styles/palette';
+import BottomDrawer from '@components/BottomDrawer';
+import Confirm from '@components/Confirm';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const AuthStack = createNativeStackNavigator<WithAuthStackParamList>();
-const Tab = createBottomTabNavigator();
+const Tab = createBottomTabNavigator<WithAuthStackParamList>();
 
 export const BeforeLogin: FC = () => {
   return (
@@ -38,11 +39,36 @@ export const BeforeLogin: FC = () => {
     >
       <Stack.Group>
         <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="Signup" component={SignupScreen} />
       </Stack.Group>
     </Stack.Navigator>
   );
 };
+
+export interface RefRbProps {
+  open: () => void;
+  close: () => void;
+}
+interface ConfirmAlertProps {
+  title: string;
+  subtitle: string;
+  confrimButtonTitle: string;
+  onPressCancel: () => void;
+  onPressConfirm: () => void;
+}
+
+export const ConfirmAlert = memo(
+  forwardRef((props: ConfirmAlertProps, ref) => (
+    <BottomDrawer ref={ref}>
+      <Confirm
+        confrimButtonTitle={props.confrimButtonTitle}
+        title={props.title}
+        subtitle={props.subtitle}
+        onPressCancel={props.onPressCancel}
+        onPressConfirm={props.onPressConfirm}
+      />
+    </BottomDrawer>
+  ))
+);
 
 export const HomeScreens: FC = () => {
   return (
@@ -54,8 +80,24 @@ export const HomeScreens: FC = () => {
     >
       <AuthStack.Group>
         <AuthStack.Screen name="Home" component={HomeScreen} options={{}} />
-        <AuthStack.Screen name="CreatePosts0" component={AddWorryScreen} />
+        <AuthStack.Screen name="AddWorry" component={AddWorryScreen} />
         <AuthStack.Screen name="Detail" component={DetailScreen} options={{}} />
+      </AuthStack.Group>
+    </AuthStack.Navigator>
+  );
+};
+
+export const AddWorryScreens: FC = () => {
+  return (
+    <AuthStack.Navigator
+      initialRouteName="AddWorry"
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
+      <AuthStack.Group>
+        <AuthStack.Screen name="Home" component={HomeScreen} options={{}} />
+        <AuthStack.Screen name="AddWorry" component={AddWorryScreen} />
       </AuthStack.Group>
     </AuthStack.Navigator>
   );
@@ -70,38 +112,34 @@ export const ArchiveScreens: FC = () => {
       }}
     >
       <AuthStack.Group>
-        <AuthStack.Screen
-          name="Archive"
-          component={ArchiveScreen}
-          options={{}}
-        />
-        <AuthStack.Screen name="CreatePosts2" component={AddWorryScreen} />
-        <AuthStack.Screen name="Worry" component={WorryScreen} options={{}} />
+        <AuthStack.Screen name="Archive" component={ArchiveScreen} />
+        <AuthStack.Screen name="Review" component={ReviewScreen} />
       </AuthStack.Group>
     </AuthStack.Navigator>
   );
 };
 
-const Add = () => null;
-
 export const AfterLogin: FC = () => {
+  const { isUpdating, isReviewing } = useSceneState();
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
         headerShown: false,
-        tabBarStyle: styles.tabBar,
+        tabBarStyle: [
+          isUpdating || isReviewing ? styles.hideTabBar : styles.tabBar,
+        ],
         tabBarItemStyle: styles.tabBarItem,
         tabBarShowLabel: false,
         tabBarIcon: ({ focused }) => {
           let iconName;
           switch (route.name) {
-            case 'Homes':
+            case 'Home':
               iconName = focused ? <IconFillHome /> : <IconHome />;
               break;
-            case 'Archives':
+            case 'Archive':
               iconName = focused ? <IconFillStorage /> : <IconStorage />;
               break;
-            case 'Add':
+            case 'AddWorry':
               iconName = <IconAdd />;
               break;
 
@@ -117,7 +155,7 @@ export const AfterLogin: FC = () => {
           tabBarIconStyle: styles.leftTabBarIcon,
           tabBarItemStyle: styles.leftTabBarItem,
         }}
-        name="Homes"
+        name="Home"
         component={HomeScreens}
       />
       <Tab.Screen
@@ -125,12 +163,12 @@ export const AfterLogin: FC = () => {
           tabBarIconStyle: styles.centerTabBarIcon,
           tabBarItemStyle: styles.centerTabBarItem,
         }}
-        component={Add}
-        name="Add"
+        component={AddWorryScreens}
+        name="AddWorry"
         listeners={({ navigation }) => ({
-          tabPress: e => {
+          tabPress: (e) => {
             e.preventDefault();
-            navigation.navigate(`CreatePosts${navigation.getState().index}`);
+            navigation.navigate('AddWorry');
           },
         })}
       />
@@ -139,7 +177,7 @@ export const AfterLogin: FC = () => {
           tabBarIconStyle: styles.rightTabBarIcon,
           tabBarItemStyle: styles.rightTabBarItem,
         }}
-        name="Archives"
+        name="Archive"
         component={ArchiveScreens}
       />
     </Tab.Navigator>
@@ -151,9 +189,12 @@ const styles = StyleSheet.create({
     borderTopWidth: 0,
     paddingHorizontal: wp('18%'),
     marginBottom: hp('5%'),
-    height: 73,
+    height: 90,
     backgroundColor: 'transparent',
     position: 'absolute',
+  },
+  hideTabBar: {
+    display: 'none',
   },
   tabBarItem: {
     shadowColor: '#fff',
@@ -167,11 +208,12 @@ const styles = StyleSheet.create({
     elevation: 24,
   },
   centerTabBarItem: {
-    backgroundColor: 'rgba(15, 15, 21, 1)',
+    backgroundColor: 'rgba(15, 15, 21, 0.5)',
+
     zIndex: 100,
   },
   leftTabBarItem: {
-    backgroundColor: 'rgba(15, 15, 21, 1)',
+    backgroundColor: 'rgba(15, 15, 21, 0.5)',
     borderTopLeftRadius: 20,
     borderBottomLeftRadius: 20,
   },
@@ -182,7 +224,7 @@ const styles = StyleSheet.create({
   leftTabBarIcon: {},
   rightTabBarIcon: {},
   rightTabBarItem: {
-    backgroundColor: 'rgba(15, 15, 21, 1)',
+    backgroundColor: 'rgba(15, 15, 21, 0.5)',
     borderTopRightRadius: 20,
     borderBottomRightRadius: 20,
   },

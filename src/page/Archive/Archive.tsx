@@ -1,58 +1,117 @@
-import React, { FC, useState } from 'react';
-import { Switch } from 'react-native-elements';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { FC, ReactElement, useCallback, useEffect, useRef } from 'react';
+import styled from 'styled-components/native';
 
+import CustomeButton from '@components/Button';
 import CustomeTabs from '@components/Tabs';
 import AppLayout from '@components/AppLayout';
 import Worries from '@components/Worries';
+import { WorryProps } from '@components/Worries/Worries';
 
 import { ArchiveProps } from '~/types/Navigation';
-import { USEFUL_WORRIES, WORRIES_LEFT } from '~/constants/WorriesData';
+import { useSceneState, useSceneDispatch } from '@context/ArchiveContext';
 
-import styled from 'styled-components/native';
+import { INIT, FILTER_TAG, DELETE_WORRY } from '@context/reducer/archive';
 
-import {
-	responsiveFontSizeByValue as fontSizeByValue,
-	getHeightDevice as heightDevice,
-	responsiveWidth as wp,
-} from '@lib/util/helper';
-import { theme } from '@lib/styles/palette';
+import { ConfirmAlert, RefRbProps } from '../Navigation';
 
-const firstRoute = () => <Worries counts={4} worries={WORRIES_LEFT} />;
-const secondRoute = () => <Worries counts={7} worries={USEFUL_WORRIES} />;
+const Archive: FC<ArchiveProps> = ({ navigation }) => {
+  const tag = '[Archive]';
 
-const DUMMY = [
-	{
-		id: '0',
-		title: '요즘 걱정,',
-		component: firstRoute,
-	},
-	{
-		id: '1',
-		title: '지난 걱정',
-		component: secondRoute,
-	},
-];
+  const refRBSheet = useRef<RefRbProps>(null);
+  const dispatch = useSceneDispatch();
+  const { index, isUpdating, worries } = useSceneState();
 
-const Home: FC<ArchiveProps> = ({ navigation }) => {
-	const [tabs, setTabs] = useState(DUMMY);
-	const [index, setIndex] = useState(0);
+  const firstRoute = (): ReactElement => <Worries />;
+  const secondRoute = (): ReactElement => <Worries />;
 
-	return (
-		<AppLayout noHeader>
-			<CustomeTabs
-				tabItems={tabs}
-				index={index}
-				onChangeIndex={i => setIndex(i)}
-			/>
-		</AppLayout>
-	);
+  const DUMMY = [
+    {
+      id: '0',
+      title: '요즘 걱정,',
+      component: firstRoute,
+    },
+    {
+      id: '1',
+      title: '지난 걱정',
+      component: secondRoute,
+    },
+  ];
+
+  const onPressTabs = useCallback(
+    (idx: number): void => {
+      console.log(tag, 'onPressTabs');
+      dispatch({ type: INIT, values: { idx } });
+    },
+    [dispatch],
+  );
+
+  const getCheckedNumber = (): number => {
+    console.log(tag, 'getCheckedNumber');
+    return worries.filter((item: WorryProps) => item.isChecked).length;
+  };
+
+  const onPressOpenDrawer = (): void => {
+    console.log(tag, 'onPressOpenDrawer');
+    if (refRBSheet.current) {
+      refRBSheet.current.open();
+    }
+  };
+
+  const onPressDelete = useCallback((): void => {
+    console.log(tag, 'onPressDelete');
+    dispatch({ type: DELETE_WORRY });
+    onPressCancel();
+  }, [dispatch]);
+
+  const onPressCancel = (): void => {
+    console.log(tag, 'onPressCancel');
+    if (refRBSheet.current) {
+      refRBSheet.current.close();
+    }
+  };
+
+  useEffect(() => {
+    dispatch({ type: INIT });
+    dispatch({ type: FILTER_TAG, values: { tag: '모든걱정' } });
+  }, []);
+
+  return (
+    <AppLayout noHeader name="worry">
+      <CustomeTabs tabItems={DUMMY} index={index} onChangeIndex={onPressTabs} />
+      {isUpdating && (
+        <>
+          <ButtonWrapper>
+            <CustomeButton
+              title={`${getCheckedNumber()} 개 삭제하기`}
+              isBorderRadius
+              onPress={onPressOpenDrawer}
+              backgroundColor={{
+                color: 'white',
+              }}
+              height={52}
+              color={{
+                color: 'black',
+              }}
+              fontSize={16}
+            />
+          </ButtonWrapper>
+          <ConfirmAlert
+            ref={refRBSheet}
+            confrimButtonTitle="삭제 하기"
+            title={`12월 24일에 작성한 #관계 걱정 및 ${getCheckedNumber()}개를 삭제하시겠어요?`}
+            subtitle="삭제한 걱정은 다시 되돌릴 수 없어요."
+            onPressCancel={onPressCancel}
+            onPressConfirm={onPressDelete}
+          />
+        </>
+      )}
+    </AppLayout>
+  );
 };
 
-const Title = styled.Text`
-	font-size: ${fontSizeByValue(25, heightDevice())}px;
-	width: ${wp('50%')}px;
-	color: ${theme.color.white};
-	font-weight: bold;
-`;
+export default Archive;
 
-export default Home;
+const ButtonWrapper = styled.View`
+  margin-bottom: 20px;
+`;

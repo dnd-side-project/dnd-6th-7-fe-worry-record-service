@@ -2,25 +2,32 @@
 
 ## 아키텍쳐
 
----
-
 ![dnd-6-7-fe drawio](https://user-images.githubusercontent.com/42944883/149341687-ad3f8df0-40ae-4be6-99e5-24d49273ff16.png)
 
 ## 기술 스택
 
----
-
-### React Native
+- React Native
+- typescript
+- React-navigation
+- Styled Component
+- React Native Element
+- Axios
+- React-query (사용가능한지 확인)
 
 ## 디자인 패턴
 
----
-
 - Presentational and Container Component Pattern ([참고](https://velog.io/@holim0/React-Design-Pattern))
+  - 위 디자인 패턴에서 Present 생략 
 
 ## 코딩 컨벤션
+- functional component로 개발 예정
+- 기타 컨벤션은 eslint 룰로 지정
 
----
+## 포매팅
+- eslint
+- Prettier
+- lint-staged
+- husky
 
 ### # 브랜치 관리 전략
 
@@ -36,7 +43,7 @@
 | 브랜치 종류  | 설명                                                         |
 | ------------ | ------------------------------------------------------------ |
 | Master(main) | 테스트 서버에서 테스트가 끝나고 운영서버로 배포 할 수 있는 브랜치 |
-| develop      | 개발을 위한 브랜치                                           |
+| development      | 개발을 위한 브랜치                                           |
 | feature      | 하나의 기능을 개발하기 위한 브랜치                           |
 | hotfix       | 운영중인 버전에서 발생한 버그를 수정 하는 브랜치             |
 

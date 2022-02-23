@@ -1,42 +1,68 @@
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RouteProp } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RouteProp, CompositeNavigationProp } from '@react-navigation/native';
+import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 
 export type RootStackParamList = {
-	Login: undefined;
-	Signup: undefined;
+  Login: undefined;
 };
 
 export type WithAuthStackParamList = {
-	Home: undefined;
-	Detail: undefined;
-	CreatePosts0: undefined;
-	CreatePosts2: undefined;
-	Archive: undefined;
-	Worry: undefined;
+  Home: undefined;
+  Detail: undefined;
+  AddWorry: undefined;
+  Archive: undefined;
+  Review: undefined;
 };
 
 export type HomeProps = {
-	route: RouteProp<WithAuthStackParamList, 'Home'>;
-	navigation: NativeStackNavigationProp<WithAuthStackParamList, 'Home'>;
+  route: RouteProp<WithAuthStackParamList, 'Home'>;
+  navigation: StackNavigationProp<WithAuthStackParamList, 'Home'>;
 };
 export type DetailProps = {
-	route: RouteProp<WithAuthStackParamList, 'Detail'>;
-	navigation: NativeStackNavigationProp<WithAuthStackParamList, 'Detail'>;
+  route: RouteProp<WithAuthStackParamList, 'Detail'>;
+  navigation: StackNavigationProp<WithAuthStackParamList, 'Detail'>;
 };
 export type ArchiveProps = {
-	route: RouteProp<WithAuthStackParamList, 'Archive'>;
-	navigation: NativeStackNavigationProp<WithAuthStackParamList, 'Archive'>;
+  route: RouteProp<WithAuthStackParamList, 'Archive'>;
+  navigation: StackNavigationProp<WithAuthStackParamList, 'Archive'>;
 };
-export type WorryProps = {
-	route: RouteProp<WithAuthStackParamList, 'Worry'>;
-	navigation: NativeStackNavigationProp<WithAuthStackParamList, 'Worry'>;
+
+export type AddWorryProps = {
+  route: RouteProp<WithAuthStackParamList, 'AddWorry'>;
+  navigation: StackNavigationProp<WithAuthStackParamList, 'AddWorry'>;
+};
+
+export type ReviewProps = {
+  route: RouteProp<WithAuthStackParamList, 'Review'>;
+  navigation: StackNavigationProp<WithAuthStackParamList, 'Review'>;
 };
 
 export type LoginProps = {
-	route: RouteProp<RootStackParamList, 'Login'>;
-	navigation: NativeStackNavigationProp<RootStackParamList, 'Login'>;
+  route: RouteProp<RootStackParamList, 'Login'>;
+  navigation: StackNavigationProp<RootStackParamList, 'Login'>;
 };
-export type SignupProps = {
-	route: RouteProp<RootStackParamList, 'Signup'>;
-	navigation: NativeStackNavigationProp<RootStackParamList, 'Signup'>;
-};
+
+export type HomeScreenNavigationProp = CompositeNavigationProp<
+  BottomTabNavigationProp<WithAuthStackParamList, 'Home'>,
+  StackNavigationProp<HomeProps>
+>;
+
+export type DetailScreenNavigationProp = CompositeNavigationProp<
+  BottomTabNavigationProp<WithAuthStackParamList, 'Detail'>,
+  StackNavigationProp<DetailProps>
+>;
+
+export type AddWorryScreenNavigationProp = CompositeNavigationProp<
+  BottomTabNavigationProp<WithAuthStackParamList, 'AddWorry'>,
+  StackNavigationProp<AddWorryProps>
+>;
+
+export type ArchiveScreenNavigationProp = CompositeNavigationProp<
+  BottomTabNavigationProp<WithAuthStackParamList, 'Archive'>,
+  StackNavigationProp<ArchiveProps>
+>;
+
+export type ReviewScreenNavigationProp = CompositeNavigationProp<
+  BottomTabNavigationProp<WithAuthStackParamList, 'Review'>,
+  StackNavigationProp<ReviewProps>
+>;

@@ -2,23 +2,23 @@
 import { Dimensions } from 'react-native';
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
 import {
-	widthPercentageToDP as wp,
-	heightPercentageToDP as hp,
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 
 export const responsiveFontSizeByPercent = (percent: number) =>
-	RFPercentage(percent);
+  RFPercentage(percent);
 
 export const responsiveFontSizeByValue = (
-	value: number,
-	screenHeight?: number,
+  value: number,
+  screenHeight?: number,
 ) => RFValue(value, screenHeight);
 
 export const responsiveWidth = (widthPercent: number | string) =>
-	wp(widthPercent);
+  wp(widthPercent);
 
 export const responsiveHeight = (HeightPercent: number | string) =>
-	hp(HeightPercent);
+  hp(HeightPercent);
 
 export const getHeightDevice = () => Dimensions.get('screen').height;
 export const getWidthDevice = () => Dimensions.get('screen').width;
