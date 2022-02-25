@@ -5,6 +5,7 @@ import HomeScreen from '@page/Home';
 import DetailScreen from '@page/Detail';
 import ArchiveScreen from '@page/Archive';
 import AddWorryScreen from '@page/AddWorry';
+import AddWorryCompleteScreen from '@page/AddWorryComplete';
 import ReviewScreen from '@page/Review';
 import ReviewEditScreen from '@page/ReviewEdit';
 import ReviewChatScreen from '@page/ReviewChat';
@@ -91,6 +92,46 @@ export const HomeScreens: FC = () => {
   );
 };
 
+export const AddWorryScreens: FC = () => {
+  return (
+    <AuthStack.Navigator
+      initialRouteName="AddWorry"
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
+      <AuthStack.Group>
+        <AuthStack.Screen name="Home" component={HomeScreen} options={{}} />
+        <AuthStack.Screen name="AddWorry" component={AddWorryScreen} />
+        <AuthStack.Screen
+          name="AddWorryComplete"
+          component={AddWorryCompleteScreen}
+        />
+      </AuthStack.Group>
+    </AuthStack.Navigator>
+  );
+};
+
+export const AddWorryCompleteScreens: FC = () => {
+  return (
+    <AuthStack.Navigator
+      initialRouteName="AddWorryComplete"
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
+      <AuthStack.Group>
+        <AuthStack.Screen name="Home" component={HomeScreen} options={{}} />
+        <AuthStack.Screen name="AddWorry" component={AddWorryScreen} />
+        <AuthStack.Screen
+          name="AddWorryComplete"
+          component={AddWorryCompleteScreen}
+        />
+      </AuthStack.Group>
+    </AuthStack.Navigator>
+  );
+};
+
 export const ArchiveScreens: FC = () => {
   return (
     <AuthStack.Navigator
@@ -110,6 +151,15 @@ export const ArchiveScreens: FC = () => {
   );
 };
 
+const getTabBarVisibility = (route: any) => {
+  const routeName = route.name;
+  if (routeName === 'AddWorry') {
+    return true;
+  }
+
+  return false;
+};
+
 export const AfterLogin: FC = () => {
   const { isUpdating, isReviewing } = useSceneState();
   return (
@@ -117,7 +167,9 @@ export const AfterLogin: FC = () => {
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarStyle: [
-          isUpdating || isReviewing ? styles.hideTabBar : styles.tabBar,
+          getTabBarVisibility(route) || isUpdating || isReviewing
+            ? styles.hideTabBar
+            : styles.tabBar,
         ],
         tabBarItemStyle: styles.tabBarItem,
         tabBarShowLabel: false,
@@ -154,7 +206,7 @@ export const AfterLogin: FC = () => {
           tabBarIconStyle: styles.centerTabBarIcon,
           tabBarItemStyle: styles.centerTabBarItem,
         }}
-        component={AddWorryScreen}
+        component={AddWorryScreens}
         name="AddWorry"
         listeners={({ navigation }) => ({
           tabPress: e => {
