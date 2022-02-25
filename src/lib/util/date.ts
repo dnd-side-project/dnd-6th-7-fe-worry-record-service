@@ -1,5 +1,5 @@
 import { format } from 'date-fns';
 
-export function getDate(date: Date, dateFormat: string): string {
-	return format(date, dateFormat);
+export function getDate(date: string, dateFormat: string): string {
+  return format(new Date(date), dateFormat);
 }

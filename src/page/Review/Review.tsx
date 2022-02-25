@@ -4,7 +4,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 
 import AppLayout from '@components/AppLayout';
 import CustomeButton from '@components/Button';
-import ChatBox from '@components/ChatBox';
+import ChatInput from '@components/ChatInput';
 
 import { ReviewProps } from '~/types/Navigation';
 
@@ -61,7 +61,7 @@ const Review: FC<ReviewProps> = ({ navigation }) => {
       >
         <Label>그땐 그랬지, 이런 걱정 있었어요</Label>
         <CardTextAreaWrapper>
-          <ChatBox
+          <ChatInput
             multiline={true}
             editable={false}
             value="아니 내가 뭐 뫄뫄 뫄뫄 때문에 뭐뭐뭐무머 했거든... 근데 또 아니 내가 뭐 뫄뫄 뫄뫄 때문에 뭐뭐뭐무머 했거든... 근데 또 아니 내가 뭐 뫄뫄 뫄뫄 때문에 ...아니 내가 뭐 뫄뫄 뫄뫄 때문에 뭐뭐뭐무머 했거든... 근데 또 아니 내가 뭐 뫄뫄 뫄뫄 때문에 뭐뭐뭐무머 했거든... 근데 또 아니 내가 뭐 뫄뫄 뫄뫄 때문에 ...아니 내가 뭐 뫄뫄 뫄뫄 때문에 뭐뭐뭐무머 했거든... 근데 또 아니 내가 뭐 뫄뫄 뫄뫄 때문에 뭐뭐뭐무머 했거든... 근데"
@@ -105,7 +105,7 @@ const Review: FC<ReviewProps> = ({ navigation }) => {
             <ButtonName>편집하기</ButtonName>
           </UpdateButton>
         </RowReviewWrapper>
-        <ChatBox
+        <ChatInput
           multiline={true}
           editable={false}
           value="아니 내가 뭐 뫄뫄 뫄뫄 때문에 뭐뭐뭐무머 했거든... 근데 또 아니 내가 뭐 뫄뫄 뫄뫄 때문에 뭐뭐뭐무머 했거든... 근데 또 아니 내가 뭐 뫄뫄 뫄뫄 때문에 ...아니 내가 뭐 뫄뫄 뫄뫄 때문에 뭐뭐뭐무머 했거든... 근데 또 아니 내가 뭐 뫄뫄 뫄뫄 때문에 뭐뭐뭐무머 했거든... 근데 또 아니 내가 뭐 뫄뫄 뫄뫄 때문에 ...아니 내가 뭐 뫄뫄 뫄뫄 때문에 뭐뭐뭐무머 했거든... 근데 또 아니 내가 뭐 뫄뫄 뫄뫄 때문에 뭐뭐뭐무머 했거든... 근데"

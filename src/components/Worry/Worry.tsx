@@ -2,7 +2,8 @@ import React, { FC, memo, ReactElement, useCallback } from 'react';
 import styled from 'styled-components/native';
 import { CheckBox } from 'react-native-elements/dist/checkbox/CheckBox';
 import { StyleSheet } from 'react-native';
-import { WorryProps as Worry } from '@components/Worries/Worries';
+import { WorryTempProps } from '@components/Worries/Worries';
+import CustomeButton from '@components/Button';
 
 import IconCloseLock from '@assets/image/close_lock.svg';
 import IconUnchecked from '@assets/image/unchecked.svg';
@@ -12,42 +13,45 @@ import { theme } from '@lib/styles/palette';
 import { Header2_600, Header6_bold, Header6_normal } from '@lib/styles/_mixin';
 
 import GradientWrapper from '@components/GradientWrapper';
-import { useSceneDispatch, useSceneState } from '@context/ArchiveContext';
-import { CLICK_CHECKBOX } from '@context/reducer/archive';
+import { getDate } from '@lib/util/date';
+import Modal from '../Modal';
+import IconUnlock from '@assets/image/unlock.svg';
+import { useNavigation } from '@react-navigation/native';
+import { useSceneState, useSceneDispatch } from '@context/ArchiveContext';
 
-// TODO: 모든걱정, 의미있는 걱정, 의미없는 걱정 태그 만들기 - 완료
-// TODO: 기타 태그, 아이콘 넣기 - 완료
-// TODO: 필터 구현하기 - 완료
-// TODO: 편집하기 클릭 > 체크박스 표출하기 - 완료 (컨텍스트 만들기)
-// TODO: 삭제하기 나오기 > 삭제 기능 추가하기 - 완료
-// TODO: 되돌리기 클릭 > 체크된 걱정 init 필요 - 완료
-// TODO: 리액트 쿼리 적용하기 - 완료
-// TODO: 걱정 후기 작성하기 - 완료
-// TODO: 키보드 클릭시 화면 올라가는 것 셋팅 - 완료
-// TODO: 후기 배경화면 변경하기 - 완료
+import {
+  CHANGE_MODE_REVIEW,
+  SET_WORRY_ID,
+  UNLOCK_WORRY,
+} from '~/context/reducer/archive';
+import { ArchiveScreenNavigationProp } from '~/types/Navigation';
 
 // TODO: 동일한 12월 24일 걱정을 다중으로 삭제했을때는 가능하지만,
 // 일자가 다른 걱정을 삭제할때는 선택한 항목 중 가장 최근날짜가 알림에 나오도록하기
-// TODO: 후기 작성 조건 한줄 만들기
-// TODO: 후기 버튼 액티브 색상 변경하기
-// TODO: 일림 기능 만들기
+// TODO: 알림 기능 만들기
 // TODO: 폰트 적용하기
 // TODO: immer 적용하기
 
 interface WorryProps {
-  item: Worry;
+  item: WorryTempProps;
   index: number;
-  onLongPress: (id: string | number[]) => void;
+  onLongPress: (item: WorryTempProps) => void;
+  onChangeCheckBox: (id: number) => void;
 }
 
-const Worries: FC<WorryProps> = ({ item, index, onLongPress }: WorryProps) => {
+const Worries: FC<WorryProps> = ({
+  item,
+  index,
+  onLongPress,
+  onChangeCheckBox,
+}: WorryProps) => {
   const tag = '[Worries]';
-
-  const { isUpdating } = useSceneState();
+  const { isUpdating, isUnlock } = useSceneState();
+  const navigation = useNavigation<ArchiveScreenNavigationProp>();
   const dispatch = useSceneDispatch();
 
   const getTagIcon = (): ReactElement | undefined => {
-    switch (item.content) {
+    switch (item.categoryName) {
       case '진로':
         return <IconImage source={require('@assets/image/jinro.png')} />;
       case '관계':
@@ -71,13 +75,22 @@ const Worries: FC<WorryProps> = ({ item, index, onLongPress }: WorryProps) => {
 
   const onChangeCheck = useCallback((): void => {
     console.log(tag, 'onChangeCheck');
-    dispatch({ type: CLICK_CHECKBOX, values: { id: item.id } });
-  }, [dispatch, item.id]);
+    onChangeCheckBox(item.worryId);
+  }, [item.worryId, onChangeCheckBox]);
 
   const onLongPressUnlock = useCallback((): void => {
     console.log(tag, 'onLongPressUnlock');
-    onLongPress(item.id);
-  }, [onLongPress, item.id]);
+    onLongPress(item);
+  }, [onLongPress, item]);
+
+  const onPressConfirm = (): void => {
+    console.log(tag, 'onPressConfirm');
+
+    dispatch({ type: UNLOCK_WORRY, values: { isUnlock: false } });
+    dispatch({ type: CHANGE_MODE_REVIEW, values: { isReviewing: true } });
+    dispatch({ type: SET_WORRY_ID, values: { worryId: item.worryId } });
+    navigation.navigate('ReviewChat');
+  };
 
   return (
     <CardWrapper index={index}>
@@ -93,7 +106,7 @@ const Worries: FC<WorryProps> = ({ item, index, onLongPress }: WorryProps) => {
             uncheckedIcon={<IconUnchecked />}
             checkedIcon={<Iconchecked />}
           >
-            {item.content}
+            {item.categoryName}
           </CheckBoxWorry>
         )}
       </CardTitle>
@@ -104,23 +117,33 @@ const Worries: FC<WorryProps> = ({ item, index, onLongPress }: WorryProps) => {
       >
         <CardConent>
           <TagWrapper>
-            <Tag>{item.content}</Tag>
+            <Tag>{item.categoryName}</Tag>
           </TagWrapper>
           <ContentsWrapper>
-            <Date>{item.title}</Date>
+            <Date>{getDate(item.worryStartDate, 'MM/dd')}</Date>
             <DateLeftWrapper>
-              {item.isOpen ? (
+              {!item.locked && item.finished && (
                 <DefaultButton disabled={isUpdating ? true : false}>
-                  <Open>걱정을 확인해보세요</Open>
+                  <Open numberOfLines={1}>
+                    {item?.worryReview || '후기가 작성되지 않았습니다.'}
+                  </Open>
                 </DefaultButton>
-              ) : (
+              )}
+              {!item.locked && !item.finished && (
+                <DefaultButton disabled={isUpdating ? true : false}>
+                  <Open>지난 걱정을 확인해보세요</Open>
+                </DefaultButton>
+              )}
+              {item.locked && (
                 <DefaultButton
                   disabled={isUpdating ? true : false}
                   onLongPress={onLongPressUnlock}
                 >
                   <IconCloseLock />
                   <DateLeft>
-                    22년 2월 19일
+                    {getDate(item.worryExpiryDate, 'yy')}년
+                    {getDate(item.worryExpiryDate, 'MM')}월
+                    {getDate(item.worryExpiryDate, 'dd')}일
                     <Unlock> 잠금해제</Unlock>
                   </DateLeft>
                 </DefaultButton>
@@ -129,6 +152,34 @@ const Worries: FC<WorryProps> = ({ item, index, onLongPress }: WorryProps) => {
           </ContentsWrapper>
         </CardConent>
       </GradientWrapper>
+      <Modal visible={isUnlock}>
+        <ModalWrapper>
+          <ModalTitle>걱정은 어떻게 되었나요?</ModalTitle>
+          <IconWrapper>
+            <IconUnlock />
+          </IconWrapper>
+          <ModalTitle>
+            {getDate(item.worryStartDate, 'MM')}월
+            {getDate(item.worryStartDate, 'dd')}일 #{item.categoryName} 걱정이
+          </ModalTitle>
+          <ModalTitle>잠금 해제되었어요!</ModalTitle>
+        </ModalWrapper>
+        <ModalButtonWrapper>
+          <CustomeButton
+            title="확인"
+            isBorderRadius
+            onPress={onPressConfirm}
+            backgroundColor={{
+              color: 'white',
+            }}
+            height={52}
+            color={{
+              color: 'black',
+            }}
+            fontSize={16}
+          />
+        </ModalButtonWrapper>
+      </Modal>
     </CardWrapper>
   );
 };
@@ -209,9 +260,9 @@ const DateLeft = styled.Text`
 
 const Unlock = styled.Text`
   ${Header6_normal(theme.color.white)}
-
-  font-size: 9px;
-  padding-left: 6px;
+  font-size: 10px;
+  font-weight: 100;
+  padding-left: 8px;
 `;
 
 const Open = styled.Text`
@@ -223,5 +274,26 @@ const IconImage = styled.Image`
   position: absolute;
   left: 0;
   top: 10;
-  zindex: 10;
+  z-index: 10;
+`;
+
+const IconWrapper = styled.View`
+  margin: 18px 0;
+`;
+
+const ModalTitle = styled.Text`
+  font-size: 20px;
+  font-weight: 700;
+  color: ${theme.color.white};
+  line-height: 28px;
+`;
+
+const ModalWrapper = styled.View`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+`;
+
+const ModalButtonWrapper = styled.View`
+  margin-bottom: 36px;
 `;

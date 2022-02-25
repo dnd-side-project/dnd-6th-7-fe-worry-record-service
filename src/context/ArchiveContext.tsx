@@ -6,7 +6,6 @@ import React, {
   Dispatch,
   useEffect,
 } from 'react';
-import { WorriesServiceClass } from '~/service/worries';
 
 import ArchiveReducer, {
   Action,
@@ -17,17 +16,15 @@ import ArchiveReducer, {
 
 type SampleDispatch = Dispatch<Action>;
 interface Props {
-  worriesService: WorriesServiceClass;
   children: any;
 }
 
 const ArchiveStateContext = createContext<State | null>(null);
 const ArchiveDispatchContext = createContext<SampleDispatch | null>(null);
-const ArchiveDispatchApi = createContext<WorriesServiceClass | null>(null);
 
 const tag = '[ArchiveContext]';
 
-export function ArchiveProvider({ children, worriesService }: Props) {
+export function ArchiveProvider({ children }: Props) {
   const [state, dispatch] = useReducer(ArchiveReducer, initialValue);
 
   useEffect(() => {
@@ -36,13 +33,11 @@ export function ArchiveProvider({ children, worriesService }: Props) {
   }, []);
 
   return (
-    <ArchiveDispatchApi.Provider value={worriesService}>
-      <ArchiveStateContext.Provider value={state}>
-        <ArchiveDispatchContext.Provider value={dispatch}>
-          {children}
-        </ArchiveDispatchContext.Provider>
-      </ArchiveStateContext.Provider>
-    </ArchiveDispatchApi.Provider>
+    <ArchiveStateContext.Provider value={state}>
+      <ArchiveDispatchContext.Provider value={dispatch}>
+        {children}
+      </ArchiveDispatchContext.Provider>
+    </ArchiveStateContext.Provider>
   );
 }
 
@@ -58,14 +53,6 @@ export const useSceneState = () => {
   const context = useContext(ArchiveStateContext);
   if (!context) {
     throw new Error('Cannot find ArchiveProvider');
-  }
-  return context;
-};
-
-export const useWorriesApi = () => {
-  const context = useContext(ArchiveDispatchApi);
-  if (!context) {
-    throw new Error('Cannot find ArchiveDispatchApi');
   }
   return context;
 };
