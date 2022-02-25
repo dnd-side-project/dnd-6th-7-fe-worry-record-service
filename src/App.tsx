@@ -13,6 +13,10 @@ import { theme } from '@lib/styles/palette';
 import { ThemeProvider } from 'styled-components';
 import { APP_BASE_URL } from '@env';
 
+// 시연용 워닝 로그 무시 코드
+import { LogBox } from 'react-native';
+LogBox.ignoreAllLogs();
+
 const baseURL = APP_BASE_URL;
 const authErrorEventBus = new AuthErrorEventBus();
 const httpClient = new HttpClient(baseURL);
