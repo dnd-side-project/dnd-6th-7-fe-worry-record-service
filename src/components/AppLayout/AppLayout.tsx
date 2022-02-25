@@ -6,7 +6,7 @@ import { ImageSourcePropType } from 'react-native';
 
 interface AppLayoutProps {
   noHeader?: boolean;
-  name: 'login' | 'worry' | 'chat' | 'home' | 'review';
+  name: 'login' | 'worry' | 'chat' | 'home' | 'review' | 'AddWorryComplete';
   headerRight?: ReactElement;
   headerRightSidePress?: () => void;
   headerLeft?: ReactElement;
@@ -16,6 +16,7 @@ interface AppLayoutProps {
   headerTitlePress?: () => void;
   noBackGroundImage?: boolean;
   children: any;
+  backgroundImageURL?: string;
 }
 
 const AppLayout: FC<AppLayoutProps> = ({
@@ -29,6 +30,7 @@ const AppLayout: FC<AppLayoutProps> = ({
   headerTitlePress,
   headerTitleCenter,
   noBackGroundImage,
+  backgroundImageURL,
   children,
 }) => {
   const setImage = (): ImageSourcePropType => {
@@ -40,7 +42,15 @@ const AppLayout: FC<AppLayoutProps> = ({
       case 'chat':
         return require('@assets/image/bg_login.png');
       case 'home':
-        return require('@assets/image/bg_home.png');
+        if (backgroundImageURL === 'default_3') {
+          return require('@assets/image/moons/default_3.gif');
+        } else if (backgroundImageURL === 'edu_4') {
+          return require('@assets/image/moons/edu_4.gif');
+        } else {
+          return require('@assets/image/bg_home.png');
+        }
+      case 'AddWorryComplete':
+        return require('@assets/image/moons/addWorryComplete.gif');
       case 'review':
         return require('@assets/image/bg_home.png');
       default:

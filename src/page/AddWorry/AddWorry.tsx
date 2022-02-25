@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { View } from 'react-native';
+import { View, KeyboardAvoidingView } from 'react-native';
 import { Switch } from 'react-native-elements';
 import { Text } from 'react-native-elements';
 
@@ -21,12 +21,12 @@ const AddWorryPage: FC<AddWorryProps> = ({ navigation }) => {
   return (
     <AppLayout
       noBackGroundImage={false}
-      name="home"
+      name='home'
       headerLeft={<ArrowLeft />}
       headerLeftSidePress={() => navigation.goBack()}
       headerTitle={<Title>흐릿에 걱정 맡기기</Title>}
     >
-      <AddWorry />
+      <AddWorry navigation={navigation} />
     </AppLayout>
   );
 };

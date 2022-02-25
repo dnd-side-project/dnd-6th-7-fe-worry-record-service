@@ -1,10 +1,11 @@
 import React, { FC } from 'react';
 import styled from 'styled-components/native';
-import { View, Image, Text } from 'react-native';
+import { View, Image, Text, TextInputProps } from 'react-native';
 
 import { theme } from '@lib/styles/palette';
+import IconSchedule from '@assets/image/schedule.svg';
 
-type ChatBubbleProps = ChatViewProps & ChatTextAreaProps;
+type ChatBubbleProps = ChatViewProps & ChatTextAreaProps & TextInputProps;
 
 interface ChatViewProps {
   width?: number;
@@ -23,6 +24,9 @@ const ChatBubble: FC<ChatBubbleProps> = ({
   height,
   multiline,
   editable,
+  placeholder,
+  placeholderTextColor,
+  onPressIn,
 }) => {
   return (
     <ChatView width={width}>
@@ -31,6 +35,9 @@ const ChatBubble: FC<ChatBubbleProps> = ({
         multiline={multiline}
         editable={editable}
         value={value}
+        placeholder={placeholder}
+        placeholderTextColor={placeholderTextColor}
+        onPressIn={onPressIn}
       />
     </ChatView>
   );
@@ -40,11 +47,14 @@ export default ChatBubble;
 
 const ChatView = styled.View<ChatViewProps>`
   ${({ width }) => {
-    if (width) return 'width:' + width + 'px';
+    if (width) {
+      return 'width:' + width + 'px';
+    }
   }}
 `;
 
 const ChatTextArea = styled.TextInput<ChatTextAreaProps>`
+  background: rgba(255, 255, 255, 0.01);
   color: ${theme.color.white};
   height: ${({ height }) => height || 192}px;
   border-radius: 10px;

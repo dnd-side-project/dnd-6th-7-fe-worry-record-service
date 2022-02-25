@@ -5,6 +5,7 @@ import HomeScreen from '@page/Home';
 import DetailScreen from '@page/Detail';
 import ArchiveScreen from '@page/Archive';
 import AddWorryScreen from '@page/AddWorry';
+import AddWorryCompleteScreen from '@page/AddWorryComplete';
 import ReviewScreen from '@page/Review';
 import ReviewEditScreen from '@page/ReviewEdit';
 import SettingScreen from '@page/Setting';
@@ -34,13 +35,13 @@ const Tab = createBottomTabNavigator<WithAuthStackParamList>();
 export const BeforeLogin: FC = () => {
   return (
     <Stack.Navigator
-      initialRouteName="Login"
+      initialRouteName='Login'
       screenOptions={{
         headerShown: false,
       }}
     >
       <Stack.Group>
-        <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name='Login' component={LoginScreen} />
       </Stack.Group>
     </Stack.Navigator>
   );
@@ -75,16 +76,16 @@ export const ConfirmAlert = memo(
 export const HomeScreens: FC = () => {
   return (
     <AuthStack.Navigator
-      initialRouteName="Home"
+      initialRouteName='Home'
       screenOptions={{
         headerShown: false,
       }}
     >
       <AuthStack.Group>
-        <AuthStack.Screen name="Home" component={HomeScreen} />
-        <AuthStack.Screen name="AddWorry" component={AddWorryScreen} />
-        <AuthStack.Screen name="Detail" component={DetailScreen} />
-        <AuthStack.Screen name="Setting" component={SettingScreen} />
+        <AuthStack.Screen name='Home' component={HomeScreen} />
+        <AuthStack.Screen name='AddWorry' component={AddWorryScreen} />
+        <AuthStack.Screen name='Detail' component={DetailScreen} />
+        <AuthStack.Screen name='Setting' component={SettingScreen} />
       </AuthStack.Group>
     </AuthStack.Navigator>
   );
@@ -93,14 +94,38 @@ export const HomeScreens: FC = () => {
 export const AddWorryScreens: FC = () => {
   return (
     <AuthStack.Navigator
-      initialRouteName="AddWorry"
+      initialRouteName='AddWorry'
       screenOptions={{
         headerShown: false,
       }}
     >
       <AuthStack.Group>
-        <AuthStack.Screen name="Home" component={HomeScreen} options={{}} />
-        <AuthStack.Screen name="AddWorry" component={AddWorryScreen} />
+        <AuthStack.Screen name='Home' component={HomeScreen} options={{}} />
+        <AuthStack.Screen name='AddWorry' component={AddWorryScreen} />
+        <AuthStack.Screen
+          name='AddWorryComplete'
+          component={AddWorryCompleteScreen}
+        />
+      </AuthStack.Group>
+    </AuthStack.Navigator>
+  );
+};
+
+export const AddWorryCompleteScreens: FC = () => {
+  return (
+    <AuthStack.Navigator
+      initialRouteName='AddWorryComplete'
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
+      <AuthStack.Group>
+        <AuthStack.Screen name='Home' component={HomeScreen} options={{}} />
+        <AuthStack.Screen name='AddWorry' component={AddWorryScreen} />
+        <AuthStack.Screen
+          name='AddWorryComplete'
+          component={AddWorryCompleteScreen}
+        />
       </AuthStack.Group>
     </AuthStack.Navigator>
   );
@@ -109,19 +134,28 @@ export const AddWorryScreens: FC = () => {
 export const ArchiveScreens: FC = () => {
   return (
     <AuthStack.Navigator
-      initialRouteName="Archive"
+      initialRouteName='Archive'
       screenOptions={{
         headerShown: false,
       }}
     >
       <AuthStack.Group>
-        <AuthStack.Screen name="Archive" component={ArchiveScreen} />
-        <AuthStack.Screen name="Review" component={ReviewScreen} />
-        <AuthStack.Screen name="ReviewEdit" component={ReviewEditScreen} />
-        <AuthStack.Screen name="Setting" component={SettingScreen} />
+        <AuthStack.Screen name='Archive' component={ArchiveScreen} />
+        <AuthStack.Screen name='Review' component={ReviewScreen} />
+        <AuthStack.Screen name='ReviewEdit' component={ReviewEditScreen} />
+        <AuthStack.Screen name='Setting' component={SettingScreen} />
       </AuthStack.Group>
     </AuthStack.Navigator>
   );
+};
+
+const getTabBarVisibility = (route: any) => {
+  const routeName = route.name;
+  if (routeName === 'AddWorry') {
+    return true;
+  }
+
+  return false;
 };
 
 export const AfterLogin: FC = () => {
@@ -131,7 +165,9 @@ export const AfterLogin: FC = () => {
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarStyle: [
-          isUpdating || isReviewing ? styles.hideTabBar : styles.tabBar,
+          getTabBarVisibility(route) || isUpdating || isReviewing
+            ? styles.hideTabBar
+            : styles.tabBar,
         ],
         tabBarItemStyle: styles.tabBarItem,
         tabBarShowLabel: false,
@@ -160,7 +196,7 @@ export const AfterLogin: FC = () => {
           tabBarIconStyle: styles.leftTabBarIcon,
           tabBarItemStyle: styles.leftTabBarItem,
         }}
-        name="Home"
+        name='Home'
         component={HomeScreens}
       />
       <Tab.Screen
@@ -169,9 +205,9 @@ export const AfterLogin: FC = () => {
           tabBarItemStyle: styles.centerTabBarItem,
         }}
         component={AddWorryScreens}
-        name="AddWorry"
+        name='AddWorry'
         listeners={({ navigation }) => ({
-          tabPress: (e) => {
+          tabPress: e => {
             e.preventDefault();
             navigation.navigate('AddWorry');
           },
@@ -182,7 +218,7 @@ export const AfterLogin: FC = () => {
           tabBarIconStyle: styles.rightTabBarIcon,
           tabBarItemStyle: styles.rightTabBarItem,
         }}
-        name="Archive"
+        name='Archive'
         component={ArchiveScreens}
       />
     </Tab.Navigator>
