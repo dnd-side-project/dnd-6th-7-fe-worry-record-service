@@ -1,27 +1,33 @@
-import React, { FC, useState } from 'react';
+import React, { FC } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { QueryClient, QueryClientProvider } from 'react-query';
 
 import { AfterLogin } from '@page/Navigation';
-import AuthService from '@service/auth';
-import WorriesService from '@service/worries';
+import AuthService from '~/service/auth';
+import WorriesService from '~/service/archive';
+
 import { AuthProvider, AuthErrorEventBus } from '@context/AuthContext';
 import { ArchiveProvider } from '@context/ArchiveContext';
 import HttpClient from '@lib/api/http';
 import { theme } from '@lib/styles/palette';
 
 import { ThemeProvider } from 'styled-components';
-import { APP_BASE_URL } from '@env';
+import { BASE_URL, JWT_TOKEN } from '@env';
 
-// 시연용 워닝 로그 무시 코드
 import { LogBox } from 'react-native';
+LogBox.ignoreLogs(['Warning: ...']);
 LogBox.ignoreAllLogs();
 
-const baseURL = APP_BASE_URL;
+export const USER_ID = '56';
+
+const baseURL = BASE_URL;
+const jwtToken = JWT_TOKEN;
 const authErrorEventBus = new AuthErrorEventBus();
-const httpClient = new HttpClient(baseURL);
-const authService = new AuthService(httpClient);
-const worriesService = new WorriesService(httpClient);
+const httpClient = new HttpClient(baseURL, jwtToken);
+
+export const authService = new AuthService(httpClient);
+export const worriesService = new WorriesService(httpClient);
+
 const queryClient = new QueryClient();
 
 const App: FC = props => {
@@ -34,7 +40,7 @@ const App: FC = props => {
             authService={authService}
             authErrorEventBus={authErrorEventBus}
           >
-            <ArchiveProvider worriesService={worriesService}>
+            <ArchiveProvider>
               <AfterLogin />
             </ArchiveProvider>
           </AuthProvider>

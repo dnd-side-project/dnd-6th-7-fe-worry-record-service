@@ -4,7 +4,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 
 import AppLayout from '@components/AppLayout';
 import CustomeButton from '@components/Button';
-import ChatBox from '@components/ChatBox';
+import ChatInput from '@components/ChatInput';
 
 import { ReviewEditProps } from '~/types/Navigation';
 
@@ -43,7 +43,7 @@ const ReviewEdit: FC<ReviewEditProps> = ({ navigation }) => {
         scrollEnabled={true}
       >
         <Label>걱정 후기를 작성해 보세요</Label>
-        <ChatBox
+        <ChatInput
           multiline={true}
           editable={true}
           bgColor={'rgba(0, 0, 0, 0.3)'}

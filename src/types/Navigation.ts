@@ -13,6 +13,7 @@ export type WithAuthStackParamList = {
   Archive: undefined;
   Review: undefined;
   ReviewEdit: undefined;
+  ReviewChat: undefined;
   Setting: undefined;
 };
 
@@ -42,6 +43,11 @@ export type ReviewProps = {
 export type ReviewEditProps = {
   route: RouteProp<WithAuthStackParamList, 'ReviewEdit'>;
   navigation: StackNavigationProp<WithAuthStackParamList, 'ReviewEdit'>;
+};
+
+export type ReviewChatProps = {
+  route: RouteProp<WithAuthStackParamList, 'ReviewChat'>;
+  navigation: StackNavigationProp<WithAuthStackParamList, 'ReviewChat'>;
 };
 
 export type SettingProps = {
@@ -82,6 +88,11 @@ export type ReviewScreenNavigationProp = CompositeNavigationProp<
 export type ReviewEditScreenNavigationProp = CompositeNavigationProp<
   BottomTabNavigationProp<WithAuthStackParamList, 'ReviewEdit'>,
   StackNavigationProp<ReviewEditProps>
+>;
+
+export type ReviewChatScreenNavigationProp = CompositeNavigationProp<
+  BottomTabNavigationProp<WithAuthStackParamList, 'ReviewChat'>,
+  StackNavigationProp<ReviewChatProps>
 >;
 
 export type SettingScreenNavigationProp = CompositeNavigationProp<

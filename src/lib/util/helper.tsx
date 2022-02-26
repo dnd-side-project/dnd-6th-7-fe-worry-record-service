@@ -22,3 +22,6 @@ export const responsiveHeight = (HeightPercent: number | string) =>
 
 export const getHeightDevice = () => Dimensions.get('screen').height;
 export const getWidthDevice = () => Dimensions.get('screen').width;
+
+export const makeQueryString = (data: any) =>
+  new URLSearchParams(data).toString();

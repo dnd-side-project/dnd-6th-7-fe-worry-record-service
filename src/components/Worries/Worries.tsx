@@ -1,33 +1,24 @@
 /* eslint-disable no-mixed-spaces-and-tabs */
-import React, { FC, memo, useCallback, useRef } from 'react';
+import React, { FC, memo, useCallback } from 'react';
 
 import styled from 'styled-components/native';
 import { FlatList } from 'react-native';
 import Worry from '@components/Worry';
 import CustomeButton from '@components/Button';
-import Modal from '@components/Modal';
+import Indicator from '@components/Indicator';
+import Error from '@components/Error';
 
 import { theme } from '@lib/styles/palette';
 import { Header6_bold } from '@lib/styles/_mixin';
 
-import {
-  useSceneState,
-  useSceneDispatch,
-  useWorriesApi,
-} from '@context/ArchiveContext';
+import { useSceneState, useSceneDispatch } from '@context/ArchiveContext';
 
-import {
-  CHANGE_MODE,
-  CHANGE_MODE_REVIEW,
-  FILTER_TAG,
-  UNLOCK_WORRY,
-} from '~/context/reducer/archive';
-import { useQuery } from 'react-query';
-import { ConfirmAlert, RefRbProps } from '~/page/Navigation';
-import { useNavigation } from '@react-navigation/native';
-import { ArchiveScreenNavigationProp } from '~/types/Navigation';
+import { CHANGE_MODE, UNLOCK_WORRY } from '@context/reducer/archive';
 
-import IconUnlock from '@assets/image/unlock.svg';
+import { useUnlockWorry } from '~/hooks/useWorries';
+import IconDelete from '@assets/image/delete.svg';
+import Modal from '../Modal';
+
 export interface WorryProps {
   id: string | number[];
   title: string;
@@ -37,127 +28,132 @@ export interface WorryProps {
   isChecked: boolean;
 }
 
-const Worries: FC = () => {
+export interface WorryTempProps {
+  worryId: number;
+  categoryName: string;
+  worryStartDate: string;
+  worryExpiryDate: string;
+  worryReview?: string;
+  locked: boolean;
+  realized: boolean;
+  finished: boolean;
+  isChecked: boolean;
+}
+
+export interface WorriesProps {
+  worries: WorryTempProps[];
+  isError: number;
+  isLoading: number;
+  onChangeCheckBox: (worryId: number) => void;
+  onPressTag: (tagId: number) => void;
+  onPressConfirm: () => void;
+  openDeleteModal: boolean;
+}
+
+const Worries: FC<WorriesProps> = ({
+  worries,
+  isLoading,
+  isError,
+  onChangeCheckBox,
+  onPressTag,
+  openDeleteModal,
+  onPressConfirm,
+}) => {
   const tag = '[Worries]';
 
-  const navigation = useNavigation<ArchiveScreenNavigationProp>();
-  const refRBSheet = useRef<RefRbProps>(null);
-
-  const { isUpdating, worries, tags, activeTags, isUnlock } = useSceneState();
+  const { isUpdating, tags, activeTags, index } = useSceneState();
   const dispatch = useSceneDispatch();
-  const worriedApi = useWorriesApi();
 
-  // TODO: 데이터 받아오기 추후 구현 예정
-  // const { data, isLoading } = useQuery(
-  //   ['worries', { tags: activeTags }],
-  //   api.getWorries(),
-  // );
+  const { mutate } = useUnlockWorry(index, activeTags);
 
   const onPressEdit = useCallback(() => {
     console.log(tag, 'onPressEdit');
     dispatch({ type: CHANGE_MODE, values: { isUpdating: !isUpdating } });
   }, [dispatch, isUpdating]);
 
-  const onPressTag = useCallback(
-    (content: string) => {
-      console.log(tag, 'onPressTag');
-
-      // mutate 호출 > 태그 필터
-      dispatch({ type: FILTER_TAG, values: { tag: content } });
-    },
-    [dispatch],
-  );
-
-  const onPressCancel = (): void => {
-    console.log(tag, 'onPressCancel');
-    if (refRBSheet.current) {
-      refRBSheet.current.close();
-    }
-  };
-
-  const onLongPressUnlock = (id: string | number[]): void => {
+  const onLongPressUnlock = (item: WorryTempProps): void => {
     console.log(tag, 'onLongPressUnlock');
-    // if (refRBSheet.current) {
-    //   refRBSheet.current.open();
-    // }
-
-    // mutate 호출 > 잠금 해제
+    mutate(String(item.worryId));
     dispatch({ type: UNLOCK_WORRY, values: { isUnlock: true } });
   };
 
-  const onPressConfirm = (): void => {
-    console.log(tag, 'onPressConfirm');
-    // if (refRBSheet.current) {
-    //   refRBSheet.current.close();
-    // }
+  if (isLoading) {
+    return <Indicator />;
+  }
 
-    dispatch({ type: UNLOCK_WORRY, values: { isUnlock: false } });
-    dispatch({ type: CHANGE_MODE_REVIEW, values: { isReviewing: true } });
-    navigation.navigate('Review');
-  };
+  if (isError) {
+    return <Error />;
+  }
 
   return (
     <WorriesWrapper>
       <FilterWrapper>
-        {worries.length
-          ? tags.map((item: WorryProps) => (
-              <ButtonWrapper>
-                <CustomeButton
-                  title={item.content}
-                  isBorderRadius
-                  onPress={onPressTag.bind(null, item.content)}
-                  backgroundColor={{
-                    color: item.content === activeTags ? 'white' : 'lightWhite',
-                  }}
-                  color={{
-                    color:
-                      item.content === activeTags
-                        ? 'originalBlack'
-                        : 'lightGray',
-                  }}
-                  fontSize={12}
-                />
-              </ButtonWrapper>
-            ))
-          : null}
+        {tags
+          .filter((tagss: WorryTempProps) =>
+            index === 0 ? !tagss.finished : tagss,
+          )
+          .map((item: WorryTempProps) => (
+            <ButtonWrapper key={item.worryId}>
+              <CustomeButton
+                title={item.categoryName}
+                isBorderRadius
+                onPress={onPressTag.bind(null, item.worryId)}
+                backgroundColor={{
+                  color:
+                    String(item.worryId) === activeTags
+                      ? 'white'
+                      : 'lightWhite',
+                }}
+                color={{
+                  color:
+                    String(item.worryId) === activeTags
+                      ? 'originalBlack'
+                      : 'lightGray',
+                }}
+                fontSize={12}
+              />
+            </ButtonWrapper>
+          ))}
       </FilterWrapper>
       <UpdateWrapper>
         <InfoText>
-          총
-          <Count>
-            {activeTags === '모든걱정' ? worries.length - 1 : worries.length}개
-          </Count>
-          걱정
+          총 <Count>{worries.length}개</Count> 걱정
         </InfoText>
-        <UpdateButton onPress={onPressEdit}>
-          <ButtonName>{isUpdating ? '취소' : '편집하기'}</ButtonName>
-        </UpdateButton>
+        {worries.length > 0 && (
+          <UpdateButton onPress={onPressEdit}>
+            <ButtonName>{isUpdating ? '취소' : '편집하기'}</ButtonName>
+          </UpdateButton>
+        )}
       </UpdateWrapper>
 
       <ListWrapper
-        data={worries.filter(item => item.id !== '-1')}
-        renderItem={({ item, index }: { item: WorryProps; index: number }) => (
-          <Worry onLongPress={onLongPressUnlock} item={item} index={index} />
+        data={worries.filter((item: any) => item.worryId !== '-1')}
+        renderItem={({
+          item,
+          index,
+        }: {
+          item: WorryTempProps;
+          index: number;
+        }) => (
+          <Worry
+            key={item.worryId}
+            onLongPress={onLongPressUnlock}
+            item={item}
+            index={index}
+            onChangeCheckBox={onChangeCheckBox}
+          />
         )}
         numColumns={2}
-        keyExtractor={(item, index) => item.id.toString()}
+        keyExtractor={(item, index) => String(index)}
       />
-      {/* <ConfirmAlert
-        ref={refRBSheet}
-        confrimButtonTitle="잠금 해제"
-        title={'12월 24일에 작성한 #관계 걱정을 잠금 해제 하시겠어요?'}
-        subtitle="잠금 해제한 걱정은 다시 되돌릴 수 없어요."
-        onPressCancel={onPressCancel}
-        onPressConfirm={onPressConfirm}
-      /> */}
-      <Modal visible={isUnlock}>
+      <Modal visible={openDeleteModal}>
         <ModalWrapper>
-          <ModalTitle>걱정은 어떻게 되었나요?</ModalTitle>
+          <ModalTitle>걱정은 쏙!</ModalTitle>
           <IconWrapper>
-            <IconUnlock />
+            <IconDelete />
           </IconWrapper>
-          <ModalTitle>12월 24일 #관계 걱정이 </ModalTitle>
-          <ModalTitle>잠금 해제되었어요!</ModalTitle>
+          <ModalTitle>걱정이</ModalTitle>
+          <ModalTitle>삭제 되었어요!</ModalTitle>
         </ModalWrapper>
         <ModalButtonWrapper>
           <CustomeButton

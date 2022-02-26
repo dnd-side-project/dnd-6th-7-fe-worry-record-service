@@ -13,6 +13,7 @@ export const color = {
   yellow: '#F8E318',
   originalBlack: '#000000',
   lightWhite: '#ffffff1a',
+  light2White: '#ffffff2a',
   transparent: 'transparent',
 };
 export const theme: DefaultTheme = {

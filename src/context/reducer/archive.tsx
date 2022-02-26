@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 /* eslint-disable no-case-declarations */
-import { WORRIES_DATA } from '~/constants/WorriesData';
-import { WorryProps } from '@components/Worries/Worries';
-import _ from 'lodash';
+import { TAG_DATA } from '~/constants/WorriesData';
+import { WorryTempProps } from '@components/Worries/Worries';
 
 const tag = '[ArchiveReducer]';
 
@@ -11,68 +10,93 @@ export type State = {
   isUpdating: boolean;
   isReviewing: boolean;
   isRealized: boolean;
-  tags: WorryProps[];
+  tags: WorryTempProps[];
   activeTags: string;
-  worries: WorryProps[];
+  worries: WorryTempProps[];
+  worryId: number;
+  chatId: string;
   isDone: boolean;
   isUnlock: boolean;
+  isDelete: boolean;
 };
 
 export type Action =
   | { type: 'INIT'; values?: { idx: number } }
+  | { type: 'INIT_WORRIES'; values?: { worries: WorryTempProps[] } }
   | { type: 'CHANGE_MODE'; values: { isUpdating: boolean } }
   | { type: 'CHANGE_MODE_REVIEW'; values: { isReviewing: boolean } }
   | { type: 'CHANGE_MODE_REALIZED'; values: { isRealized: boolean } }
-  | { type: 'CLICK_CHECKBOX'; values: { id: string | number[] } }
+  | { type: 'CLICK_CHECKBOX'; values: { id: number } }
   | { type: 'FILTER_TAG'; values: { tag: string } }
+  | { type: 'SET_WORRY_ID'; values: { worryId: number } }
+  | { type: 'SET_CHAT_ID'; values: { chatId: string } }
   | { type: 'UNLOCK_WORRY'; values: { isUnlock: boolean } }
+  | { type: 'DELETE_WORRY_MODAL'; values: { isDelete: boolean } }
   | { type: 'DELETE_WORRY' };
 
 export const INIT = 'INIT';
+export const INIT_WORRIES = 'INIT_WORRIES';
 export const CHANGE_MODE = 'CHANGE_MODE';
 export const CHANGE_MODE_REVIEW = 'CHANGE_MODE_REVIEW';
 export const CHANGE_MODE_REALIZED = 'CHANGE_MODE_REALIZED';
 export const CLICK_CHECKBOX = 'CLICK_CHECKBOX';
 export const FILTER_TAG = 'FILTER_TAG';
+export const SET_WORRY_ID = 'SET_WORRY_ID';
+export const SET_CHAT_ID = 'SET_CHAT_ID';
 export const UNLOCK_WORRY = 'UNLOCK_WORRY';
 
 export const DELETE_WORRY = 'DELETE_WORRY';
+export const DELETE_WORRY_MODAL = 'DELETE_WORRY_MODAL';
 
 export const initialValue: State = {
   index: 0,
   isReviewing: false,
   isRealized: false,
   isUpdating: false,
-  tags: [],
-  activeTags: '모든걱정',
-  worries: WORRIES_DATA,
+  tags: TAG_DATA,
+  activeTags: '-1',
+  worries: [],
   isDone: false,
   isUnlock: false,
+  worryId: -1,
+  chatId: '1',
+  isDelete: false,
 };
 
-const filterdTagDatas = (idx: number, worries: WorryProps[]) =>
-  idx === 0
-    ? worries.filter(worry => !worry.isDone)
-    : worries.filter(worry => worry.isDone);
+// const filterdTagDatas = (idx: number, worries: WorryProps[]) =>
+//   idx === 0
+//     ? worries.filter(worry => !worry.isDone)
+//     : worries.filter(worry => worry.isDone);
 
 export default function ArchiveReducer(state: State, action: Action) {
   switch (action.type) {
     case INIT:
       console.log(tag, INIT);
-
       const idx = action.values?.idx || 0;
-      const initWorres = filterdTagDatas(idx, WORRIES_DATA);
 
       return {
         ...state,
         index: idx,
-        worries: initWorres,
-        tags: _.uniqBy(initWorres, 'content'),
-        activeTags: '모든걱정',
+        tags: TAG_DATA,
+        activeTags: '-1',
         isUpdating: false,
         isReviewing: false,
         isUnlock: false,
         isRealized: false,
+        isDelete: false,
+        worryId: -1,
+        chatId: '1',
+      };
+
+    case INIT_WORRIES:
+      console.log(tag, INIT_WORRIES);
+
+      const worries = action.values?.worries || [];
+      // const initWorres = filterdTagDatas(idx, WORRIES_DATA);
+
+      return {
+        ...state,
+        worries,
       };
 
     case CHANGE_MODE:
@@ -80,7 +104,6 @@ export default function ArchiveReducer(state: State, action: Action) {
 
       return {
         ...state,
-        worries: state.worries.map(worry => ({ ...worry, isChecked: false })),
         isUpdating: action.values.isUpdating,
       };
 
@@ -89,6 +112,13 @@ export default function ArchiveReducer(state: State, action: Action) {
       return {
         ...state,
         isUnlock: action.values.isUnlock,
+      };
+
+    case DELETE_WORRY_MODAL:
+      console.log(tag, DELETE_WORRY_MODAL);
+      return {
+        ...state,
+        isDelete: action.values.isDelete,
       };
 
     case CHANGE_MODE_REALIZED:
@@ -101,7 +131,7 @@ export default function ArchiveReducer(state: State, action: Action) {
     case CLICK_CHECKBOX:
       console.log(tag, CLICK_CHECKBOX);
       const index = state.worries.findIndex(
-        worry => worry.id === action.values.id,
+        worry => worry.worryId === action.values.id,
       );
       state.worries[index].isChecked = !state.worries[index].isChecked;
       return {
@@ -110,17 +140,25 @@ export default function ArchiveReducer(state: State, action: Action) {
 
     case FILTER_TAG:
       console.log(tag, FILTER_TAG);
-      const filterdWorries =
-        action.values.tag === '모든걱정'
-          ? filterdTagDatas(state.index, WORRIES_DATA)
-          : filterdTagDatas(state.index, WORRIES_DATA).filter(
-              worry => worry.content === action.values.tag,
-            );
 
       return {
         ...state,
-        worries: filterdWorries,
         activeTags: action.values.tag,
+      };
+    case SET_WORRY_ID:
+      console.log(tag, SET_WORRY_ID);
+
+      return {
+        ...state,
+        worryId: action.values.worryId,
+      };
+
+    case SET_CHAT_ID:
+      console.log(tag, SET_CHAT_ID);
+
+      return {
+        ...state,
+        chatId: action.values.chatId,
       };
 
     case DELETE_WORRY:

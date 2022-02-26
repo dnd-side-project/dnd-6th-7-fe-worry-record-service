@@ -3,10 +3,13 @@ import axios from 'axios';
 export default class HttpClient {
   client: any;
 
-  constructor(baseURL: any) {
+  constructor(baseURL: any, jwtToken: any) {
     this.client = axios.create({
       baseURL: baseURL,
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'at-jwt-access-token': jwtToken,
+      },
       withCredentials: true,
     });
   }
@@ -24,6 +27,7 @@ export default class HttpClient {
 
     try {
       const res = await this.client(req);
+      console.log(res, 'res');
       return res.data;
     } catch (err: any) {
       if (err.response) {
