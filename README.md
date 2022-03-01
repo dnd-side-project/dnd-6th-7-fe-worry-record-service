@@ -1,4 +1,31 @@
-# 걱정 기록 서비스 (가제) - FE
+[![Build Status](https://img.shields.io/badge/status-developing-orange)](https://github.com/dnd-side-project/dnd-6th-7-worry-record-service)
+![License](https://img.shields.io/apm/l/vim-mode?color=yellowgreen)
+
+<br>
+
+<br>
+
+<p align="center">
+  <img width="350" height="350" src="https://user-images.githubusercontent.com/84304802/155870606-95bd66c5-a38d-4c29-932c-4b2b6f4dc5dd.png" alt="이미지 준비중">
+</p>
+
+
+
+
+# '🔮흐릿 - 걱정 기록 서비스'
+
+<br>
+
+### "💁‍♂️오늘도 걱정하셨나요?"
+
+걱정의 대부분은 **괜히 하는 걱정**이라고 합니다. 그러나 우리는 이 사실을 알면서도 대부분의 걱정에 감정을 소모하고, 지쳐합니다. 하지만 이 걱정을 의미있게 기록해보면 어떨까요? 물론 스스로가 기억하기엔 부정적인 감정이 크니, 기억하는건 남에게 미뤄두고요.
+
+이걸 가능하게 해주는 걱정을 기록하고 검증하는 서비스, 흐릿을 소개합니다.
+
+걱정의 대부분은 생산성이 없고 소모적입니다. 그렇다고 그냥 내버려 두기에는 우리에게 부정적인 영향을 많이 끼치죠. <br>
+**흐릿**은 걱정을 기록하여 보관하고 실제로 걱정이 얼마나 벌어졌는지 퍼센트 형태로 시각화하여 사용자들에게 보여줍니다. 또한 걱정에 대한 후기를 기록할 수 있도록 하여 이를 나중에 다시 돌아보면서 내 걱정이 별 것 아니었다고 깨닫는 경험을 통해 사용자가 걱정에 대한 부담을 줄일 수 있는 해결책을 제시합니다.
+
+<br>
 
 ## 아키텍쳐
 
@@ -23,7 +50,7 @@
 - functional component로 개발 예정
 - 기타 컨벤션은 eslint 룰로 지정
 
-## 포매팅
+## 포팅
 - eslint
 - Prettier
 - lint-staged
@@ -130,7 +157,7 @@ Type : 제목 #이슈번호
 
 <br>
 
-**[ 개발 기간 ]** 2022/01 ~ 2022/02
+**[ 개발 기간 ]** 2022/01 ~ 2022/03
 <br>
 
 📑**Notion**: https://www.notion.so/DND-6-7-811f10387f8e458689cedd781c714d86 
