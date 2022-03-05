@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 import styled from 'styled-components/native';
 import { theme } from '~/lib/styles/palette';
 
-const CustomeError: FC = () => {
+const CustomeError = (props: { error: Error; resetError: any }) => {
   return (
     <ErrorWrapper>
       <ErrorText>알 수없는 오류로</ErrorText>

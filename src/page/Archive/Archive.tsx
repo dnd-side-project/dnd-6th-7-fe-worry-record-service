@@ -35,7 +35,7 @@ const Archive: FC<ArchiveProps> = ({ navigation }) => {
   const [worries, setWorriess] = useState<WorryTempProps[]>([]);
   const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
 
-  const { isLoading, isError } = useGetWorries(
+  const { data } = useGetWorries(
     index,
     USER_ID,
     activeTags,
@@ -131,9 +131,7 @@ const Archive: FC<ArchiveProps> = ({ navigation }) => {
     <Worries
       onPressConfirm={onPressConfirm}
       openDeleteModal={openDeleteModal}
-      isLoading={isLoading}
-      isError={isError}
-      worries={worries}
+      worries={data}
       onChangeCheckBox={onChangeCheckBox}
       onPressTag={onPressTag}
     />
@@ -142,9 +140,7 @@ const Archive: FC<ArchiveProps> = ({ navigation }) => {
     <Worries
       onPressConfirm={onPressConfirm}
       openDeleteModal={openDeleteModal}
-      isLoading={isLoading}
-      isError={isError}
-      worries={worries}
+      worries={data}
       onChangeCheckBox={onChangeCheckBox}
       onPressTag={onPressTag}
     />

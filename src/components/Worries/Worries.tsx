@@ -5,8 +5,6 @@ import styled from 'styled-components/native';
 import { FlatList } from 'react-native';
 import Worry from '@components/Worry';
 import CustomeButton from '@components/Button';
-import Indicator from '@components/Indicator';
-import Error from '@components/Error';
 
 import { theme } from '@lib/styles/palette';
 import { Header6_bold } from '@lib/styles/_mixin';
@@ -42,8 +40,6 @@ export interface WorryTempProps {
 
 export interface WorriesProps {
   worries: WorryTempProps[];
-  isError: number;
-  isLoading: number;
   onChangeCheckBox: (worryId: number) => void;
   onPressTag: (tagId: number) => void;
   onPressConfirm: () => void;
@@ -52,8 +48,6 @@ export interface WorriesProps {
 
 const Worries: FC<WorriesProps> = ({
   worries,
-  isLoading,
-  isError,
   onChangeCheckBox,
   onPressTag,
   openDeleteModal,
@@ -76,14 +70,6 @@ const Worries: FC<WorriesProps> = ({
     mutate(String(item.worryId));
     dispatch({ type: UNLOCK_WORRY, values: { isUnlock: true } });
   };
-
-  if (isLoading) {
-    return <Indicator />;
-  }
-
-  if (isError) {
-    return <Error />;
-  }
 
   return (
     <WorriesWrapper>
