@@ -1,37 +1,31 @@
 /* eslint-disable no-mixed-spaces-and-tabs */
 import React, { FC, memo, useCallback } from 'react';
-import { FlatList, GestureResponderEvent } from 'react-native';
+import { FlatList } from 'react-native';
 
 import styled from 'styled-components/native';
 
 import Worry from '@components/Worry';
 import CustomeButton from '@components/Button';
-import Modal from '@components/Modal';
 
 import { theme } from '@lib/styles/palette';
 import { Header6_bold } from '@lib/styles/_mixin';
 
 import { useSceneState, useSceneDispatch } from '@context/ArchiveContext';
-import { CHANGE_MODE, UNLOCK_WORRY } from '@context/reducer/archive';
+import { CHANGE_MODE, FILTER_TAG } from '@context/reducer/archive';
 
 import { WorryTempProps } from '~/types/Worry';
 
-import { useUnlockWorry } from '~/hooks/useWorries';
-
 import IconDelete from '@assets/image/delete.svg';
+import Inform from '../Inform';
 
 export interface WorriesProps {
   worries: WorryTempProps[];
-  onChangeCheckBox: (e: GestureResponderEvent, worryId: number) => void;
-  onPressTag: (id: number, tagId: string | number[]) => void;
   onPressConfirm: () => void;
   openDeleteModal: boolean;
 }
 
 const Worries: FC<WorriesProps> = ({
   worries,
-  onChangeCheckBox,
-  onPressTag,
   openDeleteModal,
   onPressConfirm,
 }) => {
@@ -40,18 +34,23 @@ const Worries: FC<WorriesProps> = ({
   const { isUpdating, tags, activeTags, index } = useSceneState();
   const dispatch = useSceneDispatch();
 
-  const { mutate } = useUnlockWorry(index, activeTags);
-
+  // 편집하기 모드로 변경하는 함수
   const onPressEdit = useCallback(() => {
     console.log(tag, 'onPressEdit');
     dispatch({ type: CHANGE_MODE, values: { isUpdating: !isUpdating } });
   }, [dispatch, isUpdating]);
 
-  const onLongPressUnlock = (item: WorryTempProps): void => {
-    console.log(tag, 'onLongPressUnlock');
-    mutate(String(item.worryId));
-    dispatch({ type: UNLOCK_WORRY, values: { isUnlock: true } });
-  };
+  // 걱정 필터 함수
+  const onPressTag = useCallback(
+    (id: number, tagId: string | number[]) => {
+      console.log(tag, id, 'onPressTag');
+      dispatch({
+        type: FILTER_TAG,
+        values: { tag: String(id), tagId: tagId },
+      });
+    },
+    [dispatch],
+  );
 
   return (
     <WorriesWrapper>
@@ -96,41 +95,24 @@ const Worries: FC<WorriesProps> = ({
 
       <ListWrapper
         data={worries?.filter((item: any) => item.worryId !== '-1')}
-        renderItem={({ item }: { item: WorryTempProps }) => (
-          <Worry
-            key={item.worryId}
-            item={item}
-            onChangeCheckBox={onChangeCheckBox}
-          />
-        )}
+        renderItem={({
+          item,
+          index: idx,
+        }: {
+          item: WorryTempProps;
+          index: number;
+        }) => <Worry key={item.worryId} item={item} index={idx} />}
         numColumns={2}
         keyExtractor={(item, index) => String(index)}
       />
-      <Modal visible={openDeleteModal}>
-        <ModalWrapper>
-          <ModalTitle>걱정은 쏙!</ModalTitle>
-          <IconWrapper>
-            <IconDelete />
-          </IconWrapper>
-          <ModalTitle>걱정이</ModalTitle>
-          <ModalTitle>삭제 되었어요!</ModalTitle>
-        </ModalWrapper>
-        <ModalButtonWrapper>
-          <CustomeButton
-            title="확인"
-            isBorderRadius
-            onPress={onPressConfirm}
-            backgroundColor={{
-              color: 'white',
-            }}
-            height={52}
-            color={{
-              color: 'black',
-            }}
-            fontSize={16}
-          />
-        </ModalButtonWrapper>
-      </Modal>
+      <Inform
+        visible={openDeleteModal}
+        onPressConfirm={onPressConfirm}
+        icon={<IconDelete />}
+        mainTitle="걱정은 쏙!"
+        description={'걱정이'}
+        subTitle="삭제 되었어요!"
+      />
     </WorriesWrapper>
   );
 };

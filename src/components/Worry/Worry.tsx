@@ -1,12 +1,10 @@
 import React, { FC, memo, ReactElement, useCallback } from 'react';
-import { GestureResponderEvent, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 import styled from 'styled-components/native';
 import { useNavigation } from '@react-navigation/native';
 import { CheckBox } from 'react-native-elements/dist/checkbox/CheckBox';
 
-import CustomeButton from '@components/Button';
 import GradientWrapper from '@components/GradientWrapper';
-import Modal from '@components/Modal';
 
 import IconCloseLock from '@assets/image/close_lock.svg';
 import IconUnchecked from '@assets/image/unchecked.svg';
@@ -16,6 +14,7 @@ import IconUnlock from '@assets/image/unlock.svg';
 import { theme } from '@lib/styles/palette';
 import { Header2_600, Header6_bold, Header6_normal } from '@lib/styles/_mixin';
 import { getDate } from '@lib/util/date';
+import { worriesKeys } from '@lib/queries/keys';
 
 import { useSceneState, useSceneDispatch } from '@context/ArchiveContext';
 import {
@@ -28,6 +27,8 @@ import { ArchiveScreenNavigationProp } from '~/types/Navigation';
 import { WorryTempProps } from '~/types/Worry';
 
 import { useUnlockWorry } from '@hooks/useWorries';
+import { useQueryClient } from 'react-query';
+import Inform from '../Inform';
 
 // TODO: 동일한 12월 24일 걱정을 다중으로 삭제했을때는 가능하지만,
 // 일자가 다른 걱정을 삭제할때는 선택한 항목 중 가장 최근날짜가 알림에 나오도록하기
@@ -36,16 +37,24 @@ import { useUnlockWorry } from '@hooks/useWorries';
 // TODO: immer 적용하기
 interface WorryProps {
   item: WorryTempProps;
-  onChangeCheckBox: (e: GestureResponderEvent, worryId: number) => void;
+  index: number;
 }
 
-const Worries: FC<WorryProps> = ({ item, onChangeCheckBox }: WorryProps) => {
+const Worries: FC<WorryProps> = ({ item, index }: WorryProps) => {
   const tag = '[Worries]';
-  const { index, activeTags, isUpdating, isUnlock } = useSceneState();
+  const {
+    index: tabIndex,
+    activeTags,
+    isUpdating,
+    isUnlock,
+    activeTagsId,
+  } = useSceneState();
   const navigation = useNavigation<ArchiveScreenNavigationProp>();
   const dispatch = useSceneDispatch();
 
-  const { mutate } = useUnlockWorry(index, activeTags);
+  const queryClient = useQueryClient();
+
+  const { mutate } = useUnlockWorry(tabIndex, activeTags);
 
   // 각 태그에 알맞는 아이콘 지정하는 함수
   const getTagIcon = (): ReactElement | undefined => {
@@ -71,14 +80,18 @@ const Worries: FC<WorryProps> = ({ item, onChangeCheckBox }: WorryProps) => {
     }
   };
 
-  // 체크 박스 선택시 이벤트 (삭제 할 체크 박스)
-  const onChangeCheck = useCallback(
-    (e: GestureResponderEvent): void => {
-      console.log(tag, 'onChangeCheck');
-      onChangeCheckBox(e, item.worryId);
-    },
-    [item.worryId, onChangeCheckBox],
-  );
+  // 걱정 선택 함수
+  const onChangeCheckBox = useCallback(() => {
+    queryClient.setQueryData(
+      worriesKeys.worries(String(tabIndex), activeTagsId),
+      (previous: any) =>
+        previous.map((worry: WorryTempProps) =>
+          worry.worryId === item.worryId
+            ? { ...worry, isChecked: !worry.isChecked }
+            : worry,
+        ),
+    );
+  }, [queryClient, tabIndex, activeTagsId, item.worryId]);
 
   // 잠금해제 버튼 클릭시 이벤트
   const onLongPressUnlock = useCallback((): void => {
@@ -106,7 +119,7 @@ const Worries: FC<WorryProps> = ({ item, onChangeCheckBox }: WorryProps) => {
             right
             size={20}
             checked={item.isChecked}
-            onPress={onChangeCheck}
+            onPress={onChangeCheckBox}
             containerStyle={styles.checkBoxContents}
             uncheckedIcon={<IconUnchecked />}
             checkedIcon={<Iconchecked />}
@@ -157,34 +170,17 @@ const Worries: FC<WorryProps> = ({ item, onChangeCheckBox }: WorryProps) => {
           </ContentsWrapper>
         </CardConent>
       </GradientWrapper>
-      <Modal visible={isUnlock}>
-        <ModalWrapper>
-          <ModalTitle>걱정은 어떻게 되었나요?</ModalTitle>
-          <IconWrapper>
-            <IconUnlock />
-          </IconWrapper>
-          <ModalTitle>
-            {getDate(item.worryStartDate, 'MM')}월
-            {getDate(item.worryStartDate, 'dd')}일 #{item.categoryName} 걱정이
-          </ModalTitle>
-          <ModalTitle>잠금 해제되었어요!</ModalTitle>
-        </ModalWrapper>
-        <ModalButtonWrapper>
-          <CustomeButton
-            title="확인"
-            isBorderRadius
-            onPress={onPressConfirm}
-            backgroundColor={{
-              color: 'white',
-            }}
-            height={52}
-            color={{
-              color: 'black',
-            }}
-            fontSize={16}
-          />
-        </ModalButtonWrapper>
-      </Modal>
+      <Inform
+        visible={isUnlock}
+        onPressConfirm={onPressConfirm}
+        icon={<IconUnlock />}
+        mainTitle="걱정은 어떻게 되었나요?"
+        description={`${getDate(item.worryStartDate, 'MM')}월 ${getDate(
+          item.worryStartDate,
+          'dd',
+        )}일 #${item.categoryName} 걱정이`}
+        subTitle="잠금 해제되었어요!"
+      />
     </CardWrapper>
   );
 };

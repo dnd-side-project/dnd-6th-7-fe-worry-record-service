@@ -8,8 +8,6 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { GestureResponderEvent } from 'react-native';
-import { useQueryClient } from 'react-query';
 import styled from 'styled-components/native';
 
 import { USER_ID } from '~/App';
@@ -20,7 +18,7 @@ import AppLayout from '@components/AppLayout';
 import Worries from '@components/Worries';
 
 import { useSceneState, useSceneDispatch } from '@context/ArchiveContext';
-import { INIT, FILTER_TAG } from '@context/reducer/archive';
+import { INIT } from '@context/reducer/archive';
 
 import { ArchiveProps } from '~/types/Navigation';
 import { WorryTempProps } from '~/types/Worry';
@@ -30,7 +28,6 @@ import { ConfirmAlert, RefRbProps } from '../Navigation';
 import { useGetWorries, useDeleteWorry } from '@hooks/useWorries';
 
 import { getDate } from '@lib/util/date';
-import { worriesKeys } from '@lib/queries/keys';
 
 const Archive: FC<ArchiveProps> = ({ navigation }) => {
   const tag = '[Archive]';
@@ -38,7 +35,6 @@ const Archive: FC<ArchiveProps> = ({ navigation }) => {
   const dispatch = useSceneDispatch();
   const { isUpdating, activeTags, index, activeTagsId } = useSceneState();
 
-  const queryClient = useQueryClient();
   const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
 
   // 걱정 목록을 가져오는 함수
@@ -48,34 +44,6 @@ const Archive: FC<ArchiveProps> = ({ navigation }) => {
   const { mutate } = useDeleteWorry(index, activeTags, () => {
     setOpenDeleteModal(true);
   });
-
-  // 걱정 선택 함수
-  const onChangeCheckBox = useCallback(
-    (e: GestureResponderEvent, worryId: number) => {
-      queryClient.setQueryData(
-        worriesKeys.worries(String(index), activeTagsId),
-        (previous: any) =>
-          previous.map((worry: WorryTempProps) =>
-            worry.worryId === worryId
-              ? { ...worry, isChecked: !worry.isChecked }
-              : worry,
-          ),
-      );
-    },
-    [queryClient, index, activeTags, activeTagsId],
-  );
-
-  // 걱정 필터 함수
-  const onPressTag = useCallback(
-    (id: number, tagId: string | number[]) => {
-      console.log(tag, id, 'onPressTag');
-      dispatch({
-        type: FILTER_TAG,
-        values: { tag: String(id), tagId: tagId },
-      });
-    },
-    [dispatch],
-  );
 
   // 걱정 탭 함수
   const onPressTabs = useCallback(
@@ -154,8 +122,6 @@ const Archive: FC<ArchiveProps> = ({ navigation }) => {
       onPressConfirm={onPressConfirm}
       openDeleteModal={openDeleteModal}
       worries={queryData.data}
-      onChangeCheckBox={onChangeCheckBox}
-      onPressTag={onPressTag}
     />
   );
   const secondRoute = (): ReactElement => (
@@ -163,8 +129,6 @@ const Archive: FC<ArchiveProps> = ({ navigation }) => {
       onPressConfirm={onPressConfirm}
       openDeleteModal={openDeleteModal}
       worries={queryData.data}
-      onChangeCheckBox={onChangeCheckBox}
-      onPressTag={onPressTag}
     />
   );
 
