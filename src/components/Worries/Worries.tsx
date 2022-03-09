@@ -96,18 +96,10 @@ const Worries: FC<WorriesProps> = ({
 
       <ListWrapper
         data={worries?.filter((item: any) => item.worryId !== '-1')}
-        renderItem={({
-          item,
-          index,
-        }: {
-          item: WorryTempProps;
-          index: number;
-        }) => (
+        renderItem={({ item }: { item: WorryTempProps }) => (
           <Worry
             key={item.worryId}
-            onLongPress={onLongPressUnlock}
             item={item}
-            index={index}
             onChangeCheckBox={onChangeCheckBox}
           />
         )}

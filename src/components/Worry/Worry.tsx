@@ -27,6 +27,8 @@ import {
 import { ArchiveScreenNavigationProp } from '~/types/Navigation';
 import { WorryTempProps } from '~/types/Worry';
 
+import { useUnlockWorry } from '@hooks/useWorries';
+
 // TODO: 동일한 12월 24일 걱정을 다중으로 삭제했을때는 가능하지만,
 // 일자가 다른 걱정을 삭제할때는 선택한 항목 중 가장 최근날짜가 알림에 나오도록하기
 // TODO: 알림 기능 만들기
@@ -34,21 +36,16 @@ import { WorryTempProps } from '~/types/Worry';
 // TODO: immer 적용하기
 interface WorryProps {
   item: WorryTempProps;
-  index: number;
-  onLongPress: (item: WorryTempProps) => void;
   onChangeCheckBox: (e: GestureResponderEvent, worryId: number) => void;
 }
 
-const Worries: FC<WorryProps> = ({
-  item,
-  index,
-  onLongPress,
-  onChangeCheckBox,
-}: WorryProps) => {
+const Worries: FC<WorryProps> = ({ item, onChangeCheckBox }: WorryProps) => {
   const tag = '[Worries]';
-  const { isUpdating, isUnlock } = useSceneState();
+  const { index, activeTags, isUpdating, isUnlock } = useSceneState();
   const navigation = useNavigation<ArchiveScreenNavigationProp>();
   const dispatch = useSceneDispatch();
+
+  const { mutate } = useUnlockWorry(index, activeTags);
 
   // 각 태그에 알맞는 아이콘 지정하는 함수
   const getTagIcon = (): ReactElement | undefined => {
@@ -86,8 +83,9 @@ const Worries: FC<WorryProps> = ({
   // 잠금해제 버튼 클릭시 이벤트
   const onLongPressUnlock = useCallback((): void => {
     console.log(tag, 'onLongPressUnlock');
-    onLongPress(item);
-  }, [onLongPress, item]);
+    mutate(String(item.worryId));
+    dispatch({ type: UNLOCK_WORRY, values: { isUnlock: true } });
+  }, [dispatch, mutate, item.worryId]);
 
   // 걱정 잠금해제 컨펌창 확인 버튼 클릭시 이벤트
   const onPressConfirm = (): void => {
