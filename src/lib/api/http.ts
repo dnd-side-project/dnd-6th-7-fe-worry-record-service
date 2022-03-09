@@ -27,7 +27,6 @@ export default class HttpClient {
 
     try {
       const res = await this.client(req);
-      console.log(res, 'res');
       return res.data;
     } catch (err: any) {
       if (err.response) {

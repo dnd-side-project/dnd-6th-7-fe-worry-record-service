@@ -1,47 +1,29 @@
 /* eslint-disable no-mixed-spaces-and-tabs */
 import React, { FC, memo, useCallback } from 'react';
+import { FlatList, GestureResponderEvent } from 'react-native';
 
 import styled from 'styled-components/native';
-import { FlatList } from 'react-native';
+
 import Worry from '@components/Worry';
 import CustomeButton from '@components/Button';
+import Modal from '@components/Modal';
 
 import { theme } from '@lib/styles/palette';
 import { Header6_bold } from '@lib/styles/_mixin';
 
 import { useSceneState, useSceneDispatch } from '@context/ArchiveContext';
-
 import { CHANGE_MODE, UNLOCK_WORRY } from '@context/reducer/archive';
 
+import { WorryTempProps } from '~/types/Worry';
+
 import { useUnlockWorry } from '~/hooks/useWorries';
+
 import IconDelete from '@assets/image/delete.svg';
-import Modal from '../Modal';
-
-export interface WorryProps {
-  id: string | number[];
-  title: string;
-  content: string;
-  isOpen: boolean;
-  isDone: boolean;
-  isChecked: boolean;
-}
-
-export interface WorryTempProps {
-  worryId: number;
-  categoryName: string;
-  worryStartDate: string;
-  worryExpiryDate: string;
-  worryReview?: string;
-  locked: boolean;
-  realized: boolean;
-  finished: boolean;
-  isChecked: boolean;
-}
 
 export interface WorriesProps {
   worries: WorryTempProps[];
-  onChangeCheckBox: (worryId: number) => void;
-  onPressTag: (tagId: number) => void;
+  onChangeCheckBox: (e: GestureResponderEvent, worryId: number) => void;
+  onPressTag: (id: number, tagId: string | number[]) => void;
   onPressConfirm: () => void;
   openDeleteModal: boolean;
 }
@@ -83,7 +65,7 @@ const Worries: FC<WorriesProps> = ({
               <CustomeButton
                 title={item.categoryName}
                 isBorderRadius
-                onPress={onPressTag.bind(null, item.worryId)}
+                onPress={onPressTag.bind(null, item.worryId, item.id)}
                 backgroundColor={{
                   color:
                     String(item.worryId) === activeTags
@@ -103,9 +85,9 @@ const Worries: FC<WorriesProps> = ({
       </FilterWrapper>
       <UpdateWrapper>
         <InfoText>
-          총 <Count>{worries.length}개</Count> 걱정
+          총 <Count>{worries?.length}개</Count> 걱정
         </InfoText>
-        {worries.length > 0 && (
+        {worries?.length > 0 && (
           <UpdateButton onPress={onPressEdit}>
             <ButtonName>{isUpdating ? '취소' : '편집하기'}</ButtonName>
           </UpdateButton>
@@ -113,7 +95,7 @@ const Worries: FC<WorriesProps> = ({
       </UpdateWrapper>
 
       <ListWrapper
-        data={worries.filter((item: any) => item.worryId !== '-1')}
+        data={worries?.filter((item: any) => item.worryId !== '-1')}
         renderItem={({
           item,
           index,

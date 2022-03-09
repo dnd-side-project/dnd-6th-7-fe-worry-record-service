@@ -11,16 +11,6 @@ const ReviewEditScreen = lazy(() => import('@page/ReviewEdit'));
 const ReviewChatScreen = lazy(() => import('@page/ReviewChat'));
 const SettingScreen = lazy(() => import('@page/Setting'));
 
-// import LoginScreen from '@page/Login';
-// import HomeScreen from '@page/Home';
-// import DetailScreen from '@page/Detail';
-// import ArchiveScreen from '@page/Archive';
-// import AddWorryScreen from '@page/AddWorry';
-// import AddWorryCompleteScreen from '@page/AddWorryComplete';
-// import ReviewScreen from '@page/Review';
-// import ReviewEditScreen from '@page/ReviewEdit';
-// import ReviewChatScreen from '@page/ReviewChat';
-// import SettingScreen from '@page/Setting';
 import { WithAuthStackParamList, RootStackParamList } from '~/types/Navigation';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useSceneState } from '@context/ArchiveContext';

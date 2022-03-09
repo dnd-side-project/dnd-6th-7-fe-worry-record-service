@@ -1,42 +1,42 @@
 import React, { FC, memo, ReactElement, useCallback } from 'react';
+import { GestureResponderEvent, StyleSheet } from 'react-native';
 import styled from 'styled-components/native';
+import { useNavigation } from '@react-navigation/native';
 import { CheckBox } from 'react-native-elements/dist/checkbox/CheckBox';
-import { StyleSheet } from 'react-native';
-import { WorryTempProps } from '@components/Worries/Worries';
+
 import CustomeButton from '@components/Button';
+import GradientWrapper from '@components/GradientWrapper';
+import Modal from '@components/Modal';
 
 import IconCloseLock from '@assets/image/close_lock.svg';
 import IconUnchecked from '@assets/image/unchecked.svg';
 import Iconchecked from '@assets/image/checked.svg';
+import IconUnlock from '@assets/image/unlock.svg';
 
 import { theme } from '@lib/styles/palette';
 import { Header2_600, Header6_bold, Header6_normal } from '@lib/styles/_mixin';
-
-import GradientWrapper from '@components/GradientWrapper';
 import { getDate } from '@lib/util/date';
-import Modal from '../Modal';
-import IconUnlock from '@assets/image/unlock.svg';
-import { useNavigation } from '@react-navigation/native';
-import { useSceneState, useSceneDispatch } from '@context/ArchiveContext';
 
+import { useSceneState, useSceneDispatch } from '@context/ArchiveContext';
 import {
   CHANGE_MODE_REVIEW,
   SET_WORRY_ID,
   UNLOCK_WORRY,
-} from '~/context/reducer/archive';
+} from '@context/reducer/archive';
+
 import { ArchiveScreenNavigationProp } from '~/types/Navigation';
+import { WorryTempProps } from '~/types/Worry';
 
 // TODO: 동일한 12월 24일 걱정을 다중으로 삭제했을때는 가능하지만,
 // 일자가 다른 걱정을 삭제할때는 선택한 항목 중 가장 최근날짜가 알림에 나오도록하기
 // TODO: 알림 기능 만들기
 // TODO: 폰트 적용하기
 // TODO: immer 적용하기
-
 interface WorryProps {
   item: WorryTempProps;
   index: number;
   onLongPress: (item: WorryTempProps) => void;
-  onChangeCheckBox: (id: number) => void;
+  onChangeCheckBox: (e: GestureResponderEvent, worryId: number) => void;
 }
 
 const Worries: FC<WorryProps> = ({
@@ -50,6 +50,7 @@ const Worries: FC<WorryProps> = ({
   const navigation = useNavigation<ArchiveScreenNavigationProp>();
   const dispatch = useSceneDispatch();
 
+  // 각 태그에 알맞는 아이콘 지정하는 함수
   const getTagIcon = (): ReactElement | undefined => {
     switch (item.categoryName) {
       case '진로':
@@ -73,16 +74,22 @@ const Worries: FC<WorryProps> = ({
     }
   };
 
-  const onChangeCheck = useCallback((): void => {
-    console.log(tag, 'onChangeCheck');
-    onChangeCheckBox(item.worryId);
-  }, [item.worryId, onChangeCheckBox]);
+  // 체크 박스 선택시 이벤트 (삭제 할 체크 박스)
+  const onChangeCheck = useCallback(
+    (e: GestureResponderEvent): void => {
+      console.log(tag, 'onChangeCheck');
+      onChangeCheckBox(e, item.worryId);
+    },
+    [item.worryId, onChangeCheckBox],
+  );
 
+  // 잠금해제 버튼 클릭시 이벤트
   const onLongPressUnlock = useCallback((): void => {
     console.log(tag, 'onLongPressUnlock');
     onLongPress(item);
   }, [onLongPress, item]);
 
+  // 걱정 잠금해제 컨펌창 확인 버튼 클릭시 이벤트
   const onPressConfirm = (): void => {
     console.log(tag, 'onPressConfirm');
 

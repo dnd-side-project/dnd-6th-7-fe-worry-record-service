@@ -1,3 +1,5 @@
+import { WorryTempProps } from '~/types/Worry';
+
 export interface WorriesServiceClass {
   http: any;
   getWorries: (userId: any) => any;
@@ -18,6 +20,9 @@ export interface WorriesServiceClass {
   updateWorryReview: () => any;
 }
 
+// isChecked 값 설정하기 위한 함수
+const setIsChecked = (data: any) =>
+  data.map((item: WorryTempProps) => ({ ...item, isChecked: false }));
 export default class WorriesService implements WorriesServiceClass {
   http: any;
 
@@ -42,39 +47,57 @@ export default class WorriesService implements WorriesServiceClass {
   }
 
   async getRecentWorries(userId: any): Promise<any> {
-    return this.http.fetch(`/worries/recent?userId=${userId}`, {
+    const result = await this.http.fetch(`/worries/recent?userId=${userId}`, {
       method: 'GET',
     });
+    return setIsChecked(result);
   }
 
   async filterRecentWorries(queryString: any): Promise<any> {
-    return this.http.fetch(`/worries/recent/filter?${queryString}`, {
-      method: 'GET',
-    });
+    const result = await this.http.fetch(
+      `/worries/recent/filter?${queryString}`,
+      {
+        method: 'GET',
+      },
+    );
+    return setIsChecked(result);
   }
 
   async getPastWorries(userId: any): Promise<any> {
-    return this.http.fetch(`/worries/past?userId=${userId}`, {
+    const result = await this.http.fetch(`/worries/past?userId=${userId}`, {
       method: 'GET',
     });
+    return setIsChecked(result);
   }
 
   async filterPastWorries(queryString: any): Promise<any> {
-    return this.http.fetch(`/worries/past/filter?${queryString}`, {
-      method: 'GET',
-    });
+    const result = await this.http.fetch(
+      `/worries/past/filter?${queryString}`,
+      {
+        method: 'GET',
+      },
+    );
+    return setIsChecked(result);
   }
 
   async filterValuablePastWorries(userId: any): Promise<any> {
-    return this.http.fetch(`/worries/past/mean?userId=${userId}`, {
-      method: 'GET',
-    });
+    const result = await this.http.fetch(
+      `/worries/past/mean?userId=${userId}`,
+      {
+        method: 'GET',
+      },
+    );
+    return setIsChecked(result);
   }
 
   async filterInvaluablePastWorries(userId: any): Promise<any> {
-    return this.http.fetch(`/worries/past/meanless?userId=${userId}`, {
-      method: 'GET',
-    });
+    const result = await this.http.fetch(
+      `/worries/past/meanless?userId=${userId}`,
+      {
+        method: 'GET',
+      },
+    );
+    return setIsChecked(result);
   }
 
   // async lockWorry(id: any) {
