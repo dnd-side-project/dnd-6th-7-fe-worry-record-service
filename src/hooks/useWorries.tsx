@@ -13,10 +13,12 @@ const callUseQuery = (
   tabIndex: any,
   tagId: string | number[],
   api: any,
+  isUpdating: boolean,
   onSuccess?: (data: any) => void,
 ) => {
   return useCustomQuery(worriesKeys.worries(String(tabIndex), tagId), api, {
     onSuccess: onSuccess && onSuccess,
+    enabled: !isUpdating,
   });
 };
 
@@ -26,6 +28,7 @@ const fetchRecentWorries = (
   userId: string,
   eachTagId: string,
   tagId: string | number[],
+  isUpdating: boolean,
   onSuccess?: (data: any) => void,
 ) => {
   console.log('fetchRecentWorries');
@@ -35,6 +38,7 @@ const fetchRecentWorries = (
         tabIndex,
         tagId,
         worriesService.getRecentWorries(userId),
+        isUpdating,
         onSuccess,
       );
 
@@ -45,6 +49,7 @@ const fetchRecentWorries = (
         worriesService.filterRecentWorries(
           makeQueryString({ userId, categories: eachTagId }),
         ),
+        isUpdating,
         onSuccess,
       );
   }
@@ -56,6 +61,7 @@ const fetchPastWorries = (
   userId: string,
   eachTagId: string,
   tagId: string | number[],
+  isUpdating: boolean,
   onSuccess?: (data: any) => void,
 ) => {
   console.log('fetchPastWorries');
@@ -65,6 +71,7 @@ const fetchPastWorries = (
         tabIndex,
         tagId,
         worriesService.getPastWorries(userId),
+        isUpdating,
         onSuccess,
       );
     case '-2':
@@ -72,6 +79,7 @@ const fetchPastWorries = (
         tabIndex,
         tagId,
         worriesService.filterValuablePastWorries(userId),
+        isUpdating,
         onSuccess,
       );
 
@@ -80,6 +88,7 @@ const fetchPastWorries = (
         tabIndex,
         tagId,
         worriesService.filterInvaluablePastWorries(userId),
+        isUpdating,
         onSuccess,
       );
 
@@ -90,6 +99,7 @@ const fetchPastWorries = (
         worriesService.filterPastWorries(
           makeQueryString({ userId, categories: eachTagId }),
         ),
+        isUpdating,
         onSuccess,
       );
   }
@@ -101,11 +111,26 @@ export const useGetWorries = (
   userId: string,
   eachTagId: string,
   tagId: string | number[],
+  isUpdating: boolean,
   onSuccess?: (data: any) => void,
 ): any =>
   tabIndex === 0
-    ? fetchRecentWorries(tabIndex, userId, eachTagId, tagId, onSuccess)
-    : fetchPastWorries(tabIndex, userId, eachTagId, tagId, onSuccess);
+    ? fetchRecentWorries(
+        tabIndex,
+        userId,
+        eachTagId,
+        tagId,
+        isUpdating,
+        onSuccess,
+      )
+    : fetchPastWorries(
+        tabIndex,
+        userId,
+        eachTagId,
+        tagId,
+        isUpdating,
+        onSuccess,
+      );
 
 // 걱정 삭제하는 함수
 export const useDeleteWorry = (

@@ -19,6 +19,7 @@ import { worriesKeys } from '@lib/queries/keys';
 import { useSceneState, useSceneDispatch } from '@context/ArchiveContext';
 import {
   CHANGE_MODE_REVIEW,
+  CLICK_CHECKBOX,
   SET_WORRY_ID,
   UNLOCK_WORRY,
 } from '@context/reducer/archive';
@@ -48,6 +49,7 @@ const Worries: FC<WorryProps> = ({ item, index }: WorryProps) => {
     isUpdating,
     isUnlock,
     activeTagsId,
+    checkedWorries,
   } = useSceneState();
   const navigation = useNavigation<ArchiveScreenNavigationProp>();
   const dispatch = useSceneDispatch();
@@ -82,16 +84,19 @@ const Worries: FC<WorryProps> = ({ item, index }: WorryProps) => {
 
   // 걱정 선택 함수
   const onChangeCheckBox = useCallback(() => {
-    queryClient.setQueryData(
-      worriesKeys.worries(String(tabIndex), activeTagsId),
-      (previous: any) =>
-        previous.map((worry: WorryTempProps) =>
-          worry.worryId === item.worryId
-            ? { ...worry, isChecked: !worry.isChecked }
-            : worry,
-        ),
-    );
-  }, [queryClient, tabIndex, activeTagsId, item.worryId]);
+    // 로직 수정 필요
+    // queryClient.setQueryData(
+    //   worriesKeys.worries(String(tabIndex), activeTagsId),
+    //   (previous: any) =>
+    //     previous.map((worry: WorryTempProps) =>
+    //       worry.worryId === item.worryId
+    //         ? { ...worry, isChecked: !worry.isChecked }
+    //         : worry,
+    //     ),
+    // );
+    console.log(tag, 'onChangeCheckBox');
+    dispatch({ type: CLICK_CHECKBOX, values: { id: item.worryId } });
+  }, [item.worryId, dispatch]);
 
   // 잠금해제 버튼 클릭시 이벤트
   const onLongPressUnlock = useCallback((): void => {
@@ -118,7 +123,7 @@ const Worries: FC<WorryProps> = ({ item, index }: WorryProps) => {
           <CheckBoxWorry
             right
             size={20}
-            checked={item.isChecked}
+            checked={checkedWorries.includes(item.worryId)}
             onPress={onChangeCheckBox}
             containerStyle={styles.checkBoxContents}
             uncheckedIcon={<IconUnchecked />}

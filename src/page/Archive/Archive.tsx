@@ -33,12 +33,22 @@ const Archive: FC<ArchiveProps> = ({ navigation }) => {
   const tag = '[Archive]';
   const refRBSheet = useRef<RefRbProps>(null);
   const dispatch = useSceneDispatch();
-  const { isUpdating, activeTags, index, activeTagsId } = useSceneState();
+  const { isUpdating, activeTags, index, activeTagsId, checkedWorries } =
+    useSceneState();
 
   const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
 
   // 걱정 목록을 가져오는 함수
-  const queryData = useGetWorries(index, USER_ID, activeTags, activeTagsId);
+  const queryData = useGetWorries(
+    index,
+    USER_ID,
+    activeTags,
+    activeTagsId,
+    isUpdating,
+    (data: WorryTempProps[]) => {
+      console.log(data, 'rerender');
+    },
+  );
 
   // 걱정 삭제 함수
   const { mutate } = useDeleteWorry(index, activeTags, () => {
@@ -54,17 +64,34 @@ const Archive: FC<ArchiveProps> = ({ navigation }) => {
     [dispatch],
   );
 
+  console.log(queryData.data, 'queryData');
+
   // 걱정 삭제 개수 계산 함수
   const getCheckedNumber = useCallback((): number => {
     console.log(tag, 'getCheckedNumber');
-    return queryData.data.filter((item: WorryTempProps) => item.isChecked)
-      .length;
+    // if (queryData.data) {
+    //   return queryData.data?.filter((item: WorryTempProps) => item.isChecked)
+    //     .length;
+    // }
+    if (checkedWorries) {
+      return checkedWorries.length;
+    }
+    return 0;
   }, [queryData.data]);
 
   // 걱정 삭제 체크 되어 있는 것만 도출하는 함수
   const getIsChecked = useCallback((): WorryTempProps[] => {
     console.log(tag, 'getIsChecked');
-    return queryData.data.filter((item: WorryTempProps) => item.isChecked);
+    // if (queryData.data) {
+    //   return queryData.data?.filter((item: WorryTempProps) => item.isChecked);
+    // }
+
+    if (queryData.data) {
+      return queryData.data?.filter((item: WorryTempProps) =>
+        checkedWorries.includes(item.worryId),
+      );
+    }
+    return [];
   }, [queryData.data]);
 
   // 걱정 삭제 컨펌 오픈 함수

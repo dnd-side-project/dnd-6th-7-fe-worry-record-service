@@ -18,7 +18,7 @@ import { LogBox } from 'react-native';
 import Indicator from './components/Indicator';
 import Error from './components/Error';
 
-export const USER_ID = '56';
+export const USER_ID = '1';
 
 const baseURL = BASE_URL;
 const jwtToken = JWT_TOKEN;

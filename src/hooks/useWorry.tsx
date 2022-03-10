@@ -1,11 +1,14 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import React, { useState } from 'react';
 import { useQuery } from 'react-query';
-import { worriesService } from '~/App';
+import WorriesService from '@service/archive';
+import { httpClient } from '~/App';
 import { ChatData } from '~/constants/ChatData';
 import { worriesKeys } from '~/lib/queries/keys';
 import { makeQueryString } from '~/lib/util/helper';
 import { ReviewChats } from '~/page/ReviewChat/ReviewChat';
+
+const worriesService = new WorriesService(httpClient);
 
 const getWorryReviewChat = (worryId: string): Promise<any> => {
   return worriesService.getWorryReviewChat(worryId);
