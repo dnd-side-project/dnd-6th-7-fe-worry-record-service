@@ -1,4 +1,5 @@
 import axios from 'axios';
+import CheckErrorStatus from '~/constants/ErrorStatus';
 
 export default class HttpClient {
   client: any;
@@ -27,16 +28,10 @@ export default class HttpClient {
 
     try {
       const res = await this.client(req);
-      console.log(res, 'res');
       return res.data;
     } catch (err: any) {
-      if (err.response) {
-        const data = err.response.data;
-        const message =
-          data && data.message ? data.message : 'Something went wrong! 🤪';
-        throw new Error(message);
-      }
-      throw new Error('connection error');
+      const { status } = err.response;
+      throw new Error(CheckErrorStatus(status));
     }
   }
 }
