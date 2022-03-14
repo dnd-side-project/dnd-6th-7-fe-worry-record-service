@@ -14,6 +14,7 @@ export type State = {
   activeTags: string;
   activeTagsId: string | number[];
   worries: WorryTempProps[];
+  checkedWorries: number[];
   worryId: number;
   chatId: string;
   isDone: boolean;
@@ -23,7 +24,6 @@ export type State = {
 
 export type Action =
   | { type: 'INIT'; values?: { idx: number } }
-  | { type: 'INIT_WORRIES'; values?: { worries: WorryTempProps[] } }
   | { type: 'CHANGE_MODE'; values: { isUpdating: boolean } }
   | { type: 'CHANGE_MODE_REVIEW'; values: { isReviewing: boolean } }
   | { type: 'CHANGE_MODE_REALIZED'; values: { isRealized: boolean } }
@@ -36,7 +36,6 @@ export type Action =
   | { type: 'DELETE_WORRY' };
 
 export const INIT = 'INIT';
-export const INIT_WORRIES = 'INIT_WORRIES';
 export const CHANGE_MODE = 'CHANGE_MODE';
 export const CHANGE_MODE_REVIEW = 'CHANGE_MODE_REVIEW';
 export const CHANGE_MODE_REALIZED = 'CHANGE_MODE_REALIZED';
@@ -58,6 +57,7 @@ export const initialValue: State = {
   activeTags: '-1',
   activeTagsId: TAG_RECENT_DATA[0].id,
   worries: [],
+  checkedWorries: [],
   isDone: false,
   isUnlock: false,
   worryId: -1,
@@ -84,17 +84,7 @@ export default function ArchiveReducer(state: State, action: Action) {
         isDelete: false,
         worryId: -1,
         chatId: '1',
-      };
-
-    case INIT_WORRIES:
-      console.log(tag, INIT_WORRIES);
-
-      const worries = action.values?.worries || [];
-      // const initWorres = filterdTagDatas(idx, WORRIES_DATA);
-
-      return {
-        ...state,
-        worries,
+        checkedWorries: [],
       };
 
     case CHANGE_MODE:
@@ -102,6 +92,7 @@ export default function ArchiveReducer(state: State, action: Action) {
 
       return {
         ...state,
+        checkedWorries: [],
         isUpdating: action.values.isUpdating,
       };
 
@@ -128,12 +119,20 @@ export default function ArchiveReducer(state: State, action: Action) {
 
     case CLICK_CHECKBOX:
       console.log(tag, CLICK_CHECKBOX);
-      const index = state.worries.findIndex(
-        worry => worry.worryId === action.values.id,
-      );
-      state.worries[index].isChecked = !state.worries[index].isChecked;
+
+      if (state.checkedWorries.includes(action.values.id)) {
+        const checkedWorries = state.checkedWorries.filter(
+          num => num !== action.values.id,
+        );
+        return {
+          ...state,
+          checkedWorries,
+        };
+      }
+
       return {
         ...state,
+        checkedWorries: [...state.checkedWorries, action.values.id],
       };
 
     case FILTER_TAG:
@@ -143,7 +142,9 @@ export default function ArchiveReducer(state: State, action: Action) {
         ...state,
         activeTags: action.values.tag,
         activeTagsId: action.values.tagId,
+        isUpdating: false,
       };
+
     case SET_WORRY_ID:
       console.log(tag, SET_WORRY_ID);
 

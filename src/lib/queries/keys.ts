@@ -4,7 +4,8 @@ export const worriesKeys = {
     [...worriesKeys.all, idx, tagId] as const,
   // worry: (idx: string, tags: string, filters: string) =>
   //   [...worriesKeys.worries(idx, tags), { filters }] as const,
-  details: () => [...worriesKeys.all, 'detail'] as const,
+  details: (worryId: string) =>
+    [...worriesKeys.all, 'detail', worryId] as const,
   worry: (
     idx: string,
     tagId: string | number[],

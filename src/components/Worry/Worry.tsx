@@ -9,16 +9,15 @@ import GradientWrapper from '@components/GradientWrapper';
 import IconCloseLock from '@assets/image/close_lock.svg';
 import IconUnchecked from '@assets/image/unchecked.svg';
 import Iconchecked from '@assets/image/checked.svg';
-import IconUnlock from '@assets/image/unlock.svg';
 
 import { theme } from '@lib/styles/palette';
 import { Header2_600, Header6_bold, Header6_normal } from '@lib/styles/_mixin';
 import { getDate } from '@lib/util/date';
-import { worriesKeys } from '@lib/queries/keys';
 
 import { useSceneState, useSceneDispatch } from '@context/ArchiveContext';
 import {
   CHANGE_MODE_REVIEW,
+  CLICK_CHECKBOX,
   SET_WORRY_ID,
   UNLOCK_WORRY,
 } from '@context/reducer/archive';
@@ -27,8 +26,6 @@ import { ArchiveScreenNavigationProp } from '~/types/Navigation';
 import { WorryTempProps } from '~/types/Worry';
 
 import { useUnlockWorry } from '@hooks/useWorries';
-import { useQueryClient } from 'react-query';
-import Inform from '../Inform';
 
 // TODO: 동일한 12월 24일 걱정을 다중으로 삭제했을때는 가능하지만,
 // 일자가 다른 걱정을 삭제할때는 선택한 항목 중 가장 최근날짜가 알림에 나오도록하기
@@ -44,17 +41,14 @@ const Worries: FC<WorryProps> = ({ item, index }: WorryProps) => {
   const tag = '[Worries]';
   const {
     index: tabIndex,
-    activeTags,
-    isUpdating,
-    isUnlock,
     activeTagsId,
+    isUpdating,
+    checkedWorries,
+    worryId,
   } = useSceneState();
-  const navigation = useNavigation<ArchiveScreenNavigationProp>();
   const dispatch = useSceneDispatch();
 
-  const queryClient = useQueryClient();
-
-  const { mutate } = useUnlockWorry(tabIndex, activeTags);
+  const { mutate } = useUnlockWorry(worryId);
 
   // 각 태그에 알맞는 아이콘 지정하는 함수
   const getTagIcon = (): ReactElement | undefined => {
@@ -82,33 +76,33 @@ const Worries: FC<WorryProps> = ({ item, index }: WorryProps) => {
 
   // 걱정 선택 함수
   const onChangeCheckBox = useCallback(() => {
-    queryClient.setQueryData(
-      worriesKeys.worries(String(tabIndex), activeTagsId),
-      (previous: any) =>
-        previous.map((worry: WorryTempProps) =>
-          worry.worryId === item.worryId
-            ? { ...worry, isChecked: !worry.isChecked }
-            : worry,
-        ),
-    );
-  }, [queryClient, tabIndex, activeTagsId, item.worryId]);
+    // 로직 수정 필요
+    // queryClient.setQueryData(
+    //   worriesKeys.worries(String(tabIndex), activeTagsId),
+    //   (previous: any) =>
+    //     previous.map((worry: WorryTempProps) =>
+    //       worry.worryId === item.worryId
+    //         ? { ...worry, isChecked: !worry.isChecked }
+    //         : worry,
+    //     ),
+    // );
+    console.log(tag, 'onChangeCheckBox');
+    dispatch({ type: CLICK_CHECKBOX, values: { id: item.worryId } });
+  }, [item.worryId, dispatch]);
 
   // 잠금해제 버튼 클릭시 이벤트
   const onLongPressUnlock = useCallback((): void => {
     console.log(tag, 'onLongPressUnlock');
+    dispatch({
+      type: SET_WORRY_ID,
+      values: { worryId: item.worryId },
+    });
+    dispatch({
+      type: UNLOCK_WORRY,
+      values: { isUnlock: true },
+    });
     mutate(String(item.worryId));
-    dispatch({ type: UNLOCK_WORRY, values: { isUnlock: true } });
   }, [dispatch, mutate, item.worryId]);
-
-  // 걱정 잠금해제 컨펌창 확인 버튼 클릭시 이벤트
-  const onPressConfirm = (): void => {
-    console.log(tag, 'onPressConfirm');
-
-    dispatch({ type: UNLOCK_WORRY, values: { isUnlock: false } });
-    dispatch({ type: CHANGE_MODE_REVIEW, values: { isReviewing: true } });
-    dispatch({ type: SET_WORRY_ID, values: { worryId: item.worryId } });
-    navigation.navigate('ReviewChat');
-  };
 
   return (
     <CardWrapper index={index}>
@@ -118,7 +112,7 @@ const Worries: FC<WorryProps> = ({ item, index }: WorryProps) => {
           <CheckBoxWorry
             right
             size={20}
-            checked={item.isChecked}
+            checked={checkedWorries.includes(item.worryId)}
             onPress={onChangeCheckBox}
             containerStyle={styles.checkBoxContents}
             uncheckedIcon={<IconUnchecked />}
@@ -170,17 +164,6 @@ const Worries: FC<WorryProps> = ({ item, index }: WorryProps) => {
           </ContentsWrapper>
         </CardConent>
       </GradientWrapper>
-      <Inform
-        visible={isUnlock}
-        onPressConfirm={onPressConfirm}
-        icon={<IconUnlock />}
-        mainTitle="걱정은 어떻게 되었나요?"
-        description={`${getDate(item.worryStartDate, 'MM')}월 ${getDate(
-          item.worryStartDate,
-          'dd',
-        )}일 #${item.categoryName} 걱정이`}
-        subTitle="잠금 해제되었어요!"
-      />
     </CardWrapper>
   );
 };

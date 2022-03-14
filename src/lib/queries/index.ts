@@ -15,6 +15,7 @@ export function useCustomQuery(
     ...options,
     refetchOnWindowFocus: false,
     suspense: true,
+    useErrorBoundary: true,
     structuralSharing: false,
     notifyOnChangeProps: 'tracked',
   });

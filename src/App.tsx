@@ -18,13 +18,10 @@ import { LogBox } from 'react-native';
 import Indicator from './components/Indicator';
 import Error from './components/Error';
 
-export const USER_ID = '56';
+export const USER_ID = '1';
 
-const baseURL = BASE_URL;
-const jwtToken = JWT_TOKEN;
 const authErrorEventBus = new AuthErrorEventBus();
-export const httpClient = new HttpClient(baseURL, jwtToken);
-
+export const httpClient = new HttpClient(BASE_URL, JWT_TOKEN);
 export const authService = new AuthService(httpClient);
 
 const queryClient = new QueryClient();

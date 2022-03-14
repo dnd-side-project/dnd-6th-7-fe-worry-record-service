@@ -15,20 +15,11 @@ import { CHANGE_MODE, FILTER_TAG } from '@context/reducer/archive';
 
 import { WorryTempProps } from '~/types/Worry';
 
-import IconDelete from '@assets/image/delete.svg';
-import Inform from '../Inform';
-
 export interface WorriesProps {
   worries: WorryTempProps[];
-  onPressConfirm: () => void;
-  openDeleteModal: boolean;
 }
 
-const Worries: FC<WorriesProps> = ({
-  worries,
-  openDeleteModal,
-  onPressConfirm,
-}) => {
+const Worries: FC<WorriesProps> = ({ worries }) => {
   const tag = '[Worries]';
 
   const { isUpdating, tags, activeTags, index } = useSceneState();
@@ -104,14 +95,6 @@ const Worries: FC<WorriesProps> = ({
         }) => <Worry key={item.worryId} item={item} index={idx} />}
         numColumns={2}
         keyExtractor={(item, index) => String(index)}
-      />
-      <Inform
-        visible={openDeleteModal}
-        onPressConfirm={onPressConfirm}
-        icon={<IconDelete />}
-        mainTitle="걱정은 쏙!"
-        description={'걱정이'}
-        subTitle="삭제 되었어요!"
       />
     </WorriesWrapper>
   );
