@@ -44,11 +44,15 @@ const Worries: FC<WorryProps> = ({ item, index }: WorryProps) => {
     activeTagsId,
     isUpdating,
     checkedWorries,
-    worryId,
   } = useSceneState();
   const dispatch = useSceneDispatch();
 
-  const { mutate } = useUnlockWorry(worryId);
+  const { mutate } = useUnlockWorry(tabIndex, activeTagsId, () => {
+    dispatch({
+      type: UNLOCK_WORRY,
+      values: { isUnlock: true },
+    });
+  });
 
   // 각 태그에 알맞는 아이콘 지정하는 함수
   const getTagIcon = (): ReactElement | undefined => {
@@ -96,10 +100,6 @@ const Worries: FC<WorryProps> = ({ item, index }: WorryProps) => {
     dispatch({
       type: SET_WORRY_ID,
       values: { worryId: item.worryId },
-    });
-    dispatch({
-      type: UNLOCK_WORRY,
-      values: { isUnlock: true },
     });
     mutate(String(item.worryId));
   }, [dispatch, mutate, item.worryId]);

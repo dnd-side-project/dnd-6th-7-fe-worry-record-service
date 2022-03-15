@@ -18,7 +18,10 @@ export default class AuthService {
   async login(token: any) {
     return this.http.fetch('/auth/login', {
       method: 'POST',
-      body: JSON.stringify({ token }),
+      headers: {
+        oauthToken: token,
+        deviceToken: '',
+      },
     });
   }
 

@@ -12,7 +12,6 @@ const Login: FC<LoginProps> = ({ navigation }) => {
       <IconWrapper>
         <IconLogin height={'100%'} />
       </IconWrapper>
-
       <LoginCP navigation={navigation} />
     </AppLayout>
   );

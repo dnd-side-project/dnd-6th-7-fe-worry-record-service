@@ -76,7 +76,7 @@ const Archive: FC<ArchiveProps> = ({ navigation }) => {
   };
 
   // 걱정 삭제 함수
-  const { mutate } = useDeleteWorry(() => {
+  const { mutate } = useDeleteWorry(index, activeTagsId, () => {
     console.log('삭제 완료');
     setOpenDeleteModal(true);
     onPressCancel();
@@ -171,12 +171,12 @@ const Archive: FC<ArchiveProps> = ({ navigation }) => {
   // 걱정 잠금해제 컨펌창 확인 버튼 클릭시 이벤트
   const onPressUnlockConfirm = useCallback((): void => {
     console.log(tag, 'onPressConfirm');
-    // refetch();
     dispatch({ type: UNLOCK_WORRY, values: { isUnlock: false } });
     dispatch({ type: CHANGE_MODE_REVIEW, values: { isReviewing: true } });
     dispatch({ type: SET_WORRY_ID, values: { worryId: worryId } });
-    navigation.navigate('ReviewChat');
-  }, [dispatch, worryId, navigation, refetch]);
+    refetch();
+    // navigation.navigate('ReviewChat');
+  }, [refetch, dispatch, worryId, navigation]);
 
   useEffect(() => {
     dispatch({ type: INIT });

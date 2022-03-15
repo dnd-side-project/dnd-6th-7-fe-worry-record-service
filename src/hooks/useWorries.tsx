@@ -134,13 +134,21 @@ export const useGetWorries = (
       );
 
 // 걱정 삭제하는 함수
-export const useDeleteWorry = (onSuccess: (data: any) => void): any => {
+export const useDeleteWorry = (
+  tabIndex: number,
+  tagId: string | number[],
+  onSuccess: (data: any) => void,
+): any => {
+  const queryClient = useQueryClient();
   return useCustomMutation(
     (worryId: string) => {
       worriesService.deleteWorry(worryId);
     },
     (result: any) => {
       onSuccess(result);
+      return queryClient.invalidateQueries({
+        queryKey: worriesKeys.worries(String(tabIndex), tagId),
+      });
     },
     (error: any) => {
       console.log(error, '에러');
@@ -150,20 +158,20 @@ export const useDeleteWorry = (onSuccess: (data: any) => void): any => {
 
 // 걱정 잠금헤제하는 함수
 export const useUnlockWorry = (
-  worryId: number,
-  // tagId: string | number[],
+  tabIndex: number,
+  tagId: string | number[],
+  onSuccess: (data: any) => void,
 ): any => {
   const queryClient = useQueryClient();
-  let id = '';
   return useCustomMutation(
     (worryId: string) => {
-      id = worryId;
       worriesService.unlockWorry(worryId);
     },
     (result: any) => {
-      console.log('잠금 해제 성공', id);
-      queryClient.invalidateQueries({
-        queryKey: worriesKeys.details(String(id)),
+      console.log('잠금 해제 성공', tagId);
+      onSuccess(result);
+      return queryClient.invalidateQueries({
+        queryKey: worriesKeys.worries(String(tabIndex), tagId),
       });
     },
     (error: any) => {

@@ -39,21 +39,21 @@ const App: FC = props => {
   return (
     <ThemeProvider theme={theme}>
       <NavigationContainer>
-        <AuthProvider
-          props={props}
-          authService={authService}
-          authErrorEventBus={authErrorEventBus}
-        >
-          <ArchiveProvider>
+        <Suspense fallback={<Indicator />}>
+          <ErrorBoundary FallbackComponent={Error}>
             <QueryClientProvider client={queryClient}>
-              <Suspense fallback={<Indicator />}>
-                <ErrorBoundary FallbackComponent={Error}>
+              <AuthProvider
+                props={props}
+                authService={authService}
+                authErrorEventBus={authErrorEventBus}
+              >
+                <ArchiveProvider>
                   <AfterLogin />
-                </ErrorBoundary>
-              </Suspense>
+                </ArchiveProvider>
+              </AuthProvider>
             </QueryClientProvider>
-          </ArchiveProvider>
-        </AuthProvider>
+          </ErrorBoundary>
+        </Suspense>
       </NavigationContainer>
     </ThemeProvider>
   );

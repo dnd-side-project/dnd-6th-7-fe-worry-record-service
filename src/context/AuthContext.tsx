@@ -10,6 +10,7 @@ import {
   useState,
 } from 'react';
 import { BeforeLogin } from '@page/Navigation';
+import { useLogin } from '~/hooks/useLogin';
 
 const AuthContext = createContext({});
 
@@ -28,7 +29,7 @@ export function AuthProvider({
   authErrorEventBus,
   children,
 }: Props): any {
-  const [user, setUser] = useState<any>(true);
+  const [user, setUser] = useState<any>(false);
 
   useImperativeHandle(tokenRef, () => (user ? user.token : undefined));
 
@@ -45,6 +46,11 @@ export function AuthProvider({
   // 	authService.me().then(setUser).catch(console.error);
   // }, [authService]);
 
+  const mutation = useLogin(data => {
+    console.log(data);
+    setUser(true);
+  });
+
   const signUp = useCallback(
     async (username, password, name, email, url) =>
       authService
@@ -54,9 +60,8 @@ export function AuthProvider({
   );
 
   const logIn = useCallback(
-    async (username, password) =>
-      authService.login(username, password).then((user: any) => setUser(user)),
-    [authService],
+    async kakaoToken => mutation.mutate(kakaoToken),
+    [mutation],
   );
 
   const logout = useCallback(
