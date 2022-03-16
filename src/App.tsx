@@ -19,6 +19,7 @@ import Indicator from './components/Indicator';
 import Error from './components/Error';
 
 export const USER_ID = '1';
+export const TEMP_DEVICE_TOKEN = '123456789';
 
 const authErrorEventBus = new AuthErrorEventBus();
 export const httpClient = new HttpClient(BASE_URL, JWT_TOKEN);

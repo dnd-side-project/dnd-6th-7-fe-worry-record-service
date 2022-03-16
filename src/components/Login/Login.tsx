@@ -20,7 +20,7 @@ import IconKakao from '@assets/image/kakaotalk.svg';
 import IconApple from '@assets/image/apple.svg';
 
 import { useAuth } from '@context/AuthContext';
-
+import { TEMP_DEVICE_TOKEN } from '~/App';
 import {
   responsiveWidth as wp,
   responsiveHeight as hp,
@@ -36,9 +36,8 @@ const Login: FC<LoginProps> = props => {
 
   const signInWithKakao = async (): Promise<void> => {
     try {
-      const token: KakaoOAuthToken = await login();
-      console.log(token, 'token');
-      authLogin(token);
+      const result: KakaoOAuthToken = await login();
+      authLogin(result.accessToken, TEMP_DEVICE_TOKEN);
     } catch (err) {
       console.log(err);
     }

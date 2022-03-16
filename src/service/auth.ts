@@ -15,12 +15,12 @@ export default class AuthService {
     });
   }
 
-  async login(token: any) {
-    return this.http.fetch('/auth/login', {
+  async login(oauthToken: any, deviceToken: any) {
+    return this.http.fetch('/auth/kakao', {
       method: 'POST',
       headers: {
-        oauthToken: token,
-        deviceToken: '',
+        oauthToken,
+        deviceToken,
       },
     });
   }

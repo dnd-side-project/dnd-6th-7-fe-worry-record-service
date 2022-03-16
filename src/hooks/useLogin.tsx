@@ -1,15 +1,15 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { useCustomMutation } from '@lib/queries';
-import { httpClient } from '~/App';
-import AuthService from '@service/auth';
 import { KakaoOAuthToken } from '@react-native-seoul/kakao-login';
+import { authService, httpClient } from '~/App';
+import Storage from '@lib/storage';
 
-const authService = new AuthService(httpClient);
 const JWT_EXPIRY_TIME = 24 * 3600 * 1000;
+const storage = new Storage();
 
 const setRefreshToken = (result: any) => {
-  // httpClient.client.headers['at-jwt-access-token'] = result.accessToken;
-  // localStorage.setItem('jwt_refreshToken', result.refreshToken);
+  httpClient.client.headers['at-jwt-access-token'] = result.accessToken;
+  storage.set('jwt_refreshToken', result.refreshToken);
   // setTimeout(useSilentRefresh, JWT_EXPIRY_TIME - 60000);
 };
 
@@ -34,9 +34,9 @@ export const useLogin = (onSuccess: (data: any) => void): any => {
   return useCustomMutation(
     (kakaoToken: KakaoOAuthToken) => authService.login(kakaoToken),
     (result: any) => {
-      setRefreshToken(result);
-
-      onSuccess(result);
+      console.log(result, '로그인 성공');
+      // setRefreshToken(result);
+      // onSuccess(result);
     },
     (error: any) => {
       console.log(error, '에러');

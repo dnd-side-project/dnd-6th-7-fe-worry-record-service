@@ -9,7 +9,7 @@ export default class HttpClient {
       baseURL: baseURL,
       headers: {
         'Content-Type': 'application/json',
-        'at-jwt-access-token': jwtToken,
+        // 'at-jwt-access-token': jwtToken,
       },
       withCredentials: true,
     });
