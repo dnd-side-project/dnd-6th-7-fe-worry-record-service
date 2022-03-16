@@ -175,7 +175,7 @@ const Archive: FC<ArchiveProps> = ({ navigation }) => {
     dispatch({ type: CHANGE_MODE_REVIEW, values: { isReviewing: true } });
     dispatch({ type: SET_WORRY_ID, values: { worryId: worryId } });
     refetch();
-    // navigation.navigate('ReviewChat');
+    navigation.navigate('ReviewChat');
   }, [refetch, dispatch, worryId, navigation]);
 
   useEffect(() => {
@@ -278,7 +278,7 @@ const Archive: FC<ArchiveProps> = ({ navigation }) => {
   );
 };
 
-export default memo(Archive);
+export default Archive;
 
 const ButtonWrapper = styled.View`
   margin-bottom: 20px;

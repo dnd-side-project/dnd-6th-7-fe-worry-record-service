@@ -5,7 +5,7 @@ export default class HttpClient {
   client: any;
 
   constructor(baseURL: any, jwtToken: any) {
-    this.client = axios.create({
+    const instance = axios.create({
       baseURL: baseURL,
       headers: {
         'Content-Type': 'application/json',
@@ -13,6 +13,38 @@ export default class HttpClient {
       },
       withCredentials: true,
     });
+
+    this.client = this.setInterceptors(instance);
+  }
+
+  setInterceptors(instance: any) {
+    // Add a request interceptor
+    instance.interceptors.request.use(
+      function (config: any) {
+        // Do something before request is sent
+        return config;
+      },
+      function (error: any) {
+        // Do something with request error
+        return Promise.reject(error);
+      },
+    );
+
+    // Add a response interceptor
+    instance.interceptors.response.use(
+      function (response: any) {
+        // Any status code that lie within the range of 2xx cause this function to trigger
+        // Do something with response data
+        return response;
+      },
+      function (error: any) {
+        // Any status codes that falls outside the range of 2xx cause this function to trigger
+        // Do something with response error
+        return Promise.reject(error);
+      },
+    );
+
+    return instance;
   }
 
   async fetch(url: any, options: { body: any; method: any; headers: any }) {

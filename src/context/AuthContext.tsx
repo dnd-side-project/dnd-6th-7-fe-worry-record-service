@@ -29,9 +29,9 @@ export function AuthProvider({
   authErrorEventBus,
   children,
 }: Props): any {
-  const [user, setUser] = useState<any>(false);
+  const [user, setUser] = useState<any>(true);
 
-  useImperativeHandle(tokenRef, () => (user ? user.token : undefined));
+  // useImperativeHandle(tokenRef, () => (user ? user.token : undefined));
 
   //TODO: 추후 작업필요 (Auth Error 발생시 반응하는 API)
   // useEffect(() => {

@@ -25,6 +25,16 @@ export default class AuthService {
     });
   }
 
+  async silentRefresh(refreshToken: any) {
+    return this.http.fetch('/auth/refresh', {
+      method: 'POST',
+      headers: {
+        oauthToken: refreshToken,
+        deviceToken: '',
+      },
+    });
+  }
+
   async me() {
     return this.http.fetch('/auth/me', {
       method: 'GET',

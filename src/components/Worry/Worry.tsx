@@ -37,7 +37,7 @@ interface WorryProps {
   index: number;
 }
 
-const Worries: FC<WorryProps> = ({ item, index }: WorryProps) => {
+const Worry: FC<WorryProps> = ({ item, index }: WorryProps) => {
   const tag = '[Worries]';
   const {
     index: tabIndex,
@@ -168,7 +168,7 @@ const Worries: FC<WorryProps> = ({ item, index }: WorryProps) => {
   );
 };
 
-export default memo(Worries);
+export default memo(Worry);
 
 const styles = StyleSheet.create({
   cardContents: {

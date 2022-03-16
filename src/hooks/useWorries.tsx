@@ -146,9 +146,9 @@ export const useDeleteWorry = (
     },
     (result: any) => {
       onSuccess(result);
-      return queryClient.invalidateQueries({
-        queryKey: worriesKeys.worries(String(tabIndex), tagId),
-      });
+      return queryClient.invalidateQueries(
+        worriesKeys.worries(String(tabIndex), tagId),
+      );
     },
     (error: any) => {
       console.log(error, '에러');
