@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 /* eslint-disable no-case-declarations */
-import { TAG_DATA } from '~/constants/WorriesData';
-import { WorryTempProps } from '@components/Worries/Worries';
+import { TAG_RECENT_DATA, TAG_PAST_DATA } from '~/constants/WorriesData';
+import { WorryTempProps } from '~/types/Worry';
 
 const tag = '[ArchiveReducer]';
 
@@ -12,7 +12,9 @@ export type State = {
   isRealized: boolean;
   tags: WorryTempProps[];
   activeTags: string;
+  activeTagsId: string | number[];
   worries: WorryTempProps[];
+  checkedWorries: number[];
   worryId: number;
   chatId: string;
   isDone: boolean;
@@ -27,7 +29,7 @@ export type Action =
   | { type: 'CHANGE_MODE_REVIEW'; values: { isReviewing: boolean } }
   | { type: 'CHANGE_MODE_REALIZED'; values: { isRealized: boolean } }
   | { type: 'CLICK_CHECKBOX'; values: { id: number } }
-  | { type: 'FILTER_TAG'; values: { tag: string } }
+  | { type: 'FILTER_TAG'; values: { tag: string; tagId: string | number[] } }
   | { type: 'SET_WORRY_ID'; values: { worryId: number } }
   | { type: 'SET_CHAT_ID'; values: { chatId: string } }
   | { type: 'UNLOCK_WORRY'; values: { isUnlock: boolean } }
@@ -53,20 +55,17 @@ export const initialValue: State = {
   isReviewing: false,
   isRealized: false,
   isUpdating: false,
-  tags: TAG_DATA,
+  tags: TAG_RECENT_DATA,
   activeTags: '-1',
+  activeTagsId: TAG_RECENT_DATA[0].id,
   worries: [],
+  checkedWorries: [],
   isDone: false,
   isUnlock: false,
   worryId: -1,
   chatId: '1',
   isDelete: false,
 };
-
-// const filterdTagDatas = (idx: number, worries: WorryProps[]) =>
-//   idx === 0
-//     ? worries.filter(worry => !worry.isDone)
-//     : worries.filter(worry => worry.isDone);
 
 export default function ArchiveReducer(state: State, action: Action) {
   switch (action.type) {
@@ -77,8 +76,9 @@ export default function ArchiveReducer(state: State, action: Action) {
       return {
         ...state,
         index: idx,
-        tags: TAG_DATA,
+        tags: idx === 0 ? TAG_RECENT_DATA : TAG_PAST_DATA,
         activeTags: '-1',
+        activeTagsId: idx === 0 ? TAG_RECENT_DATA[0].id : TAG_PAST_DATA[0].id,
         isUpdating: false,
         isReviewing: false,
         isUnlock: false,
@@ -86,6 +86,7 @@ export default function ArchiveReducer(state: State, action: Action) {
         isDelete: false,
         worryId: -1,
         chatId: '1',
+        checkedWorries: [],
       };
 
     case INIT_WORRIES:
@@ -130,12 +131,20 @@ export default function ArchiveReducer(state: State, action: Action) {
 
     case CLICK_CHECKBOX:
       console.log(tag, CLICK_CHECKBOX);
-      const index = state.worries.findIndex(
-        worry => worry.worryId === action.values.id,
-      );
-      state.worries[index].isChecked = !state.worries[index].isChecked;
+
+      if (state.checkedWorries.includes(action.values.id)) {
+        const checkedWorries = state.checkedWorries.filter(
+          num => num !== action.values.id,
+        );
+        return {
+          ...state,
+          checkedWorries,
+        };
+      }
+
       return {
         ...state,
+        checkedWorries: [...state.checkedWorries, action.values.id],
       };
 
     case FILTER_TAG:
@@ -144,6 +153,7 @@ export default function ArchiveReducer(state: State, action: Action) {
       return {
         ...state,
         activeTags: action.values.tag,
+        activeTagsId: action.values.tagId,
       };
     case SET_WORRY_ID:
       console.log(tag, SET_WORRY_ID);

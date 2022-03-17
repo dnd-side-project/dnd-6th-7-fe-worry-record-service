@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {
   FC,
+  memo,
   ReactElement,
   useCallback,
   useEffect,
@@ -9,84 +10,91 @@ import React, {
 } from 'react';
 import styled from 'styled-components/native';
 
+import { USER_ID } from '~/App';
+
 import CustomeButton from '@components/Button';
 import CustomeTabs from '@components/Tabs';
 import AppLayout from '@components/AppLayout';
 import Worries from '@components/Worries';
-import { WorryTempProps } from '@components/Worries/Worries';
-
-import { getDate } from '@lib/util/date';
-import { ArchiveProps } from '~/types/Navigation';
 
 import { useSceneState, useSceneDispatch } from '@context/ArchiveContext';
-import { INIT, FILTER_TAG } from '@context/reducer/archive';
+import { INIT } from '@context/reducer/archive';
+
+import { ArchiveProps } from '~/types/Navigation';
+import { WorryTempProps } from '~/types/Worry';
 
 import { ConfirmAlert, RefRbProps } from '../Navigation';
-import { useGetWorries, useDeleteWorry } from '~/hooks/useWorries';
-import { USER_ID } from '~/App';
+
+import { useGetWorries, useDeleteWorry } from '@hooks/useWorries';
+
+import { getDate } from '@lib/util/date';
 
 const Archive: FC<ArchiveProps> = ({ navigation }) => {
   const tag = '[Archive]';
-
   const refRBSheet = useRef<RefRbProps>(null);
   const dispatch = useSceneDispatch();
-  const { isUpdating, activeTags, index } = useSceneState();
+  const { isUpdating, activeTags, index, activeTagsId, checkedWorries } =
+    useSceneState();
 
-  const [worries, setWorriess] = useState<WorryTempProps[]>([]);
   const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
 
-  const { isLoading, isError } = useGetWorries(
+  // 걱정 목록을 가져오는 함수
+  const queryData = useGetWorries(
     index,
     USER_ID,
     activeTags,
-    (item: WorryTempProps[]) => setWorriess(item.length ? item : []),
+    activeTagsId,
+    isUpdating,
+    (data: WorryTempProps[]) => {
+      console.log(data, 'rerender');
+    },
   );
 
+  // 걱정 삭제 함수
   const { mutate } = useDeleteWorry(index, activeTags, () => {
     setOpenDeleteModal(true);
   });
 
-  const onChangeCheckBox = useCallback(
-    (worryId: number) => {
-      console.log(tag, 'onChangeCheckBox');
-
-      setWorriess((previous: any) =>
-        previous.map((worry: WorryTempProps) =>
-          worry.worryId === worryId
-            ? { ...worry, isChecked: !worry.isChecked }
-            : worry,
-        ),
-      );
-    },
-    [setWorriess],
-  );
-
-  const onPressTag = useCallback(
-    (tagId: number) => {
-      console.log(tag, tagId, 'onPressTag');
-      dispatch({ type: FILTER_TAG, values: { tag: String(tagId) } });
-    },
-    [dispatch],
-  );
-
+  // 걱정 탭 함수
   const onPressTabs = useCallback(
     (tabId: number): void => {
-      console.log(tag, 'onPressTabs');
+      console.log(tag, tabId, 'onPressTabs');
       dispatch({ type: INIT, values: { idx: tabId } });
     },
     [dispatch],
   );
 
+  console.log(queryData.data, 'queryData');
+
+  // 걱정 삭제 개수 계산 함수
   const getCheckedNumber = useCallback((): number => {
     console.log(tag, 'getCheckedNumber');
-    return worries.filter((item: WorryTempProps) => item.isChecked).length;
-  }, [worries]);
+    // if (queryData.data) {
+    //   return queryData.data?.filter((item: WorryTempProps) => item.isChecked)
+    //     .length;
+    // }
+    if (checkedWorries) {
+      return checkedWorries.length;
+    }
+    return 0;
+  }, [queryData.data]);
 
+  // 걱정 삭제 체크 되어 있는 것만 도출하는 함수
   const getIsChecked = useCallback((): WorryTempProps[] => {
     console.log(tag, 'getIsChecked');
-    return worries.filter((item: WorryTempProps) => item.isChecked);
-  }, [worries]);
+    // if (queryData.data) {
+    //   return queryData.data?.filter((item: WorryTempProps) => item.isChecked);
+    // }
 
+    if (queryData.data) {
+      return queryData.data?.filter((item: WorryTempProps) =>
+        checkedWorries.includes(item.worryId),
+      );
+    }
+    return [];
+  }, [queryData.data]);
+
+  // 걱정 삭제 컨펌 오픈 함수
   const onPressOpenDrawer = useCallback((): void => {
     console.log(tag, 'onPressOpenDrawer');
     if (refRBSheet.current) {
@@ -94,10 +102,9 @@ const Archive: FC<ArchiveProps> = ({ navigation }) => {
     }
   }, [refRBSheet]);
 
-  const onPressDelete = useCallback((): void => {
-    console.log(tag, 'onPressDelete');
-    const filterd = worries.filter((item: WorryTempProps) => item.isChecked);
-    console.log(worries, 'filterd', filterd);
+  // 걱정 삭제 쿼리 만드는 함수
+  const makeQueryDelete = (filterd: WorryTempProps[]): string => {
+    console.log(tag, 'makeQueryDelete');
     const result = filterd
       .map((item: WorryTempProps, idx: number) => {
         if (idx === 0) {
@@ -106,10 +113,21 @@ const Archive: FC<ArchiveProps> = ({ navigation }) => {
         return `&worryIds=${item.worryId}`;
       })
       .join('');
-    mutate(result);
-    onPressCancel();
-  }, [worries, mutate]);
+    return result;
+  };
 
+  // 걱정 삭제 함수
+  const onPressDelete = useCallback((): void => {
+    console.log(tag, 'onPressDelete');
+
+    const filterdData = getIsChecked();
+    const query = makeQueryDelete(filterdData);
+
+    mutate(query);
+    onPressCancel();
+  }, [queryData.data, mutate]);
+
+  // 걱정 컨펌 창 숨김 함수
   const onPressCancel = (): void => {
     console.log(tag, 'onPressCancel');
     if (refRBSheet.current) {
@@ -124,29 +142,20 @@ const Archive: FC<ArchiveProps> = ({ navigation }) => {
 
   useEffect(() => {
     dispatch({ type: INIT });
-    // dispatch({ type: FILTER_TAG, values: { tag: '모든걱정' } });
   }, []);
 
   const firstRoute = (): ReactElement => (
     <Worries
       onPressConfirm={onPressConfirm}
       openDeleteModal={openDeleteModal}
-      isLoading={isLoading}
-      isError={isError}
-      worries={worries}
-      onChangeCheckBox={onChangeCheckBox}
-      onPressTag={onPressTag}
+      worries={queryData.data}
     />
   );
   const secondRoute = (): ReactElement => (
     <Worries
       onPressConfirm={onPressConfirm}
       openDeleteModal={openDeleteModal}
-      isLoading={isLoading}
-      isError={isError}
-      worries={worries}
-      onChangeCheckBox={onChangeCheckBox}
-      onPressTag={onPressTag}
+      worries={queryData.data}
     />
   );
 
@@ -218,7 +227,7 @@ const Archive: FC<ArchiveProps> = ({ navigation }) => {
   );
 };
 
-export default Archive;
+export default memo(Archive);
 
 const ButtonWrapper = styled.View`
   margin-bottom: 20px;

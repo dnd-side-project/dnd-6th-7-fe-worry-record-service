@@ -1,167 +1,173 @@
 /* eslint-disable react-hooks/rules-of-hooks */
+import { useQueryClient } from 'react-query';
+import { useCustomMutation, useCustomQuery } from '@lib/queries';
+import { worriesKeys } from '@lib/queries/keys';
+import { makeQueryString } from '@lib/util/helper';
+import WorriesService from '@service/archive';
+import { httpClient } from '~/App';
 
-import { useMutation, useQuery, useQueryClient } from 'react-query';
-import { worriesService } from '~/App';
-import { WorryTempProps } from '~/components/Worries/Worries';
-import { worriesKeys } from '~/lib/queries/keys';
-import { makeQueryString } from '~/lib/util/helper';
+const worriesService = new WorriesService(httpClient);
 
-const getRecentWorries = (userId: string): Promise<any> => {
-  return worriesService.getRecentWorries(userId);
+// custom hook을 사용하여 쿼리를 실행
+const callUseQuery = (
+  tabIndex: any,
+  tagId: string | number[],
+  api: any,
+  isUpdating: boolean,
+  onSuccess?: (data: any) => void,
+) => {
+  return useCustomQuery(worriesKeys.worries(String(tabIndex), tagId), api, {
+    onSuccess: onSuccess && onSuccess,
+    enabled: !isUpdating,
+  });
 };
 
-const getPastWorries = (userId: string): Promise<any> => {
-  return worriesService.getPastWorries(userId);
-};
-
-const filterRecentWorries = (queryString: string): Promise<any> => {
-  return worriesService.filterRecentWorries(queryString);
-};
-
-const filterPastWorries = (queryString: string): Promise<any> => {
-  return worriesService.filterPastWorries(queryString);
-};
-
-const filterValuablePastWorries = (userId: string): Promise<any> => {
-  return worriesService.filterValuablePastWorries(userId);
-};
-
-const filterInvaluablePastWorries = (userId: string): Promise<any> => {
-  return worriesService.filterInvaluablePastWorries(userId);
-};
-
-const deleteWorry = (worryId: string): Promise<any> => {
-  console.log('deleteWorry', worryId);
-  return worriesService.deleteWorry(worryId);
-};
-
-const unlockWorry = (worryId: string): Promise<any> => {
-  return worriesService.unlockWorry(worryId);
-};
-
-const setIsChecked = (data: any) =>
-  data.map((item: WorryTempProps) => ({ ...item, isChecked: false }));
-
-export const useGetWorries = (
+// 요즘 걱정 목록을 가져오는 함수
+const fetchRecentWorries = (
   tabIndex: number,
   userId: string,
-  categoryId: string,
-  onSuccess: (data: any) => void,
-): any => {
-  if (tabIndex === 0) {
-    // 요즘 걱정 데이터 받아오기
-    switch (categoryId) {
-      case '-1':
-        return useQuery(
-          worriesKeys.worries(String(tabIndex), categoryId),
-          () => getRecentWorries(userId),
-          {
-            select: setIsChecked,
-            onSuccess: onSuccess,
-          },
-        );
+  eachTagId: string,
+  tagId: string | number[],
+  isUpdating: boolean,
+  onSuccess?: (data: any) => void,
+) => {
+  console.log('fetchRecentWorries');
+  switch (eachTagId) {
+    case '-1':
+      return callUseQuery(
+        tabIndex,
+        tagId,
+        worriesService.getRecentWorries(userId),
+        isUpdating,
+        onSuccess,
+      );
 
-      default:
-        return useQuery(
-          worriesKeys.worries(String(tabIndex), categoryId),
-          () =>
-            filterRecentWorries(
-              makeQueryString({ userId, categories: categoryId }),
-            ),
-          {
-            select: setIsChecked,
-            onSuccess: onSuccess,
-          },
-        );
-    }
-  } else {
-    // 지난 걱정 데이터 받아오기
-    switch (categoryId) {
-      case '-1':
-        return useQuery(
-          worriesKeys.worries(String(tabIndex), categoryId),
-          () => getPastWorries(userId),
-          {
-            select: setIsChecked,
-            onSuccess: onSuccess,
-          },
-        );
-      case '-2':
-        return useQuery(
-          worriesKeys.worries(String(tabIndex), categoryId),
-          () => filterValuablePastWorries(userId),
-          {
-            select: setIsChecked,
-            onSuccess: onSuccess,
-          },
-        );
-      case '-3':
-        return useQuery(
-          worriesKeys.worries(String(tabIndex), categoryId),
-          () => filterInvaluablePastWorries(userId),
-          {
-            select: setIsChecked,
-            onSuccess: onSuccess,
-          },
-        );
-
-      default:
-        return useQuery(
-          worriesKeys.worries(String(tabIndex), categoryId),
-          () =>
-            filterPastWorries(
-              makeQueryString({ userId, categories: categoryId }),
-            ),
-          {
-            select: setIsChecked,
-            onSuccess: onSuccess,
-          },
-        );
-    }
+    default:
+      return callUseQuery(
+        tabIndex,
+        tagId,
+        worriesService.filterRecentWorries(
+          makeQueryString({ userId, categories: eachTagId }),
+        ),
+        isUpdating,
+        onSuccess,
+      );
   }
 };
 
+// 지난 걱정 목록을 가져오는 함수
+const fetchPastWorries = (
+  tabIndex: number,
+  userId: string,
+  eachTagId: string,
+  tagId: string | number[],
+  isUpdating: boolean,
+  onSuccess?: (data: any) => void,
+) => {
+  console.log('fetchPastWorries');
+  switch (eachTagId) {
+    case '-1':
+      return callUseQuery(
+        tabIndex,
+        tagId,
+        worriesService.getPastWorries(userId),
+        isUpdating,
+        onSuccess,
+      );
+    case '-2':
+      return callUseQuery(
+        tabIndex,
+        tagId,
+        worriesService.filterValuablePastWorries(userId),
+        isUpdating,
+        onSuccess,
+      );
+
+    case '-3':
+      return callUseQuery(
+        tabIndex,
+        tagId,
+        worriesService.filterInvaluablePastWorries(userId),
+        isUpdating,
+        onSuccess,
+      );
+
+    default:
+      return callUseQuery(
+        tabIndex,
+        tagId,
+        worriesService.filterPastWorries(
+          makeQueryString({ userId, categories: eachTagId }),
+        ),
+        isUpdating,
+        onSuccess,
+      );
+  }
+};
+
+// 걱정 목록을 가져오는 함수
+export const useGetWorries = (
+  tabIndex: number,
+  userId: string,
+  eachTagId: string,
+  tagId: string | number[],
+  isUpdating: boolean,
+  onSuccess?: (data: any) => void,
+): any =>
+  tabIndex === 0
+    ? fetchRecentWorries(
+        tabIndex,
+        userId,
+        eachTagId,
+        tagId,
+        isUpdating,
+        onSuccess,
+      )
+    : fetchPastWorries(
+        tabIndex,
+        userId,
+        eachTagId,
+        tagId,
+        isUpdating,
+        onSuccess,
+      );
+
+// 걱정 삭제하는 함수
 export const useDeleteWorry = (
   tabIndex: number,
-  categoryId: string,
+  eachTagId: string,
   onSuccess: (data: any) => void,
 ): any => {
   const queryClient = useQueryClient();
-  return useMutation(
-    (worryId: string) => {
-      console.log('useDeleteWorry', worryId);
-      return deleteWorry(worryId);
+
+  return useCustomMutation(
+    (worryId: string) => worriesService.deleteWorry(worryId),
+    (result: any) => {
+      console.log('삭제 성공', result);
+      queryClient.invalidateQueries({
+        queryKey: worriesKeys.worries(String(tabIndex), eachTagId),
+      });
+      onSuccess(result);
     },
-    {
-      onSuccess: (result: any) => {
-        console.log('삭제 성공', result);
-
-        queryClient.invalidateQueries({
-          queryKey: worriesKeys.worries(String(tabIndex), categoryId),
-        });
-
-        onSuccess(result);
-      },
-      onError(result: any) {
-        console.log(result, '에러');
-      },
+    (error: any) => {
+      console.log(error, '에러');
     },
   );
 };
 
-export const useUnlockWorry = (tabIndex: number, categoryId: string): any => {
+// 걱정 잠금헤제하는 함수
+export const useUnlockWorry = (tabIndex: number, eachTagId: string): any => {
   const queryClient = useQueryClient();
-  console.log('useUnlockWorry');
-  return useMutation((worryId: string) => unlockWorry(worryId), {
-    onSuccess: (result: any) => {
-      console.log('잠금 해제 성공');
-
+  return useCustomMutation(
+    (worryId: string) => worriesService.unlockWorry(worryId),
+    (result: any) => {
+      console.log('잠금 해제 성공', result);
       queryClient.invalidateQueries({
-        queryKey: worriesKeys.worries(String(tabIndex), categoryId),
+        queryKey: worriesKeys.worries(String(tabIndex), eachTagId),
       });
     },
-    onError(result: any) {
-      console.log(result, '에러');
+    (error: any) => {
+      console.log(error, '에러');
     },
-  });
+  );
 };

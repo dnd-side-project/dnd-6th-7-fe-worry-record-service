@@ -1,14 +1,19 @@
 export const worriesKeys = {
   all: ['worries'] as const,
-  worries: (idx: string, tag: string) =>
-    [...worriesKeys.all, { idx }, { tag }] as const,
+  worries: (idx: string, tagId: string | number[]) =>
+    [...worriesKeys.all, idx, tagId] as const,
   // worry: (idx: string, tags: string, filters: string) =>
   //   [...worriesKeys.worries(idx, tags), { filters }] as const,
   details: () => [...worriesKeys.all, 'detail'] as const,
-  worry: (idx: string, tag: string, worryId: string, chatId: string) =>
+  worry: (
+    idx: string,
+    tagId: string | number[],
+    worryId: string,
+    chatId: string,
+  ) =>
     [
       ...worriesKeys.all,
-      worriesKeys.worries(idx, tag),
+      worriesKeys.worries(idx, tagId),
       { worryId },
       { chatId },
     ] as const,
