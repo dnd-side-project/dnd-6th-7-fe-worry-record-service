@@ -32,7 +32,9 @@ export const useSilentRefresh = (): any => {
 // 로그인 하는 함수
 export const useLogin = (onSuccess: (data: any) => void): any => {
   return useCustomMutation(
-    (kakaoToken: KakaoOAuthToken) => authService.login(kakaoToken),
+    (token: any) => {
+      return authService.login(token);
+    },
     (result: any) => {
       console.log(result, '로그인 성공');
       // setRefreshToken(result);

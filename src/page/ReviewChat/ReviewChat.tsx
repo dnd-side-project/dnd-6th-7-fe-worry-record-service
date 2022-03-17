@@ -4,7 +4,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 
 import AppLayout from '@components/AppLayout';
 import ChatBox from '@components/ChatBox';
-import Error from '@components/Error';
+import ChatBoxWithButton from '@components/ChatBoxWithButton';
 
 import { ReviewChatProps } from '~/types/Navigation';
 
@@ -17,6 +17,7 @@ import { USER_ID } from '~/App';
 
 import { useSceneState, useSceneDispatch } from '@context/ArchiveContext';
 import { SET_CHAT_ID } from '~/context/reducer/archive';
+import ChatBubble from '~/components/ChatBubble';
 
 export interface ReviewChats {
   categoryName?: string;
@@ -34,6 +35,9 @@ const ReviewChat: FC<ReviewChatProps> = ({ navigation }) => {
   const dispatch = useSceneDispatch();
 
   const [worryChat, setWorryChat] = useState<ReviewChats>();
+  const [worryReview, setWorryReview] = useState<string>('');
+  const [chatMode, setChatMode] = useState<number>(0);
+  const [setMode, setSettingMode] = useState<number>(0);
 
   const { isLoading, isError } = useGetWorry(
     index,
@@ -52,20 +56,13 @@ const ReviewChat: FC<ReviewChatProps> = ({ navigation }) => {
   }, [navigation]);
 
   const onPressEdit = useCallback(
-    (chatId: string) => {
+    (id: string) => {
       console.log(tag, 'onPressEdit');
-      dispatch({ type: SET_CHAT_ID, values: { chatId } });
+      setWorryChat({});
+      dispatch({ type: SET_CHAT_ID, values: { chatId: id } });
     },
     [dispatch],
   );
-
-  // if (isLoading) {
-  //   return <Indicator />;
-  // }
-
-  if (isError) {
-    return <Error />;
-  }
 
   return (
     <AppLayout
@@ -101,11 +98,34 @@ const ReviewChat: FC<ReviewChatProps> = ({ navigation }) => {
                 : ''
             }
             value={item.contents}
+            delay={item.delay}
             onPressEdit={onPressEdit}
             id={item.id}
             isActive={item.isActive}
           />
         ))}
+        {chatMode === 0 ? (
+          <ChatBubble
+            value={''}
+            placeholder={'걱정이 있나요?'}
+            placeholderTextColor={'rgba(255, 255, 255, 0.5)'}
+            height={42}
+            editable={true}
+            onPressIn={() => setChatMode(1)}
+          />
+        ) : (
+          <ChatBoxWithButton
+            value={worryReview}
+            setValue={setWorryReview}
+            onBlur={() => {
+              console.log('onBlur');
+              if (worryReview.length === 0) {
+                setChatMode(0);
+              }
+            }}
+            setSettingMode={setSettingMode}
+          />
+        )}
       </WithScroll>
     </AppLayout>
   );

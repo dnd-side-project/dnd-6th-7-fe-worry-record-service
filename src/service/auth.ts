@@ -15,7 +15,8 @@ export default class AuthService {
     });
   }
 
-  async login(oauthToken: any, deviceToken: any) {
+  async login(token: any) {
+    const { oauthToken, deviceToken } = token;
     return this.http.fetch('/auth/kakao', {
       method: 'POST',
       headers: {

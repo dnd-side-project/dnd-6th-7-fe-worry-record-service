@@ -25,3 +25,10 @@ export const getWidthDevice = () => Dimensions.get('screen').width;
 
 export const makeQueryString = (data: any) =>
   new URLSearchParams(data).toString();
+
+export const makeDelay = (delay: number): (() => number) => {
+  let number = delay;
+  return () => {
+    return (number += delay);
+  };
+};

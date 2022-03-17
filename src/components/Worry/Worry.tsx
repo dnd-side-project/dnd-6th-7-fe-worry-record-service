@@ -41,13 +41,14 @@ const Worry: FC<WorryProps> = ({ item, index }: WorryProps) => {
   const tag = '[Worries]';
   const {
     index: tabIndex,
+    activeTags,
     activeTagsId,
     isUpdating,
     checkedWorries,
   } = useSceneState();
   const dispatch = useSceneDispatch();
 
-  const { mutate } = useUnlockWorry(tabIndex, activeTagsId, () => {
+  const { mutate } = useUnlockWorry(tabIndex, activeTags, activeTagsId, () => {
     dispatch({
       type: UNLOCK_WORRY,
       values: { isUnlock: true },

@@ -100,6 +100,7 @@ export default function ArchiveReducer(state: State, action: Action) {
       console.log(tag, UNLOCK_WORRY);
       return {
         ...state,
+        chatId: '1',
         isUnlock: action.values.isUnlock,
       };
 
@@ -155,7 +156,6 @@ export default function ArchiveReducer(state: State, action: Action) {
 
     case SET_CHAT_ID:
       console.log(tag, SET_CHAT_ID);
-
       return {
         ...state,
         chatId: action.values.chatId,

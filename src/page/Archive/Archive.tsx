@@ -76,7 +76,7 @@ const Archive: FC<ArchiveProps> = ({ navigation }) => {
   };
 
   // 걱정 삭제 함수
-  const { mutate } = useDeleteWorry(index, activeTagsId, () => {
+  const { mutate } = useDeleteWorry(index, activeTags, activeTagsId, () => {
     console.log('삭제 완료');
     setOpenDeleteModal(true);
     onPressCancel();
