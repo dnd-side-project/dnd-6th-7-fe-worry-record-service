@@ -16,9 +16,16 @@ import CustomeButton from '@components/Button';
 import CustomeTabs from '@components/Tabs';
 import AppLayout from '@components/AppLayout';
 import Worries from '@components/Worries';
+import Inform from '@components/Inform';
 
 import { useSceneState, useSceneDispatch } from '@context/ArchiveContext';
-import { INIT } from '@context/reducer/archive';
+import {
+  CHANGE_MODE,
+  CHANGE_MODE_REVIEW,
+  INIT,
+  SET_WORRY_ID,
+  UNLOCK_WORRY,
+} from '@context/reducer/archive';
 
 import { ArchiveProps } from '~/types/Navigation';
 import { WorryTempProps } from '~/types/Worry';
@@ -29,30 +36,50 @@ import { useGetWorries, useDeleteWorry } from '@hooks/useWorries';
 
 import { getDate } from '@lib/util/date';
 
+import IconDelete from '@assets/image/delete.svg';
+import IconUnlock from '@assets/image/unlock.svg';
+
 const Archive: FC<ArchiveProps> = ({ navigation }) => {
   const tag = '[Archive]';
   const refRBSheet = useRef<RefRbProps>(null);
   const dispatch = useSceneDispatch();
-  const { isUpdating, activeTags, index, activeTagsId, checkedWorries } =
-    useSceneState();
+  const {
+    isUpdating,
+    activeTags,
+    index,
+    activeTagsId,
+    checkedWorries,
+    worryId,
+    isUnlock,
+  } = useSceneState();
 
   const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
 
   // 걱정 목록을 가져오는 함수
-  const queryData = useGetWorries(
+  const { data: worries, refetch } = useGetWorries(
     index,
     USER_ID,
     activeTags,
     activeTagsId,
     isUpdating,
     (data: WorryTempProps[]) => {
-      console.log(data, 'rerender');
+      console.log('목록 조회 완료');
     },
   );
 
+  // 걱정 컨펌 창 숨김 함수
+  const onPressCancel = (): void => {
+    console.log(tag, 'onPressCancel');
+    if (refRBSheet.current) {
+      refRBSheet.current.close();
+    }
+  };
+
   // 걱정 삭제 함수
-  const { mutate } = useDeleteWorry(index, activeTags, () => {
+  const { mutate } = useDeleteWorry(index, activeTags, activeTagsId, () => {
+    console.log('삭제 완료');
     setOpenDeleteModal(true);
+    onPressCancel();
   });
 
   // 걱정 탭 함수
@@ -64,35 +91,43 @@ const Archive: FC<ArchiveProps> = ({ navigation }) => {
     [dispatch],
   );
 
-  console.log(queryData.data, 'queryData');
+  console.log(worries, 'queryData');
 
   // 걱정 삭제 개수 계산 함수
   const getCheckedNumber = useCallback((): number => {
     console.log(tag, 'getCheckedNumber');
-    // if (queryData.data) {
-    //   return queryData.data?.filter((item: WorryTempProps) => item.isChecked)
-    //     .length;
-    // }
     if (checkedWorries) {
       return checkedWorries.length;
     }
     return 0;
-  }, [queryData.data]);
+  }, [worries, checkedWorries]);
 
   // 걱정 삭제 체크 되어 있는 것만 도출하는 함수
   const getIsChecked = useCallback((): WorryTempProps[] => {
     console.log(tag, 'getIsChecked');
-    // if (queryData.data) {
-    //   return queryData.data?.filter((item: WorryTempProps) => item.isChecked);
-    // }
-
-    if (queryData.data) {
-      return queryData.data?.filter((item: WorryTempProps) =>
+    if (worries) {
+      return worries?.filter((item: WorryTempProps) =>
         checkedWorries.includes(item.worryId),
       );
     }
     return [];
-  }, [queryData.data]);
+  }, [worries, checkedWorries]);
+
+  // 걱정 도출하는 함수
+  const getWorry = useCallback(
+    (key: string): string => {
+      console.log(tag, 'getWorry');
+      if (worries) {
+        const data = worries?.find(
+          (item: WorryTempProps) => +item.worryId === +worryId,
+        );
+        console.log(data, 'dd');
+        return data[key];
+      }
+      return '';
+    },
+    [worries, worryId],
+  );
 
   // 걱정 삭제 컨펌 오픈 함수
   const onPressOpenDrawer = useCallback((): void => {
@@ -122,42 +157,33 @@ const Archive: FC<ArchiveProps> = ({ navigation }) => {
 
     const filterdData = getIsChecked();
     const query = makeQueryDelete(filterdData);
-
+    dispatch({ type: CHANGE_MODE, values: { isUpdating: false } });
     mutate(query);
-    onPressCancel();
-  }, [queryData.data, mutate]);
+  }, [worries, mutate, getIsChecked, dispatch, checkedWorries]);
 
-  // 걱정 컨펌 창 숨김 함수
-  const onPressCancel = (): void => {
-    console.log(tag, 'onPressCancel');
-    if (refRBSheet.current) {
-      refRBSheet.current.close();
-    }
-  };
-
-  const onPressConfirm = (): void => {
-    console.log(tag, 'onPressConfirm');
+  // 걱정 삭제 확인 함수 (삭제 컨펌 창)
+  const onPressDeleteConfirm = useCallback((): void => {
+    console.log(tag, 'onPressDeleteConfirm');
     setOpenDeleteModal(false);
-  };
+    refetch();
+  }, [refetch, setOpenDeleteModal]);
+
+  // 걱정 잠금해제 컨펌창 확인 버튼 클릭시 이벤트
+  const onPressUnlockConfirm = useCallback((): void => {
+    console.log(tag, 'onPressConfirm');
+    dispatch({ type: UNLOCK_WORRY, values: { isUnlock: false } });
+    dispatch({ type: CHANGE_MODE_REVIEW, values: { isReviewing: true } });
+    dispatch({ type: SET_WORRY_ID, values: { worryId: worryId } });
+    refetch();
+    navigation.navigate('ReviewChat');
+  }, [refetch, dispatch, worryId, navigation]);
 
   useEffect(() => {
     dispatch({ type: INIT });
   }, []);
 
-  const firstRoute = (): ReactElement => (
-    <Worries
-      onPressConfirm={onPressConfirm}
-      openDeleteModal={openDeleteModal}
-      worries={queryData.data}
-    />
-  );
-  const secondRoute = (): ReactElement => (
-    <Worries
-      onPressConfirm={onPressConfirm}
-      openDeleteModal={openDeleteModal}
-      worries={queryData.data}
-    />
-  );
+  const firstRoute = (): ReactElement => <Worries worries={worries} />;
+  const secondRoute = (): ReactElement => <Worries worries={worries} />;
 
   const DUMMY = [
     {
@@ -223,11 +249,36 @@ const Archive: FC<ArchiveProps> = ({ navigation }) => {
           />
         </>
       )}
+      {openDeleteModal && (
+        <Inform
+          visible={openDeleteModal}
+          onPressConfirm={onPressDeleteConfirm}
+          icon={<IconDelete />}
+          mainTitle="걱정은 쏙!"
+          description={'걱정이'}
+          subTitle="삭제 되었어요!"
+        />
+      )}
+      {isUnlock && (
+        <Inform
+          visible={isUnlock}
+          onPressConfirm={onPressUnlockConfirm}
+          icon={<IconUnlock />}
+          mainTitle="걱정은 어떻게 되었나요?"
+          description={`${getDate(
+            getWorry('worryStartDate'),
+            'MM',
+          )}월 ${getDate(getWorry('worryStartDate'), 'dd')}일 #${getWorry(
+            'categoryName',
+          )} 걱정이`}
+          subTitle="잠금 해제되었어요!"
+        />
+      )}
     </AppLayout>
   );
 };
 
-export default memo(Archive);
+export default Archive;
 
 const ButtonWrapper = styled.View`
   margin-bottom: 20px;

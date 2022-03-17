@@ -86,7 +86,7 @@ const CustomeTabs: FC<CustomeTabsProps> = ({
   );
 };
 
-export default memo(CustomeTabs);
+export default CustomeTabs;
 
 const styles = StyleSheet.create({
   tabBarWrapper: {

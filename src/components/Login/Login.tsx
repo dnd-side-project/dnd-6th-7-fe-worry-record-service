@@ -19,11 +19,12 @@ import { theme } from '@lib/styles/palette';
 import IconKakao from '@assets/image/kakaotalk.svg';
 import IconApple from '@assets/image/apple.svg';
 
+import { useAuth } from '@context/AuthContext';
+import { TEMP_DEVICE_TOKEN } from '~/App';
 import {
   responsiveWidth as wp,
   responsiveHeight as hp,
 } from '@lib/util/helper';
-import { Text } from 'react-native-elements';
 
 interface LoginProps {
   data?: string;
@@ -31,11 +32,12 @@ interface LoginProps {
 }
 
 const Login: FC<LoginProps> = props => {
-  const [result, setResult] = React.useState<string>('');
+  const { logIn: authLogin } = useAuth();
+
   const signInWithKakao = async (): Promise<void> => {
     try {
-      const token: KakaoOAuthToken = await login();
-      setResult(JSON.stringify(token));
+      const result: KakaoOAuthToken = await login();
+      authLogin(result.accessToken, TEMP_DEVICE_TOKEN);
     } catch (err) {
       console.log(err);
     }

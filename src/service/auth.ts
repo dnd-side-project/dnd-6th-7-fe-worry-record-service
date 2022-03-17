@@ -16,9 +16,23 @@ export default class AuthService {
   }
 
   async login(token: any) {
-    return this.http.fetch('/auth/login', {
+    const { oauthToken, deviceToken } = token;
+    return this.http.fetch('/auth/kakao', {
       method: 'POST',
-      body: JSON.stringify({ token }),
+      headers: {
+        oauthToken,
+        deviceToken,
+      },
+    });
+  }
+
+  async silentRefresh(refreshToken: any) {
+    return this.http.fetch('/auth/refresh', {
+      method: 'POST',
+      headers: {
+        oauthToken: refreshToken,
+        deviceToken: '',
+      },
     });
   }
 

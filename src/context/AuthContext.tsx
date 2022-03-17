@@ -10,6 +10,7 @@ import {
   useState,
 } from 'react';
 import { BeforeLogin } from '@page/Navigation';
+import { useLogin } from '~/hooks/useLogin';
 
 const AuthContext = createContext({});
 
@@ -30,7 +31,7 @@ export function AuthProvider({
 }: Props): any {
   const [user, setUser] = useState<any>(true);
 
-  useImperativeHandle(tokenRef, () => (user ? user.token : undefined));
+  // useImperativeHandle(tokenRef, () => (user ? user.token : undefined));
 
   //TODO: 추후 작업필요 (Auth Error 발생시 반응하는 API)
   // useEffect(() => {
@@ -45,6 +46,11 @@ export function AuthProvider({
   // 	authService.me().then(setUser).catch(console.error);
   // }, [authService]);
 
+  const mutation = useLogin(data => {
+    console.log(data);
+    setUser(true);
+  });
+
   const signUp = useCallback(
     async (username, password, name, email, url) =>
       authService
@@ -54,9 +60,11 @@ export function AuthProvider({
   );
 
   const logIn = useCallback(
-    async (username, password) =>
-      authService.login(username, password).then((user: any) => setUser(user)),
-    [authService],
+    async (oauthToken: string, deviceToken: string) => {
+      console.log(deviceToken, 'dd');
+      mutation.mutate({ oauthToken, deviceToken });
+    },
+    [mutation],
   );
 
   const logout = useCallback(

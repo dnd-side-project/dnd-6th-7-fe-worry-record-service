@@ -24,7 +24,6 @@ export type State = {
 
 export type Action =
   | { type: 'INIT'; values?: { idx: number } }
-  | { type: 'INIT_WORRIES'; values?: { worries: WorryTempProps[] } }
   | { type: 'CHANGE_MODE'; values: { isUpdating: boolean } }
   | { type: 'CHANGE_MODE_REVIEW'; values: { isReviewing: boolean } }
   | { type: 'CHANGE_MODE_REALIZED'; values: { isRealized: boolean } }
@@ -37,7 +36,6 @@ export type Action =
   | { type: 'DELETE_WORRY' };
 
 export const INIT = 'INIT';
-export const INIT_WORRIES = 'INIT_WORRIES';
 export const CHANGE_MODE = 'CHANGE_MODE';
 export const CHANGE_MODE_REVIEW = 'CHANGE_MODE_REVIEW';
 export const CHANGE_MODE_REALIZED = 'CHANGE_MODE_REALIZED';
@@ -89,22 +87,12 @@ export default function ArchiveReducer(state: State, action: Action) {
         checkedWorries: [],
       };
 
-    case INIT_WORRIES:
-      console.log(tag, INIT_WORRIES);
-
-      const worries = action.values?.worries || [];
-      // const initWorres = filterdTagDatas(idx, WORRIES_DATA);
-
-      return {
-        ...state,
-        worries,
-      };
-
     case CHANGE_MODE:
       console.log(tag, CHANGE_MODE);
 
       return {
         ...state,
+        checkedWorries: [],
         isUpdating: action.values.isUpdating,
       };
 
@@ -112,6 +100,7 @@ export default function ArchiveReducer(state: State, action: Action) {
       console.log(tag, UNLOCK_WORRY);
       return {
         ...state,
+        chatId: '1',
         isUnlock: action.values.isUnlock,
       };
 
@@ -154,7 +143,9 @@ export default function ArchiveReducer(state: State, action: Action) {
         ...state,
         activeTags: action.values.tag,
         activeTagsId: action.values.tagId,
+        isUpdating: false,
       };
+
     case SET_WORRY_ID:
       console.log(tag, SET_WORRY_ID);
 
@@ -165,7 +156,6 @@ export default function ArchiveReducer(state: State, action: Action) {
 
     case SET_CHAT_ID:
       console.log(tag, SET_CHAT_ID);
-
       return {
         ...state,
         chatId: action.values.chatId,

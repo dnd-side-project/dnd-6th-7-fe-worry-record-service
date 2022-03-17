@@ -1,6 +1,6 @@
 import React, { FC, useCallback } from 'react';
 import styled from 'styled-components/native';
-
+import * as Animatable from 'react-native-animatable';
 import { theme } from '@lib/styles/palette';
 import { responsiveWidth as wp } from '~/lib/util/helper';
 
@@ -13,6 +13,7 @@ interface ChatBoxProps {
   isActive?: boolean;
   id: string;
   value: string;
+  delay: number;
   onPressEdit?: (id: string) => void;
 }
 
@@ -27,6 +28,7 @@ interface ChatBoxStyleProps {
 
 const ChatBox: FC<ChatBoxProps> = ({
   value,
+  delay,
   id,
   height,
   width,
@@ -41,6 +43,7 @@ const ChatBox: FC<ChatBoxProps> = ({
       onPressEdit(id);
     }
   }, [id, onPressEdit]);
+
   return (
     <>
       {isOposite ? (
@@ -50,6 +53,9 @@ const ChatBox: FC<ChatBoxProps> = ({
           width={width}
           isOposite={isOposite}
           isActive={isActive}
+          animation="fadeInUp"
+          delay={delay}
+          useNativeDriver
         >
           <UpdateButton onPress={onPressEditHandler}>
             <CardTextOposite fontColor={fontColor} isActive={isActive}>
@@ -63,6 +69,9 @@ const ChatBox: FC<ChatBoxProps> = ({
           height={height}
           width={width}
           isOposite={isOposite}
+          animation="fadeInUp"
+          delay={delay}
+          useNativeDriver
         >
           <CardText fontColor={fontColor}>{value}</CardText>
         </CardTextWrapper>
@@ -84,17 +93,21 @@ const InitTextWrapper = styled.View<ChatBoxStyleProps>`
   max-width: ${({ width }) => (width !== undefined ? `${width}px` : 'auto')};
 `;
 
-const CardTextWrapper = styled(InitTextWrapper)<ChatBoxStyleProps>`
+const CardTextWrapper = Animatable.createAnimatableComponent(styled(
+  InitTextWrapper,
+)<ChatBoxStyleProps>`
   border: 1px solid ${theme.color.lightWhite};
   background-color: ${({ bgColor }) => bgColor || 'transparent'};
   align-self: flex-start;
   max-width: ${wp('80%')}px;
-`;
+`);
 
-const CardTextOpositeWrapper = styled(InitTextWrapper)<ChatBoxStyleProps>`
+const CardTextOpositeWrapper = Animatable.createAnimatableComponent(styled(
+  InitTextWrapper,
+)<ChatBoxStyleProps>`
   align-self: flex-end;
   background-color: ${({ isActive, bgColor }) => (isActive ? '#fff' : bgColor)};
-`;
+`);
 
 const InitText = styled.Text<ChatBoxStyleProps>`
   color: ${({ fontColor }) => fontColor || theme.color.white};

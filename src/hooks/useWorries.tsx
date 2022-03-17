@@ -5,21 +5,27 @@ import { worriesKeys } from '@lib/queries/keys';
 import { makeQueryString } from '@lib/util/helper';
 import WorriesService from '@service/archive';
 import { httpClient } from '~/App';
+import { WorryTempProps } from '~/types/Worry';
 
 const worriesService = new WorriesService(httpClient);
 
 // custom hook을 사용하여 쿼리를 실행
 const callUseQuery = (
   tabIndex: any,
+  eachTagId: string,
   tagId: string | number[],
   api: any,
   isUpdating: boolean,
   onSuccess?: (data: any) => void,
 ) => {
-  return useCustomQuery(worriesKeys.worries(String(tabIndex), tagId), api, {
-    onSuccess: onSuccess && onSuccess,
-    enabled: !isUpdating,
-  });
+  return useCustomQuery(
+    worriesKeys.worries(String(tabIndex), eachTagId, tagId),
+    api,
+    {
+      onSuccess: onSuccess && onSuccess,
+      // enabled: !isUpdating,
+    },
+  );
 };
 
 // 요즘 걱정 목록을 가져오는 함수
@@ -36,6 +42,7 @@ const fetchRecentWorries = (
     case '-1':
       return callUseQuery(
         tabIndex,
+        eachTagId,
         tagId,
         worriesService.getRecentWorries(userId),
         isUpdating,
@@ -45,6 +52,7 @@ const fetchRecentWorries = (
     default:
       return callUseQuery(
         tabIndex,
+        eachTagId,
         tagId,
         worriesService.filterRecentWorries(
           makeQueryString({ userId, categories: eachTagId }),
@@ -69,6 +77,7 @@ const fetchPastWorries = (
     case '-1':
       return callUseQuery(
         tabIndex,
+        eachTagId,
         tagId,
         worriesService.getPastWorries(userId),
         isUpdating,
@@ -77,6 +86,7 @@ const fetchPastWorries = (
     case '-2':
       return callUseQuery(
         tabIndex,
+        eachTagId,
         tagId,
         worriesService.filterValuablePastWorries(userId),
         isUpdating,
@@ -86,6 +96,7 @@ const fetchPastWorries = (
     case '-3':
       return callUseQuery(
         tabIndex,
+        eachTagId,
         tagId,
         worriesService.filterInvaluablePastWorries(userId),
         isUpdating,
@@ -95,6 +106,7 @@ const fetchPastWorries = (
     default:
       return callUseQuery(
         tabIndex,
+        eachTagId,
         tagId,
         worriesService.filterPastWorries(
           makeQueryString({ userId, categories: eachTagId }),
@@ -136,18 +148,19 @@ export const useGetWorries = (
 export const useDeleteWorry = (
   tabIndex: number,
   eachTagId: string,
+  tagId: string | number[],
   onSuccess: (data: any) => void,
 ): any => {
   const queryClient = useQueryClient();
-
   return useCustomMutation(
-    (worryId: string) => worriesService.deleteWorry(worryId),
+    (worryId: string) => {
+      worriesService.deleteWorry(worryId);
+    },
     (result: any) => {
-      console.log('삭제 성공', result);
-      queryClient.invalidateQueries({
-        queryKey: worriesKeys.worries(String(tabIndex), eachTagId),
-      });
       onSuccess(result);
+      return queryClient.invalidateQueries(
+        worriesKeys.worries(String(tabIndex), eachTagId, tagId),
+      );
     },
     (error: any) => {
       console.log(error, '에러');
@@ -156,14 +169,22 @@ export const useDeleteWorry = (
 };
 
 // 걱정 잠금헤제하는 함수
-export const useUnlockWorry = (tabIndex: number, eachTagId: string): any => {
+export const useUnlockWorry = (
+  tabIndex: number,
+  eachTagId: string,
+  tagId: string | number[],
+  onSuccess: (data: any) => void,
+): any => {
   const queryClient = useQueryClient();
   return useCustomMutation(
-    (worryId: string) => worriesService.unlockWorry(worryId),
+    (worryId: string) => {
+      worriesService.unlockWorry(worryId);
+    },
     (result: any) => {
-      console.log('잠금 해제 성공', result);
-      queryClient.invalidateQueries({
-        queryKey: worriesKeys.worries(String(tabIndex), eachTagId),
+      console.log('잠금 해제 성공', tagId);
+      onSuccess(result);
+      return queryClient.invalidateQueries({
+        queryKey: worriesKeys.worries(String(tabIndex), eachTagId, tagId),
       });
     },
     (error: any) => {
