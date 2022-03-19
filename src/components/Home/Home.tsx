@@ -29,7 +29,7 @@ const Home: FC<HomeProps> = ({ setBackgroundImageUrl }) => {
 
   useEffect(() => {
     axios
-      .get(`http://${process.env.API_URL}/worries/home?userId=${56}`)
+      .get(`${process.env.HTTPS_B_URL}/worries/home?userId=${1}`)
       .catch(err => console.log(err))
       .then(res => {
         console.log(res?.data);

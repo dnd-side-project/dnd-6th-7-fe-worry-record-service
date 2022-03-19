@@ -1,7 +1,7 @@
 import React, { FC, useCallback, useState } from 'react';
 import styled from 'styled-components/native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-
+import * as Animatable from 'react-native-animatable';
 import AppLayout from '@components/AppLayout';
 import ChatBox from '@components/ChatBox';
 import ChatBoxWithButton from '@components/ChatBoxWithButton';
@@ -31,7 +31,7 @@ export interface ReviewChats {
 
 const ReviewChat: FC<ReviewChatProps> = ({ navigation }) => {
   const tag = '[ReviewChat]';
-  const { index, activeTags, worryId, chatId } = useSceneState();
+  const { index, activeTags, worryId, chatId, activeTagsId } = useSceneState();
   const dispatch = useSceneDispatch();
 
   const [worryChat, setWorryChat] = useState<ReviewChats>();
@@ -45,6 +45,7 @@ const ReviewChat: FC<ReviewChatProps> = ({ navigation }) => {
     String(worryId),
     chatId,
     activeTags,
+    activeTagsId,
     (item: ReviewChats) => setWorryChat(item),
   );
 
@@ -104,14 +105,18 @@ const ReviewChat: FC<ReviewChatProps> = ({ navigation }) => {
             isActive={item.isActive}
           />
         ))}
-        {chatMode === 0 ? (
+        {worryChat?.worryChat?.length && chatMode === 0 ? (
           <ChatBubble
+            // 애니메이션 설정 하는 props 추가
             value={''}
-            placeholder={'걱정이 있나요?'}
+            placeholder={'걱정 후기를 남겨주세요.'}
             placeholderTextColor={'rgba(255, 255, 255, 0.5)'}
             height={42}
             editable={true}
             onPressIn={() => setChatMode(1)}
+            // animation="fadeInUp"
+            // useNativeDriver
+            // delay={2000}
           />
         ) : (
           <ChatBoxWithButton
@@ -140,5 +145,9 @@ const Headeritle = styled.Text`
   color: ${theme.color.white};
   font-weight: bold;
 `;
+
+const ChatAnimatedBubble = Animatable.createAnimatableComponent(
+  styled(ChatBubble)``,
+);
 
 export default ReviewChat;

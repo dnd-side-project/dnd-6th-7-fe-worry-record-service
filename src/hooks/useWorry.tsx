@@ -24,13 +24,14 @@ export const useGetWorry = (
   worryId: string,
   chatId: string,
   categoryId: string,
+  tagId: string | number[],
   onSuccess: (data: any) => void,
 ): any => {
   const [worryText, setWorryText] = useState('');
   switch (chatId) {
     case '1':
       return useQuery(
-        worriesKeys.worry(String(tabIndex), categoryId, worryId, chatId),
+        worriesKeys.worry(String(tabIndex), categoryId, tagId, worryId, chatId),
         () => worriesService.getWorryReviewChat(worryId),
         {
           onSuccess(data: ReviewChats) {
@@ -52,7 +53,7 @@ export const useGetWorry = (
 
     case '2':
       return useQuery(
-        worriesKeys.worry(String(tabIndex), categoryId, worryId, chatId),
+        worriesKeys.worry(String(tabIndex), categoryId, tagId, worryId, chatId),
         () =>
           addWorryReview(
             makeQueryString({ userId, worryId, isRealized: false }),
@@ -89,7 +90,7 @@ export const useGetWorry = (
       );
     case '3':
       return useQuery(
-        worriesKeys.worry(String(tabIndex), categoryId, worryId, chatId),
+        worriesKeys.worry(String(tabIndex), categoryId, tagId, worryId, chatId),
         () =>
           addWorryReview(
             makeQueryString({ userId, worryId, isRealized: true }),
@@ -126,7 +127,7 @@ export const useGetWorry = (
       );
     case '4':
       return useQuery(
-        worriesKeys.worry(String(tabIndex), categoryId, worryId, chatId),
+        worriesKeys.worry(String(tabIndex), categoryId, tagId, worryId, chatId),
         () => getWorryReviewChat(worryId),
         {
           onSuccess(data: ReviewChats) {
