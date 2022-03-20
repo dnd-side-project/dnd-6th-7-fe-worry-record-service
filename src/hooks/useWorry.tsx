@@ -31,7 +31,6 @@ export const useGetWorry = (
             if (data?.worryText) {
               setWorryText(data?.worryText);
             }
-
             data = {
               ...data,
               worryChat: ChatData.getChat1(
@@ -55,20 +54,6 @@ export const useGetWorry = (
           onSuccess(data: ReviewChats) {
             data = {
               ...data,
-              // worryChat: [
-              //   ...ChatData.getChat1(data.username || '', worryText || '')
-              //     .filter((item: any) => item.id === chatId || item.id === '-1')
-              //     .map((item: any) =>
-              //       item.id === chatId ? { ...item, isActive: true } : item,
-              //     ),
-              //   ...ChatData.getChat2(
-              //     data.username || '',
-              //     data.worryStartDate || '',
-              //     data.categoryName || '',
-              //     data.worryCnt || 0,
-              //     data.meaningfulWorryCnt || 0,
-              //   ),
-              // ],
               worryChat: ChatData.getChat2(
                 data.username || '',
                 data.worryStartDate || '',
@@ -92,20 +77,6 @@ export const useGetWorry = (
           onSuccess(data: ReviewChats) {
             data = {
               ...data,
-              // worryChat: [
-              //   ...ChatData.getChat1(data.username || '', worryText || '')
-              //     .filter((item: any) => item.id === chatId || item.id === '-1')
-              //     .map((item: any) =>
-              //       item.id === chatId ? { ...item, isActive: true } : item,
-              //     ),
-              //   ...ChatData.getChat3(
-              //     data.username || '',
-              //     data.worryStartDate || '',
-              //     data.categoryName || '',
-              //     data.worryCnt || 0,
-              //     data.meaningfulWorryCnt || 0,
-              //   ),
-              // ],
               worryChat: ChatData.getChat3(
                 data.username || '',
                 data.worryStartDate || '',
@@ -121,12 +92,15 @@ export const useGetWorry = (
     case '4':
       return useQuery(
         worriesKeys.worry(String(tabIndex), categoryId, tagId, worryId, chatId),
-        () => worriesService.getWorryReviewChat(worryId),
+        () =>
+          worriesService.addWorryReview(
+            makeQueryString({ userId, worryId, isRealized: false }),
+          ),
         {
           onSuccess(data: ReviewChats) {
             data = {
               ...data,
-              worryChat: ChatData.getChat1('상초', data?.worryText || ''),
+              worryChat: ChatData.getChat4(),
             };
             onSuccess(data);
           },
@@ -141,8 +115,6 @@ export const useGetWorry = (
 // 후기 등록 함수
 export const useSubmitReview = (
   tabIndex: number,
-  worryId: string,
-  chatId: string,
   categoryId: string,
   tagId: string | number[],
   onSuccess: (data: any) => void,
@@ -157,6 +129,21 @@ export const useSubmitReview = (
         worriesKeys.worries(String(tabIndex), categoryId, tagId),
       );
       onSuccess(result);
+    },
+    (error: any) => {
+      console.log(error, '에러');
+    },
+  );
+};
+
+// 후기 등록 함수
+export const useUpdateExpiredDate = (onSuccess: (data: any) => void): any => {
+  return useCustomMutation(
+    ({ worryId, expiryDate }: { worryId: string; expiryDate: string }) => {
+      worriesService.updateWorryExpiredDate(worryId, expiryDate);
+    },
+    async (result: any) => {
+      onSuccess(ChatData.getChat5(result.expiryDate));
     },
     (error: any) => {
       console.log(error, '에러');

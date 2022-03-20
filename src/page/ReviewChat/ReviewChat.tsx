@@ -1,18 +1,24 @@
 import React, { FC, useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components/native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+
 import AppLayout from '@components/AppLayout';
 import ChatBox from '@components/ChatBox';
 import ChatBoxWithButton from '@components/ChatBoxWithButton';
 import ChatBubble from '@components/ChatBubble';
+import CustomeButton from '@components/Button';
 
 import { ReviewChatProps } from '~/types/Navigation';
 
-import { getDate } from '@lib/util/date';
+import { addDate, getDate, getIsoDate } from '@lib/util/date';
 import { theme } from '@lib/styles/palette';
 import ArrowLeft from '@assets/image/arrow_left.svg';
 import { Platform, StyleSheet } from 'react-native';
-import { useGetWorry, useSubmitReview } from '@hooks/useWorry';
+import {
+  useGetWorry,
+  useSubmitReview,
+  useUpdateExpiredDate,
+} from '@hooks/useWorry';
 import { USER_ID } from '~/App';
 
 import { useSceneState, useSceneDispatch } from '@context/ArchiveContext';
@@ -40,6 +46,7 @@ const ReviewChat: FC<ReviewChatProps> = ({ navigation }) => {
   const [chatMode, setChatMode] = useState<number>(0);
   const [setMode, setSettingMode] = useState<number>(0);
   const [initDelay, setInitDelay] = useState<boolean>(false);
+  const [isFinish, setIsFinish] = useState<boolean>(false);
 
   const { isLoading, isError } = useGetWorry(
     index,
@@ -51,10 +58,11 @@ const ReviewChat: FC<ReviewChatProps> = ({ navigation }) => {
     (item: ReviewChats) => setWorryChat(item),
   );
 
-  const mutation = useSubmitReview(
+  // 알림 날짜 설정하는 popup창 만들기
+  // 채팅 종료 전까지 테스트하기
+
+  const mutateReview = useSubmitReview(
     index,
-    String(worryId),
-    chatId,
     activeTags,
     activeTagsId,
     (item: ReviewChats) => {
@@ -63,24 +71,62 @@ const ReviewChat: FC<ReviewChatProps> = ({ navigation }) => {
     },
   );
 
+  const mutateExpiredDate = useUpdateExpiredDate((item: ReviewChats) => {
+    console.log(tag, 'mutateExpiredDate success', item);
+    setIsFinish(true);
+    setWorryChat((prev: any) => {
+      return {
+        ...prev,
+        worryChat: [...prev.worryChat, item],
+      };
+    });
+  });
+
   const onPressBack = useCallback(() => {
     console.log(tag, 'onPressBack');
     navigation.goBack();
   }, [navigation]);
 
+  // 우측 chat 버튼 클릭시 이벤트
   const onPressEdit = useCallback(
-    (id: string) => {
+    (chatId: string) => {
       console.log(tag, 'onPressEdit');
-      setWorryChat({});
-      dispatch({ type: SET_CHAT_ID, values: { chatId: id } });
+      switch (chatId) {
+        case '5':
+          mutateExpiredDate.mutate(worryId, getIsoDate(addDate(new Date(), 7)));
+          break;
+        case '6':
+          mutateExpiredDate.mutate(
+            worryId,
+            getIsoDate(addDate(new Date(), 14)),
+          );
+          break;
+        case '7':
+          mutateExpiredDate.mutate(
+            worryId,
+            getIsoDate(addDate(new Date(), 30)),
+          );
+          break;
+        case '8':
+          break;
+
+        default:
+          setWorryChat({});
+          dispatch({ type: SET_CHAT_ID, values: { chatId } });
+          break;
+      }
     },
-    [dispatch],
+    [dispatch, mutateExpiredDate, worryId, setWorryChat],
   );
 
   const onPressSubmit = useCallback(() => {
     console.log(tag, 'onPressSubmit');
-    mutation.mutate({ worryId, worryReview });
-  }, [mutation, worryId, worryReview]);
+    mutateReview.mutate({ worryId, worryReview });
+  }, [mutateReview, worryId, worryReview]);
+
+  const onPressFinish = useCallback(() => {
+    console.log(tag, 'onPressFinish');
+  }, []);
 
   useEffect(() => {
     console.log(tag, 'init');
@@ -129,8 +175,10 @@ const ReviewChat: FC<ReviewChatProps> = ({ navigation }) => {
             />
           ))}
         </ChatBoxWrapper>
-        {chatId === '1' || worryChat?.worryChat?.length === 0 ? null : worryChat
-            ?.worryChat?.length && chatMode === 0 ? (
+        {chatId === '1' ||
+        chatId === '4' ||
+        worryChat?.worryChat?.length === 0 ? null : worryChat?.worryChat
+            ?.length && chatMode === 0 ? (
           <ChatBubble
             // 애니메이션 설정 하는 props 추가
             value={''}
@@ -163,6 +211,23 @@ const ReviewChat: FC<ReviewChatProps> = ({ navigation }) => {
             settingIcon={<IconSubmit onPress={onPressSubmit} />}
           />
         )}
+        {isFinish && (
+          <ButtonWrapper>
+            <CustomeButton
+              title={'채팅 종료'}
+              isBorderRadius
+              onPress={onPressFinish}
+              backgroundColor={{
+                color: 'white',
+              }}
+              height={52}
+              color={{
+                color: 'black',
+              }}
+              fontSize={16}
+            />
+          </ButtonWrapper>
+        )}
       </WithScroll>
     </AppLayout>
   );
@@ -187,5 +252,7 @@ const Headeritle = styled.Text`
 const ChatBoxWrapper = styled.View`
   flex: 1;
 `;
+
+const ButtonWrapper = styled.View``;
 
 export default ReviewChat;
