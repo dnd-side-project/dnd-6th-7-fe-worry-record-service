@@ -1,22 +1,15 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import React, { useState } from 'react';
-import { useQuery } from 'react-query';
+import { useQuery, useQueryClient } from 'react-query';
 import WorriesService from '@service/archive';
 import { httpClient } from '~/App';
 import { ChatData } from '~/constants/ChatData';
 import { worriesKeys } from '~/lib/queries/keys';
 import { makeQueryString } from '~/lib/util/helper';
 import { ReviewChats } from '~/page/ReviewChat/ReviewChat';
+import { useCustomMutation } from '~/lib/queries';
 
 const worriesService = new WorriesService(httpClient);
-
-const getWorryReviewChat = (worryId: string): Promise<any> => {
-  return worriesService.getWorryReviewChat(worryId);
-};
-
-const addWorryReview = (queryString: string): Promise<any> => {
-  return worriesService.addWorryReview(queryString);
-};
 
 export const useGetWorry = (
   tabIndex: number,
@@ -55,7 +48,7 @@ export const useGetWorry = (
       return useQuery(
         worriesKeys.worry(String(tabIndex), categoryId, tagId, worryId, chatId),
         () =>
-          addWorryReview(
+          worriesService.addWorryReview(
             makeQueryString({ userId, worryId, isRealized: false }),
           ),
         {
@@ -92,7 +85,7 @@ export const useGetWorry = (
       return useQuery(
         worriesKeys.worry(String(tabIndex), categoryId, tagId, worryId, chatId),
         () =>
-          addWorryReview(
+          worriesService.addWorryReview(
             makeQueryString({ userId, worryId, isRealized: true }),
           ),
         {
@@ -128,7 +121,7 @@ export const useGetWorry = (
     case '4':
       return useQuery(
         worriesKeys.worry(String(tabIndex), categoryId, tagId, worryId, chatId),
-        () => getWorryReviewChat(worryId),
+        () => worriesService.getWorryReviewChat(worryId),
         {
           onSuccess(data: ReviewChats) {
             data = {
@@ -143,4 +136,30 @@ export const useGetWorry = (
     default:
       break;
   }
+};
+
+// 후기 등록 함수
+export const useSubmitReview = (
+  tabIndex: number,
+  worryId: string,
+  chatId: string,
+  categoryId: string,
+  tagId: string | number[],
+  onSuccess: (data: any) => void,
+): any => {
+  const queryClient = useQueryClient();
+  return useCustomMutation(
+    ({ worryId, worryReview }: { worryId: string; worryReview: string }) => {
+      worriesService.updateWorryReview(worryId, worryReview);
+    },
+    async (result: any) => {
+      await queryClient.invalidateQueries(
+        worriesKeys.worries(String(tabIndex), categoryId, tagId),
+      );
+      onSuccess(result);
+    },
+    (error: any) => {
+      console.log(error, '에러');
+    },
+  );
 };

@@ -14,6 +14,7 @@ import ChatBox from '@components/ChatBox';
 import ChatBubble from '@components/ChatBubble';
 import ChatBoxWithButton from '@components/ChatBoxWithButton';
 import AddWorrySetting from '@components/AddWorrySetting';
+import IconSchedule from '@assets/image/schedule.svg';
 
 import { theme } from '@lib/styles/palette';
 import {
@@ -81,6 +82,7 @@ const AddWorry: FC<AddWorryProps> = ({ navigation }) => {
                     }
                   }}
                   setSettingMode={setSettingMode}
+                  settingIcon={<IconSchedule />}
                 />
               )}
             </View>

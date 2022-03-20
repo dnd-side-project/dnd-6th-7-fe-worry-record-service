@@ -1,23 +1,24 @@
-import React, { FC, useCallback, useState } from 'react';
+import React, { FC, useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components/native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import * as Animatable from 'react-native-animatable';
 import AppLayout from '@components/AppLayout';
 import ChatBox from '@components/ChatBox';
 import ChatBoxWithButton from '@components/ChatBoxWithButton';
+import ChatBubble from '@components/ChatBubble';
 
 import { ReviewChatProps } from '~/types/Navigation';
 
 import { getDate } from '@lib/util/date';
 import { theme } from '@lib/styles/palette';
 import ArrowLeft from '@assets/image/arrow_left.svg';
-import { Platform } from 'react-native';
-import { useGetWorry } from '~/hooks/useWorry';
+import { Platform, StyleSheet } from 'react-native';
+import { useGetWorry, useSubmitReview } from '@hooks/useWorry';
 import { USER_ID } from '~/App';
 
 import { useSceneState, useSceneDispatch } from '@context/ArchiveContext';
-import { SET_CHAT_ID } from '~/context/reducer/archive';
-import ChatBubble from '~/components/ChatBubble';
+import { SET_CHAT_ID } from '@context/reducer/archive';
+
+import IconSubmit from '@assets/image/submit.svg';
 
 export interface ReviewChats {
   categoryName?: string;
@@ -38,6 +39,7 @@ const ReviewChat: FC<ReviewChatProps> = ({ navigation }) => {
   const [worryReview, setWorryReview] = useState<string>('');
   const [chatMode, setChatMode] = useState<number>(0);
   const [setMode, setSettingMode] = useState<number>(0);
+  const [initDelay, setInitDelay] = useState<boolean>(false);
 
   const { isLoading, isError } = useGetWorry(
     index,
@@ -49,7 +51,17 @@ const ReviewChat: FC<ReviewChatProps> = ({ navigation }) => {
     (item: ReviewChats) => setWorryChat(item),
   );
 
-  console.log(worryChat);
+  const mutation = useSubmitReview(
+    index,
+    String(worryId),
+    chatId,
+    activeTags,
+    activeTagsId,
+    (item: ReviewChats) => {
+      console.log(tag, 'ReviewChats mutation success', item);
+      navigation.goBack();
+    },
+  );
 
   const onPressBack = useCallback(() => {
     console.log(tag, 'onPressBack');
@@ -65,10 +77,19 @@ const ReviewChat: FC<ReviewChatProps> = ({ navigation }) => {
     [dispatch],
   );
 
+  const onPressSubmit = useCallback(() => {
+    console.log(tag, 'onPressSubmit');
+    mutation.mutate({ worryId, worryReview });
+  }, [mutation, worryId, worryReview]);
+
+  useEffect(() => {
+    console.log(tag, 'init');
+    setInitDelay(false);
+  }, []);
+
   return (
     <AppLayout
-      name="review"
-      noBackGroundImage={true}
+      name="chat"
       headerLeft={<ArrowLeft />}
       headerLeftSidePress={onPressBack}
       headerTitle={
@@ -85,27 +106,31 @@ const ReviewChat: FC<ReviewChatProps> = ({ navigation }) => {
         enableAutomaticScroll={Platform.OS === 'ios'}
         resetScrollToCoords={{ x: 0, y: 0 }}
         scrollEnabled={true}
+        contentContainerStyle={styles.container}
       >
-        {worryChat?.worryChat?.map((item: any, index: any) => (
-          <ChatBox
-            key={index}
-            isOposite={item.isOposite}
-            fontColor={item.isOposite ? theme.color.lightGray : ''}
-            bgColor={
-              item.isOposite
-                ? theme.color.lightWhite
-                : item.isActive
-                ? theme.color.light2White
-                : ''
-            }
-            value={item.contents}
-            delay={item.delay}
-            onPressEdit={onPressEdit}
-            id={item.id}
-            isActive={item.isActive}
-          />
-        ))}
-        {worryChat?.worryChat?.length && chatMode === 0 ? (
+        <ChatBoxWrapper>
+          {worryChat?.worryChat?.map((item: any, index: any) => (
+            <ChatBox
+              key={index}
+              isOposite={item.isOposite}
+              fontColor={item.isOposite ? theme.color.lightGray : ''}
+              bgColor={
+                item.isOposite
+                  ? theme.color.lightWhite
+                  : item.isActive
+                  ? theme.color.light2White
+                  : ''
+              }
+              value={item.contents}
+              delay={item.delay}
+              onPressEdit={onPressEdit}
+              id={item.id}
+              isActive={item.isActive}
+            />
+          ))}
+        </ChatBoxWrapper>
+        {chatId === '1' || worryChat?.worryChat?.length === 0 ? null : worryChat
+            ?.worryChat?.length && chatMode === 0 ? (
           <ChatBubble
             // 애니메이션 설정 하는 props 추가
             value={''}
@@ -114,9 +139,14 @@ const ReviewChat: FC<ReviewChatProps> = ({ navigation }) => {
             height={42}
             editable={true}
             onPressIn={() => setChatMode(1)}
-            // animation="fadeInUp"
-            // useNativeDriver
-            // delay={2000}
+            isAnimated
+            animation="fadeInUp"
+            delay={
+              initDelay
+                ? 0
+                : worryChat?.worryChat[worryChat?.worryChat.length - 1]?.delay +
+                  500
+            }
           />
         ) : (
           <ChatBoxWithButton
@@ -126,15 +156,23 @@ const ReviewChat: FC<ReviewChatProps> = ({ navigation }) => {
               console.log('onBlur');
               if (worryReview.length === 0) {
                 setChatMode(0);
+                setInitDelay(true);
               }
             }}
             setSettingMode={setSettingMode}
+            settingIcon={<IconSubmit onPress={onPressSubmit} />}
           />
         )}
       </WithScroll>
     </AppLayout>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});
 
 const WithScroll = styled(KeyboardAwareScrollView)`
   height: -30px;
@@ -146,8 +184,8 @@ const Headeritle = styled.Text`
   font-weight: bold;
 `;
 
-const ChatAnimatedBubble = Animatable.createAnimatableComponent(
-  styled(ChatBubble)``,
-);
+const ChatBoxWrapper = styled.View`
+  flex: 1;
+`;
 
 export default ReviewChat;

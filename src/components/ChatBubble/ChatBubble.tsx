@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import styled from 'styled-components/native';
 import { View, Image, Text, TextInputProps } from 'react-native';
-
+import * as Animatable from 'react-native-animatable';
 import { theme } from '@lib/styles/palette';
 import IconSchedule from '@assets/image/schedule.svg';
 
@@ -16,6 +16,9 @@ interface ChatTextAreaProps {
   multiline?: boolean;
   editable?: boolean;
   height?: number;
+  isAnimated?: boolean;
+  animation?: string;
+  delay?: number;
 }
 
 const ChatBubble: FC<ChatBubbleProps> = ({
@@ -24,10 +27,34 @@ const ChatBubble: FC<ChatBubbleProps> = ({
   height,
   multiline,
   editable,
+  isAnimated,
+  animation,
+  delay,
   placeholder,
   placeholderTextColor,
   onPressIn,
 }) => {
+  if (isAnimated) {
+    return (
+      <ChatViewAnimated
+        width={width}
+        useNativeDriver
+        delay={delay}
+        animation={animation}
+      >
+        <ChatTextArea
+          height={height}
+          multiline={multiline}
+          editable={editable}
+          value={value}
+          placeholder={placeholder}
+          placeholderTextColor={placeholderTextColor}
+          onPressIn={onPressIn}
+        />
+      </ChatViewAnimated>
+    );
+  }
+
   return (
     <ChatView width={width}>
       <ChatTextArea
@@ -44,6 +71,16 @@ const ChatBubble: FC<ChatBubbleProps> = ({
 };
 
 export default ChatBubble;
+
+const ChatViewAnimated = Animatable.createAnimatableComponent(
+  styled.View<ChatViewProps>`
+    ${({ width }) => {
+      if (width) {
+        return 'width:' + width + 'px';
+      }
+    }}
+  `,
+);
 
 const ChatView = styled.View<ChatViewProps>`
   ${({ width }) => {

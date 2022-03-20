@@ -17,7 +17,7 @@ export interface WorriesServiceClass {
   updateWorryExpiredDate: (id: any) => any;
   getWorryReview: (id: any) => any;
   updatePresentWorry: () => any;
-  updateWorryReview: () => any;
+  updateWorryReview: (worryId: any, worryReview: any) => any;
 }
 
 // isChecked 값 설정하기 위한 함수
@@ -148,9 +148,13 @@ export default class WorriesService implements WorriesServiceClass {
     });
   }
 
-  async updateWorryReview() {
+  async updateWorryReview(worryId: any, worryReview: any) {
     return this.http.fetch('/worries/review', {
       method: 'PATCH',
+      body: JSON.stringify({
+        worryId,
+        worryReview,
+      }),
     });
   }
 }
