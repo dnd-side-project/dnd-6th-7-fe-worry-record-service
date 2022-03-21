@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useEffect, useState } from 'react';
+import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components/native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
@@ -25,6 +25,8 @@ import { useSceneState, useSceneDispatch } from '@context/ArchiveContext';
 import { SET_CHAT_ID } from '@context/reducer/archive';
 
 import IconSubmit from '@assets/image/submit.svg';
+import { ConfirmAlert, RefRbProps } from '../Navigation';
+import DatePicker from '~/components/DatePicker';
 
 export interface ReviewChats {
   categoryName?: string;
@@ -38,6 +40,7 @@ export interface ReviewChats {
 
 const ReviewChat: FC<ReviewChatProps> = ({ navigation }) => {
   const tag = '[ReviewChat]';
+  const refRBSheet = useRef<RefRbProps>(null);
   const { index, activeTags, worryId, chatId, activeTagsId } = useSceneState();
   const dispatch = useSceneDispatch();
 
@@ -47,6 +50,7 @@ const ReviewChat: FC<ReviewChatProps> = ({ navigation }) => {
   const [setMode, setSettingMode] = useState<number>(0);
   const [initDelay, setInitDelay] = useState<boolean>(false);
   const [isFinish, setIsFinish] = useState<boolean>(false);
+  const [date, setDate] = useState(new Date());
 
   const { isLoading, isError } = useGetWorry(
     index,
@@ -61,6 +65,7 @@ const ReviewChat: FC<ReviewChatProps> = ({ navigation }) => {
   // 알림 날짜 설정하는 popup창 만들기
   // 채팅 종료 전까지 테스트하기
 
+  // 리뷰 작성 후 submit하는 Mutations
   const mutateReview = useSubmitReview(
     index,
     activeTags,
@@ -71,6 +76,7 @@ const ReviewChat: FC<ReviewChatProps> = ({ navigation }) => {
     },
   );
 
+  // 걱정 종료 시간 계산하는 함수
   const mutateExpiredDate = useUpdateExpiredDate((item: ReviewChats) => {
     console.log(tag, 'mutateExpiredDate success', item);
     setIsFinish(true);
@@ -82,10 +88,27 @@ const ReviewChat: FC<ReviewChatProps> = ({ navigation }) => {
     });
   });
 
+  // 뒤로가기 함수
   const onPressBack = useCallback(() => {
     console.log(tag, 'onPressBack');
     navigation.goBack();
   }, [navigation]);
+
+  // 걱정 종료 달력 오픈 함수
+  const onPressOpenDrawer = useCallback((): void => {
+    console.log(tag, 'onPressOpenDrawer');
+    if (refRBSheet.current) {
+      refRBSheet.current.open();
+    }
+  }, [refRBSheet]);
+
+  // 걱정 종료 달력  숨김 함수
+  const onPressCancel = (): void => {
+    console.log(tag, 'onPressCancel');
+    if (refRBSheet.current) {
+      refRBSheet.current.close();
+    }
+  };
 
   // 우측 chat 버튼 클릭시 이벤트
   const onPressEdit = useCallback(
@@ -108,6 +131,7 @@ const ReviewChat: FC<ReviewChatProps> = ({ navigation }) => {
           );
           break;
         case '8':
+          onPressOpenDrawer();
           break;
 
         default:
@@ -116,14 +140,26 @@ const ReviewChat: FC<ReviewChatProps> = ({ navigation }) => {
           break;
       }
     },
-    [dispatch, mutateExpiredDate, worryId, setWorryChat],
+    [dispatch, mutateExpiredDate, worryId, setWorryChat, onPressOpenDrawer],
   );
 
+  // DatePicker 에서 선택한 날짜 저장
+  const onPressUpdateExpireDate = useCallback(() => {
+    console.log(tag, 'onPressUpdateExpireDate');
+  }, []);
+
+  // 채팅 종료 시간(임의) 설정 함수
+  const onDateChange = useCallback(() => {
+    console.log(tag, 'onDateChange');
+  }, []);
+
+  // 채팅 입력 후 전송 클릭시 이벤트
   const onPressSubmit = useCallback(() => {
     console.log(tag, 'onPressSubmit');
     mutateReview.mutate({ worryId, worryReview });
   }, [mutateReview, worryId, worryReview]);
 
+  // 채팅 종료 이벤트
   const onPressFinish = useCallback(() => {
     console.log(tag, 'onPressFinish');
   }, []);
@@ -229,6 +265,16 @@ const ReviewChat: FC<ReviewChatProps> = ({ navigation }) => {
           </ButtonWrapper>
         )}
       </WithScroll>
+      <ConfirmAlert
+        ref={refRBSheet}
+        drawerHeight={48}
+        confrimButtonTitle="확인"
+        title="알림 날짜를 설정하세요."
+        subtitle="설정한 날짜에 맞춰 걱정 잠금이 해제됩니다."
+        onPressCancel={onPressCancel}
+        onPressConfirm={onPressUpdateExpireDate}
+        children={<DatePicker date={date} onDateChange={onDateChange} />}
+      />
     </AppLayout>
   );
 };

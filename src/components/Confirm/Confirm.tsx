@@ -12,6 +12,7 @@ interface ConfirmProps {
   confrimButtonTitle: string;
   onPressCancel: () => void;
   onPressConfirm: () => void;
+  children?: ReactElement;
 }
 
 const Confirm: FC<ConfirmProps> = ({
@@ -20,6 +21,7 @@ const Confirm: FC<ConfirmProps> = ({
   confrimButtonTitle,
   onPressCancel,
   onPressConfirm,
+  children,
 }) => {
   return (
     <ConfirmWrapper angle={117.5} colors={['#32323F', '#1F1F2D']}>
@@ -27,6 +29,7 @@ const Confirm: FC<ConfirmProps> = ({
         <Title>{title}</Title>
         <SubTitle>{subtitle}</SubTitle>
       </TitleWrapper>
+      {children}
       <ButtonWrapper>
         <CustomeButton
           title="취소"

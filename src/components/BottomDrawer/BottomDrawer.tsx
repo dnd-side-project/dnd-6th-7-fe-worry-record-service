@@ -2,9 +2,11 @@ import React, { forwardRef, memo, ReactElement } from 'react';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import { StyleSheet } from 'react-native';
 import { theme } from '@lib/styles/palette';
+import { responsiveHeight as hp } from '~/lib/util/helper';
 
 interface BottomDrawerProps {
   children: ReactElement;
+  height?: number;
 }
 
 const BottomDrawer = forwardRef<any, BottomDrawerProps>((props, ref) => {
@@ -19,7 +21,7 @@ const BottomDrawer = forwardRef<any, BottomDrawerProps>((props, ref) => {
       customStyles={{
         wrapper: styles.drawerContainer,
         draggableIcon: styles.drawerIcon,
-        container: styles.drawerWrapper,
+        container: dynimcStyles(props.height ? props.height : 35).drawerWrapper,
       }}
     >
       {props.children}
@@ -33,15 +35,21 @@ const styles = StyleSheet.create({
   drawerContainer: {
     backgroundColor: 'transparent',
   },
-  drawerWrapper: {
-    backgroundColor: '#32323F',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    borderColor: theme.color.drawerBorder,
-    borderWidth: 1,
-  },
+
   drawerIcon: {
     backgroundColor: theme.color.drawerIcon,
     width: 52,
   },
 });
+
+const dynimcStyles = (height: number) =>
+  StyleSheet.create({
+    drawerWrapper: {
+      backgroundColor: '#32323F',
+      height: hp(height),
+      borderTopLeftRadius: 20,
+      borderTopRightRadius: 20,
+      borderColor: theme.color.drawerBorder,
+      borderWidth: 1,
+    },
+  });
