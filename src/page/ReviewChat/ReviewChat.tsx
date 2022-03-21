@@ -50,7 +50,7 @@ const ReviewChat: FC<ReviewChatProps> = ({ navigation }) => {
   const [setMode, setSettingMode] = useState<number>(0);
   const [initDelay, setInitDelay] = useState<boolean>(false);
   const [isFinish, setIsFinish] = useState<boolean>(false);
-  const [date, setDate] = useState(new Date());
+  const [expiredDate, setExpiredDate] = useState<Date>(new Date());
 
   const { isLoading, isError } = useGetWorry(
     index,
@@ -62,7 +62,8 @@ const ReviewChat: FC<ReviewChatProps> = ({ navigation }) => {
     (item: ReviewChats) => setWorryChat(item),
   );
 
-  // 알림 날짜 설정하는 popup창 만들기
+  // 알림 날짜 설정하는 popup창 만들기 - 완료
+  // 선택한 알림 날짜 표출 하기
   // 채팅 종료 전까지 테스트하기
 
   // 리뷰 작성 후 submit하는 Mutations
@@ -145,12 +146,15 @@ const ReviewChat: FC<ReviewChatProps> = ({ navigation }) => {
 
   // DatePicker 에서 선택한 날짜 저장
   const onPressUpdateExpireDate = useCallback(() => {
+    //
     console.log(tag, 'onPressUpdateExpireDate');
   }, []);
 
   // 채팅 종료 시간(임의) 설정 함수
-  const onDateChange = useCallback(() => {
-    console.log(tag, 'onDateChange');
+  const onDateChange = useCallback((date: Date) => {
+    const dateString = getDate(String(date), 'yyyy-MM-dd');
+    setExpiredDate(date);
+    console.log(tag, dateString, 'onDateChange');
   }, []);
 
   // 채팅 입력 후 전송 클릭시 이벤트
@@ -273,7 +277,7 @@ const ReviewChat: FC<ReviewChatProps> = ({ navigation }) => {
         subtitle="설정한 날짜에 맞춰 걱정 잠금이 해제됩니다."
         onPressCancel={onPressCancel}
         onPressConfirm={onPressUpdateExpireDate}
-        children={<DatePicker date={date} onDateChange={onDateChange} />}
+        children={<DatePicker date={expiredDate} onDateChange={onDateChange} />}
       />
     </AppLayout>
   );

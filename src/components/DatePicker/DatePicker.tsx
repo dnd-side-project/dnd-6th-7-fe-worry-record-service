@@ -4,13 +4,19 @@ import styled from 'styled-components/native';
 
 interface DatePickerProps {
   date: Date;
-  onDateChange: () => void;
+  onDateChange: (date: Date) => void;
 }
 
 const InlineDatePicker: FC<DatePickerProps> = ({ date, onDateChange }) => {
   return (
     <DatePickerWrapper>
-      <DatePicker textColor="#fff" date={date} onDateChange={onDateChange} />
+      <DatePicker
+        mode="date"
+        textColor="#fff"
+        fadeToColor="#fff"
+        date={date}
+        onDateChange={onDateChange}
+      />
     </DatePickerWrapper>
   );
 };
