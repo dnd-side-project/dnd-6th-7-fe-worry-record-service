@@ -50,7 +50,8 @@ const ReviewChat: FC<ReviewChatProps> = ({ navigation }) => {
   const [setMode, setSettingMode] = useState<number>(0);
   const [initDelay, setInitDelay] = useState<boolean>(false);
   const [isFinish, setIsFinish] = useState<boolean>(false);
-  const [expiredDate, setExpiredDate] = useState<Date>(new Date());
+
+  const expiredDate = useRef<Date>(new Date());
 
   const { isLoading, isError } = useGetWorry(
     index,
@@ -80,7 +81,15 @@ const ReviewChat: FC<ReviewChatProps> = ({ navigation }) => {
   // 걱정 종료 시간 계산하는 함수
   const mutateExpiredDate = useUpdateExpiredDate((item: ReviewChats) => {
     console.log(tag, 'mutateExpiredDate success', item);
+
     setIsFinish(true);
+    if (expiredDate.current) {
+      const realDate = getDate(String(expiredDate.current), 'yyyy-MM-dd');
+      onPressCancel();
+      updatePersonalDate(realDate);
+      return;
+    }
+
     setWorryChat((prev: any) => {
       return {
         ...prev,
@@ -117,19 +126,22 @@ const ReviewChat: FC<ReviewChatProps> = ({ navigation }) => {
       console.log(tag, 'onPressEdit');
       switch (chatId) {
         case '5':
-          mutateExpiredDate.mutate(worryId, getIsoDate(addDate(new Date(), 7)));
+          mutateExpiredDate.mutate({
+            worryId,
+            expiryDate: getIsoDate(addDate(new Date(), 7)),
+          });
           break;
         case '6':
-          mutateExpiredDate.mutate(
+          mutateExpiredDate.mutate({
             worryId,
-            getIsoDate(addDate(new Date(), 14)),
-          );
+            expiryDate: getIsoDate(addDate(new Date(), 14)),
+          });
           break;
         case '7':
-          mutateExpiredDate.mutate(
+          mutateExpiredDate.mutate({
             worryId,
-            getIsoDate(addDate(new Date(), 30)),
-          );
+            expiryDate: getIsoDate(addDate(new Date(), 30)),
+          });
           break;
         case '8':
           onPressOpenDrawer();
@@ -145,15 +157,34 @@ const ReviewChat: FC<ReviewChatProps> = ({ navigation }) => {
   );
 
   // DatePicker 에서 선택한 날짜 저장
+  const updatePersonalDate = useCallback(
+    (expiredDate: string) => {
+      console.log(tag, 'updatePersonalDate');
+
+      setWorryChat((prev: any) => {
+        const lastItem = prev.worryChat[prev.worryChat.length - 1];
+        return {
+          ...prev,
+          worryChat: [...prev.worryChat, { ...lastItem, expiredDate }],
+        };
+      });
+    },
+    [setWorryChat],
+  );
+
+  // DatePicker 에서 선택한 날짜 저장
   const onPressUpdateExpireDate = useCallback(() => {
-    //
     console.log(tag, 'onPressUpdateExpireDate');
-  }, []);
+    mutateExpiredDate.mutate({
+      worryId,
+      expiryDate: getIsoDate(expiredDate.current),
+    });
+  }, [mutateExpiredDate, worryId]);
 
   // 채팅 종료 시간(임의) 설정 함수
   const onDateChange = useCallback((date: Date) => {
     const dateString = getDate(String(date), 'yyyy-MM-dd');
-    setExpiredDate(date);
+    expiredDate.current = date;
     console.log(tag, dateString, 'onDateChange');
   }, []);
 
@@ -277,7 +308,9 @@ const ReviewChat: FC<ReviewChatProps> = ({ navigation }) => {
         subtitle="설정한 날짜에 맞춰 걱정 잠금이 해제됩니다."
         onPressCancel={onPressCancel}
         onPressConfirm={onPressUpdateExpireDate}
-        children={<DatePicker date={expiredDate} onDateChange={onDateChange} />}
+        children={
+          <DatePicker date={expiredDate.current} onDateChange={onDateChange} />
+        }
       />
     </AppLayout>
   );

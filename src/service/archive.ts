@@ -130,7 +130,7 @@ export default class WorriesService implements WorriesServiceClass {
     });
   }
 
-  async updateWorryExpiredDate(worryId: any, expiryDate: any) {
+  async updateWorryExpiredDate(worryId: string, expiryDate: string) {
     return this.http.fetch(
       `/worries/review/date?worryId=${worryId}&expiryDate=${expiryDate}`,
       {

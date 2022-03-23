@@ -140,7 +140,10 @@ export const useSubmitReview = (
 export const useUpdateExpiredDate = (onSuccess: (data: any) => void): any => {
   return useCustomMutation(
     ({ worryId, expiryDate }: { worryId: string; expiryDate: string }) => {
-      worriesService.updateWorryExpiredDate(worryId, expiryDate);
+      return worriesService.updateWorryExpiredDate(
+        String(worryId),
+        String(expiryDate),
+      );
     },
     async (result: any) => {
       onSuccess(ChatData.getChat5(result.expiryDate));
