@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useCallback } from 'react';
 import styled from 'styled-components/native';
 import {
   KakaoOAuthToken,
@@ -6,7 +6,7 @@ import {
   getProfile as getKakaoProfile,
   login,
 } from '@react-native-seoul/kakao-login';
-
+import messaging from '@react-native-firebase/messaging';
 import CustomeButton from '@components/Button';
 import { h5_fontSize } from '@lib/styles/_variable';
 import {
@@ -37,7 +37,9 @@ const Login: FC<LoginProps> = props => {
   const signInWithKakao = async (): Promise<void> => {
     try {
       const result: KakaoOAuthToken = await login();
-      authLogin(result.accessToken, TEMP_DEVICE_TOKEN);
+      const fcmToken = await messaging().getToken();
+
+      authLogin(result.accessToken, fcmToken);
     } catch (err) {
       console.log(err);
     }

@@ -10,7 +10,7 @@ import {
   useState,
 } from 'react';
 import { BeforeLogin } from '@page/Navigation';
-import { useLogin } from '~/hooks/useLogin';
+import { useLogin } from '@hooks/useLogin';
 
 const AuthContext = createContext({});
 
@@ -61,7 +61,6 @@ export function AuthProvider({
 
   const logIn = useCallback(
     async (oauthToken: string, deviceToken: string) => {
-      console.log(deviceToken, 'dd');
       mutation.mutate({ oauthToken, deviceToken });
     },
     [mutation],

@@ -64,8 +64,8 @@ const ReviewChat: FC<ReviewChatProps> = ({ navigation }) => {
   );
 
   // 알림 날짜 설정하는 popup창 만들기 - 완료
-  // 선택한 알림 날짜 표출 하기
-  // 채팅 종료 전까지 테스트하기
+  // 선택한 알림 날짜 표출 하기 - 테스트 필요
+  // 채팅 종료 전까지 테스트하기 - 테스트 필요
 
   // 리뷰 작성 후 submit하는 Mutations
   const mutateReview = useSubmitReview(
