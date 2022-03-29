@@ -41,7 +41,7 @@ export const useLogin = (onSuccess: (data: any) => void): any => {
     },
     (result: any) => {
       console.log(result, '로그인 성공');
-      setRefreshToken(result, deviceToken);
+      // setRefreshToken(result, deviceToken);
       // onSuccess(result);
     },
     (error: any) => {

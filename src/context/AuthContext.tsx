@@ -29,7 +29,7 @@ export function AuthProvider({
   authErrorEventBus,
   children,
 }: Props): any {
-  const [user, setUser] = useState<any>(true);
+  const [user, setUser] = useState<any>(false);
 
   // useImperativeHandle(tokenRef, () => (user ? user.token : undefined));
 

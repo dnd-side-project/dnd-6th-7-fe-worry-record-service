@@ -24,14 +24,13 @@ import FCM from '@lib/api/fcm';
 export const USER_ID = '1';
 export const TEMP_DEVICE_TOKEN = '123456789';
 
-const storage = new Storage();
-
 const authErrorEventBus = new AuthErrorEventBus();
+export const storage = new Storage();
 export const httpClient = new HttpClient(HTTPS_B_URL, storage);
 export const authService = new AuthService(httpClient);
+export const fcm = new FCM(storage);
 
 const queryClient = new QueryClient();
-const fcm = new FCM(storage);
 
 if (__DEV__) {
   import('react-query-native-devtools').then(({ addPlugin }) => {
@@ -43,32 +42,40 @@ LogBox.ignoreLogs(['Warning: ...']);
 LogBox.ignoreAllLogs();
 
 const App: FC = props => {
+  const tag = 'App';
   const { appState } = useAppState();
 
   useEffect(() => {
     console.log('appState', appState);
   }, [appState]);
 
+  // forground 상태(앱이 Active 되어 있는 상태에서 알림이 오는 경우)
   const foregroundListener = useCallback(() => {
-    const result = fcm.getMessage();
-    console.log('foregroundListener', result);
+    fcm.getMessage();
   }, []);
 
-  const handlePushToken = useCallback(async () => {
-    fcm.requestUserPermission();
-    const fcmToken = await fcm.getToken();
-    const isLogedIn = storage.get('jwt_refreshToken');
-    if (isLogedIn) {
-      // deviceToken과 userId를 서버에 전송
-      // await authService.updatePushToken(fcmToken);
+  const checkIsLogedIn = useCallback(async () => {
+    console.log(tag, 'checkIsLogedIn');
+    const userId = await storage.get('user_id');
+    // 권한 체크
+    // 토큰 가져오기
+    // 토큰 저장
+    // deviceToken과 userId를 서버에 전송
+    await fcm.checkPermission();
+    const deviceToken = await fcm.getToken();
+    storage.set('fcm_token', String(deviceToken));
+
+    if (userId) {
+      // 이미 로그인이 되어 있는 상황
+      const result = await authService.updateFCMToken({ userId, deviceToken });
+      console.log(result, '이미 로그인이 되어 있는 상황');
     }
-    console.log('fcmToken', fcmToken);
   }, []);
 
   useEffect(() => {
+    checkIsLogedIn();
     foregroundListener();
-    handlePushToken();
-  }, [foregroundListener, handlePushToken]);
+  }, [checkIsLogedIn, foregroundListener]);
 
   return (
     <ThemeProvider theme={theme}>
