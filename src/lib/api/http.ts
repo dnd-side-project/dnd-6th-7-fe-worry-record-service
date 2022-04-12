@@ -3,8 +3,9 @@ import CheckErrorStatus from '~/constants/ErrorStatus';
 
 export default class HttpClient {
   client: any;
+  storage: any;
 
-  constructor(baseURL: any, jwtToken: any) {
+  constructor(baseURL: any, storage: any) {
     const instance = axios.create({
       baseURL: baseURL,
       headers: {
@@ -14,37 +15,48 @@ export default class HttpClient {
       withCredentials: true,
     });
 
-    this.client = this.setInterceptors(instance);
+    this.client = instance;
+    this.setInterceptors();
+    this.storage = storage;
   }
 
-  setInterceptors(instance: any) {
-    // Add a request interceptor
-    instance.interceptors.request.use(
-      function (config: any) {
-        // Do something before request is sent
+  setInterceptors() {
+    this.client.interceptors.request.use(
+      async (config: any) => {
+        const accessToken = config.headers['at-jwt-access-token'];
+        if (accessToken) {
+          console.log('accessToken here', accessToken);
+        }
         return config;
       },
-      function (error: any) {
+      async (error: any) => {
         // Do something with request error
         return Promise.reject(error);
       },
     );
 
     // Add a response interceptor
-    instance.interceptors.response.use(
-      function (response: any) {
-        // Any status code that lie within the range of 2xx cause this function to trigger
-        // Do something with response data
+    this.client.interceptors.response.use(
+      async (response: any) => {
+        if (response.headers['at-jwt-access-token']) {
+          this.client.defaults.headers.common['at-jwt-access-token'] =
+            response.headers['at-jwt-access-token'];
+        }
+
+        if (response.headers['at-jwt-refresh-token']) {
+          this.storage.set(
+            'jwt_refreshToken',
+            response.headers['at-jwt-refresh-token'],
+          );
+        }
         return response;
       },
-      function (error: any) {
+      async (error: any) => {
         // Any status codes that falls outside the range of 2xx cause this function to trigger
         // Do something with response error
         return Promise.reject(error);
       },
     );
-
-    return instance;
   }
 
   async fetch(url: any, options: { body: any; method: any; headers: any }) {
