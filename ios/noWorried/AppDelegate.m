@@ -4,6 +4,7 @@
 #import <React/RCTBridge.h>
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
+#import <Firebase.h>
 
 #ifdef FB_SONARKIT_ENABLED
 #import <FlipperKit/FlipperClient.h>
@@ -36,6 +37,7 @@ static void InitializeFlipper(UIApplication *application) {
  return NO;
 }
 
+
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
 #ifdef FB_SONARKIT_ENABLED
@@ -52,6 +54,8 @@ static void InitializeFlipper(UIApplication *application) {
   } else {
       rootView.backgroundColor = [UIColor whiteColor];
   }
+  
+  [FIRApp configure];
 
   self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
   UIViewController *rootViewController = [UIViewController new];
@@ -61,6 +65,14 @@ static void InitializeFlipper(UIApplication *application) {
   return YES;
 }
 
+//- (BOOL)application:(UIApplication *)application
+//    didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+//
+//  [FIRApp configure];
+//
+//  return YES;
+//}
+
 - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
 {
 #if DEBUG
@@ -69,5 +81,8 @@ static void InitializeFlipper(UIApplication *application) {
   return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
 #endif
 }
-
 @end
+
+//@implementation AppDelegate (Firebase)
+//
+//@end

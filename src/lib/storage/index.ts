@@ -11,7 +11,11 @@ export default class Storage {
     return this.storage.setItem(key, value);
   }
 
-  get(key: string) {
-    return this.storage.getItem(key);
+  async get(key: string) {
+    return await this.storage.getItem(key);
+  }
+
+  delete(key: string) {
+    return this.storage.removeItem(key);
   }
 }

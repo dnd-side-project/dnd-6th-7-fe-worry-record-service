@@ -12,6 +12,7 @@ interface ChatBoxWithButtonProps {
   setValue: (text: string) => void;
   onBlur: () => void;
   setSettingMode: (a: number) => void;
+  settingIcon?: SVGRectElement;
 }
 
 const ChatBoxWithButton: FC<ChatBoxWithButtonProps> = ({
@@ -19,6 +20,7 @@ const ChatBoxWithButton: FC<ChatBoxWithButtonProps> = ({
   setValue,
   onBlur,
   setSettingMode,
+  settingIcon,
 }) => {
   return (
     <ChatView>
@@ -38,9 +40,11 @@ const ChatBoxWithButton: FC<ChatBoxWithButtonProps> = ({
           />
         </GradientView>
       </MaskedView>
-      <IconView onTouchStart={() => setSettingMode(1)}>
-        <IconSchedule />
-      </IconView>
+      {settingIcon && (
+        <IconView onTouchStart={() => setSettingMode(1)}>
+          {settingIcon}
+        </IconView>
+      )}
     </ChatView>
   );
 };

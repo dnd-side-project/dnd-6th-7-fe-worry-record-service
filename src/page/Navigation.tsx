@@ -1,4 +1,4 @@
-import React, { FC, forwardRef, memo, lazy } from 'react';
+import React, { FC, forwardRef, memo, lazy, ReactElement } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 const LoginScreen = lazy(() => import('@page/Login'));
 const HomeScreen = lazy(() => import('@page/Home'));
@@ -59,17 +59,20 @@ interface ConfirmAlertProps {
   confrimButtonTitle: string;
   onPressCancel: () => void;
   onPressConfirm: () => void;
+  children?: ReactElement;
+  drawerHeight?: number;
 }
 
 export const ConfirmAlert = memo(
   forwardRef((props: ConfirmAlertProps, ref) => (
-    <BottomDrawer ref={ref}>
+    <BottomDrawer ref={ref} height={props.drawerHeight}>
       <Confirm
         confrimButtonTitle={props.confrimButtonTitle}
         title={props.title}
         subtitle={props.subtitle}
         onPressCancel={props.onPressCancel}
         onPressConfirm={props.onPressConfirm}
+        children={props.children}
       />
     </BottomDrawer>
   )),

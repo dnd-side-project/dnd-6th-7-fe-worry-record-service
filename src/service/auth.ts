@@ -15,7 +15,7 @@ export default class AuthService {
     });
   }
 
-  async login(token: any) {
+  async login(token: any): Promise<any> {
     const { oauthToken, deviceToken } = token;
     return this.http.fetch('/auth/kakao', {
       method: 'POST',
@@ -34,6 +34,15 @@ export default class AuthService {
         deviceToken: '',
       },
     });
+  }
+
+  async updateFCMToken({ userId, deviceToken }: any): Promise<any> {
+    return this.http.fetch(
+      `/auth/refresh?userId=${userId}&deviceToken=${deviceToken}`,
+      {
+        method: 'PUT',
+      },
+    );
   }
 
   async me() {

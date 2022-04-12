@@ -10,7 +10,7 @@ import {
   useState,
 } from 'react';
 import { BeforeLogin } from '@page/Navigation';
-import { useLogin } from '~/hooks/useLogin';
+import { useLogin } from '@hooks/useLogin';
 
 const AuthContext = createContext({});
 
@@ -29,7 +29,7 @@ export function AuthProvider({
   authErrorEventBus,
   children,
 }: Props): any {
-  const [user, setUser] = useState<any>(true);
+  const [user, setUser] = useState<any>(false);
 
   // useImperativeHandle(tokenRef, () => (user ? user.token : undefined));
 
@@ -61,7 +61,6 @@ export function AuthProvider({
 
   const logIn = useCallback(
     async (oauthToken: string, deviceToken: string) => {
-      console.log(deviceToken, 'dd');
       mutation.mutate({ oauthToken, deviceToken });
     },
     [mutation],

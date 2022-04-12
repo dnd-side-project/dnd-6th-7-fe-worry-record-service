@@ -5,7 +5,6 @@ import { worriesKeys } from '@lib/queries/keys';
 import { makeQueryString } from '@lib/util/helper';
 import WorriesService from '@service/archive';
 import { httpClient } from '~/App';
-import { WorryTempProps } from '~/types/Worry';
 
 const worriesService = new WorriesService(httpClient);
 
