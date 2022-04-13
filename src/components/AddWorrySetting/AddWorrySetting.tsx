@@ -8,7 +8,10 @@ import { Button, ButtonGroup, withTheme } from 'react-native-elements';
 
 import { theme } from '@lib/styles/palette';
 import { th } from 'date-fns/locale';
+import WorriesService from '@service/archive';
+import { httpClient } from '~/App';
 
+const worriesService = new WorriesService(httpClient);
 interface AddWorrySettingProps {
   worryContents: {
     userId: number;
@@ -66,15 +69,14 @@ const AddWorrySetting: FC<AddWorrySettingProps> = ({
   };
 
   const postWorry = () => {
-    axios
-      .post(`http://${process.env.API_URL}/worries/write`, worryContents)
-      .then(res => {
-        console.log(worryContents);
-        console.log(res?.data);
-        navigation.navigate('AddWorryComplete', {
-          worryExpiryDate: worryContents.worryExpiryDate,
-        });
+    // .post(`${process.env.HTTPS_B_URL}/worries/write`, worryContents)
+    worriesService.addWorry(worryContents).then(res => {
+      console.log(worryContents);
+      console.log(res?.data);
+      navigation.navigate('AddWorryComplete', {
+        worryExpiryDate: worryContents.worryExpiryDate,
       });
+    });
   };
   return (
     <>
@@ -155,9 +157,9 @@ const AddWorrySetting: FC<AddWorrySettingProps> = ({
         </View>
         <View style={style.titleContainer2}>
           <Text style={style.titleText}>걱정 숨기기</Text>
-          <Text
-            style={style.detailText}
-          >{`알림이 울릴 때까지 보고싶지 않은 걱정을 숨길 수 있어요.`}</Text>
+          <Text style={style.detailText}>
+            {'알림이 울릴 때까지 보고싶지 않은 걱정을 숨길 수 있어요.'}
+          </Text>
           <Switch
             style={style.switch}
             trackColor={{ false: `${theme.color.white}10`, true: '#3431A5' }}

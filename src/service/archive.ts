@@ -3,7 +3,7 @@ import { WorryTempProps } from '~/types/Worry';
 export interface WorriesServiceClass {
   http: any;
   getWorries: (userId: any) => any;
-  addWorry: (email: any, password: any) => any;
+  addWorry: (worryContents: any) => any;
   getRecentWorries: (userId: any) => any;
   filterRecentWorries: (queryString: any) => any;
   getPastWorries: (userId: any) => any;
@@ -36,12 +36,11 @@ export default class WorriesService implements WorriesServiceClass {
     });
   }
 
-  async addWorry(email: any, password: any) {
+  async addWorry(worryContents: any) {
     return this.http.fetch('/worries/write', {
       method: 'POST',
       body: JSON.stringify({
-        email,
-        password,
+        worryContents,
       }),
     });
   }

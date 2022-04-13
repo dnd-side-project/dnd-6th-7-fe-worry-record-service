@@ -11,6 +11,7 @@ import {
 } from 'react';
 import { BeforeLogin } from '@page/Navigation';
 import { useLogin } from '@hooks/useLogin';
+import { fcm, storage } from '~/App';
 
 const AuthContext = createContext({});
 
@@ -29,7 +30,14 @@ export function AuthProvider({
   authErrorEventBus,
   children,
 }: Props): any {
+  const tag = 'AuthProvider';
   const [user, setUser] = useState<any>(false);
+  const [userInfo, setUserInfo] = useState<any>({
+    userId: '',
+    userName: '',
+    userEmail: '',
+    userImage: '',
+  });
 
   // useImperativeHandle(tokenRef, () => (user ? user.token : undefined));
 
@@ -46,22 +54,43 @@ export function AuthProvider({
   // 	authService.me().then(setUser).catch(console.error);
   // }, [authService]);
 
+  const checkIsLogedIn = useCallback(async () => {
+    console.log(tag, 'checkIsLogedIn');
+    const userId = await storage.get('user_id');
+    const userEmail = await storage.get('user_email');
+    const userName = await storage.get('user_name');
+    const userImage = await storage.get('user_image_url');
+
+    setUserInfo({
+      userId,
+      userName,
+      userEmail,
+      userImage,
+    });
+    // 권한 체크
+    // 토큰 가져오기
+    // 토큰 저장
+    // deviceToken과 userId를 서버에 전송
+    await fcm.checkPermission();
+    const deviceToken = await fcm.getToken();
+    storage.set('fcm_token', String(deviceToken));
+
+    if (userId) {
+      // 이미 로그인이 되어 있는 상황
+      const result = await authService.updateFCMToken({ userId, deviceToken });
+      setUser(true);
+      console.log(result, '이미 로그인이 되어 있는 상황');
+    }
+  }, [authService]);
+
   const mutation = useLogin(data => {
     console.log(data);
     setUser(true);
   });
 
-  const signUp = useCallback(
-    async (username, password, name, email, url) =>
-      authService
-        .signup(username, password, name, email, url)
-        .then((user: any) => setUser(user)),
-    [authService],
-  );
-
   const logIn = useCallback(
-    async (oauthToken: string, deviceToken: string) => {
-      mutation.mutate({ oauthToken, deviceToken });
+    async (result: any, deviceToken: string) => {
+      mutation.mutate({ result, deviceToken });
     },
     [mutation],
   );
@@ -74,12 +103,16 @@ export function AuthProvider({
   const context = useMemo(
     () => ({
       user,
-      signUp,
+      userInfo,
       logIn,
       logout,
     }),
-    [user, signUp, logIn, logout],
+    [user, userInfo, logIn, logout],
   );
+
+  useEffect(() => {
+    checkIsLogedIn();
+  }, [checkIsLogedIn]);
 
   return (
     <AuthContext.Provider value={context}>

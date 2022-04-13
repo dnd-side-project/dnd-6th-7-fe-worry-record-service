@@ -18,3 +18,7 @@ export const worriesKeys = {
       { chatId },
     ] as const,
 };
+
+export const homekeys = {
+  all: ['home'] as const,
+};

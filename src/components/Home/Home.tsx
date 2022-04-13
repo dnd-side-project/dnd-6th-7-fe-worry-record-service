@@ -9,10 +9,13 @@ import {
   getHeightDevice as heightDevice,
   responsiveWidth as wp,
 } from '@lib/util/helper';
+import { storage } from '~/App';
 
 import { theme } from '@lib/styles/palette';
 
 import IconRightArrow from '@assets/image/arrow_right.svg';
+import { useHome } from '~/hooks/useHome';
+import { useAuth } from '@context/AuthContext';
 
 interface TextContainerProps {
   username: string;
@@ -21,28 +24,41 @@ interface TextContainerProps {
 }
 
 const Home: FC<HomeProps> = ({ setBackgroundImageUrl }) => {
+  const { userInfo } = useAuth();
+
   const [worryInfo, setWorryInfo] = useState({
     meanlessWorryPer: 0,
     recentWorryCnt: 0,
     imgUrl: 'worryservice.s3.s3.ap-northeast-2.amazonaws.com/homeGIF/1.gif',
   });
 
-  useEffect(() => {
-    axios
-      .get(`${process.env.HTTPS_B_URL}/worries/home?userId=${1}`)
-      .catch(err => console.log(err))
-      .then(res => {
-        console.log(res?.data);
-        // 이 부분 시연 위해서 하드코딩 되어있음
-        if (res?.data?.recentWorryCnt <= 3) {
-          setBackgroundImageUrl('default_3');
-        } else {
-          setBackgroundImageUrl('edu_4');
-        }
-        setWorryInfo({ ...res?.data });
-      })
-      .catch(err => console.log(err));
-  }, []);
+  useHome(res => {
+    console.log(res, 'result');
+    // 이 부분 시연 위해서 하드코딩 되어있음
+    // if (res?.data?.recentWorryCnt <= 3) {
+    //   setBackgroundImageUrl('default_3');
+    // } else {
+    //   setBackgroundImageUrl('edu_4');
+    // }
+    setWorryInfo({ ...res });
+  });
+
+  // useEffect(() => {
+  //   axios
+  //     .get(`${process.env.HTTPS_B_URL}/worries/home?userId=${1}`)
+  //     .catch(err => console.log(err))
+  //     .then(res => {
+  //       console.log(res?.data);
+  //       // 이 부분 시연 위해서 하드코딩 되어있음
+  //       if (res?.data?.recentWorryCnt <= 3) {
+  //         setBackgroundImageUrl('default_3');
+  //       } else {
+  //         setBackgroundImageUrl('edu_4');
+  //       }
+  //       setWorryInfo({ ...res?.data });
+  //     })
+  //     .catch(err => console.log(err));
+  // }, []);
 
   return (
     <>
@@ -50,25 +66,25 @@ const Home: FC<HomeProps> = ({ setBackgroundImageUrl }) => {
         <TextContainer1
           meanlessWorryPer={worryInfo.meanlessWorryPer}
           recentWorryCnt={worryInfo.recentWorryCnt}
-          username={'이현'}
+          username={userInfo.userName}
         />
       ) : worryInfo.recentWorryCnt <= 3 ? (
         <TextContainer2
           meanlessWorryPer={worryInfo.meanlessWorryPer}
           recentWorryCnt={worryInfo.recentWorryCnt}
-          username={'이현'}
+          username={userInfo.userName}
         />
       ) : worryInfo.meanlessWorryPer <= 50 ? (
         <TextContainer3
           meanlessWorryPer={worryInfo.meanlessWorryPer}
           recentWorryCnt={worryInfo.recentWorryCnt}
-          username={'이현'}
+          username={userInfo.userName}
         />
       ) : (
         <TextContainer4
           meanlessWorryPer={worryInfo.meanlessWorryPer}
           recentWorryCnt={worryInfo.recentWorryCnt}
-          username={'이현'}
+          username={userInfo.userName}
         />
       )}
     </>

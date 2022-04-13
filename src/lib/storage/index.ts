@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+// import RNAsyncStorageFlipper from 'rn-async-storage-flipper';
+// RNAsyncStorageFlipper(AsyncStorage);
 export default class Storage {
   storage: any;
 
