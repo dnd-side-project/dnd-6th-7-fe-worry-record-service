@@ -22,14 +22,16 @@ import {
   responsiveHeight as hp,
 } from '@lib/util/helper';
 import { values } from 'lodash';
+import { useAuth } from '~/context/AuthContext';
 
 interface AddWorryProps {
   navigation?: any;
 }
 
 const AddWorry: FC<AddWorryProps> = ({ navigation }) => {
+  const { userInfo } = useAuth();
   const [worryContents, setWorryContents] = useState({
-    userId: 56,
+    userId: userInfo.userId,
     categoryId: -1,
     worryText: '',
     worryExpiryDate: new Date(0),

@@ -1,5 +1,9 @@
 import React, { FC, Suspense, useCallback, useEffect } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+import {
+  NavigationContainer,
+  useNavigationContainerRef,
+} from '@react-navigation/native';
+import { useFlipper } from '@react-navigation/devtools';
 import { QueryClient, QueryClientProvider } from 'react-query';
 
 import { AfterLogin } from '@page/Navigation';
@@ -21,9 +25,6 @@ import Error from '@components/Error';
 import Storage from '@lib/storage';
 import FCM from '@lib/api/fcm';
 
-export const USER_ID = '1';
-export const TEMP_DEVICE_TOKEN = '123456789';
-
 const authErrorEventBus = new AuthErrorEventBus();
 export const storage = new Storage();
 export const httpClient = new HttpClient(HTTPS_B_URL, storage);
@@ -44,6 +45,9 @@ LogBox.ignoreAllLogs();
 const App: FC = props => {
   const tag = 'App';
   const { appState } = useAppState();
+  const navigationRef = useNavigationContainerRef();
+
+  useFlipper(navigationRef);
 
   useEffect(() => {
     console.log('appState', appState);
@@ -54,32 +58,13 @@ const App: FC = props => {
     fcm.getMessage();
   }, []);
 
-  const checkIsLogedIn = useCallback(async () => {
-    console.log(tag, 'checkIsLogedIn');
-    const userId = await storage.get('user_id');
-    // 권한 체크
-    // 토큰 가져오기
-    // 토큰 저장
-    // deviceToken과 userId를 서버에 전송
-    await fcm.checkPermission();
-    const deviceToken = await fcm.getToken();
-    storage.set('fcm_token', String(deviceToken));
-
-    if (userId) {
-      // 이미 로그인이 되어 있는 상황
-      const result = await authService.updateFCMToken({ userId, deviceToken });
-      console.log(result, '이미 로그인이 되어 있는 상황');
-    }
-  }, []);
-
   useEffect(() => {
-    checkIsLogedIn();
     foregroundListener();
-  }, [checkIsLogedIn, foregroundListener]);
+  }, [foregroundListener]);
 
   return (
     <ThemeProvider theme={theme}>
-      <NavigationContainer>
+      <NavigationContainer ref={navigationRef}>
         <Suspense fallback={<Indicator />}>
           <ErrorBoundary FallbackComponent={Error}>
             <QueryClientProvider client={queryClient}>

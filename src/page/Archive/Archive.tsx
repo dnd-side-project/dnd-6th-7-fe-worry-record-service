@@ -10,8 +10,6 @@ import React, {
 } from 'react';
 import styled from 'styled-components/native';
 
-import { USER_ID } from '~/App';
-
 import CustomeButton from '@components/Button';
 import CustomeTabs from '@components/Tabs';
 import AppLayout from '@components/AppLayout';
@@ -38,11 +36,13 @@ import { getDate } from '@lib/util/date';
 
 import IconDelete from '@assets/image/delete.svg';
 import IconUnlock from '@assets/image/unlock.svg';
+import { useAuth } from '~/context/AuthContext';
 
 const Archive: FC<ArchiveProps> = ({ navigation }) => {
   const tag = '[Archive]';
   const refRBSheet = useRef<RefRbProps>(null);
   const dispatch = useSceneDispatch();
+  const { userInfo } = useAuth();
   const {
     isUpdating,
     activeTags,
@@ -58,7 +58,7 @@ const Archive: FC<ArchiveProps> = ({ navigation }) => {
   // 걱정 목록을 가져오는 함수
   const { data: worries, refetch } = useGetWorries(
     index,
-    USER_ID,
+    userInfo.userId,
     activeTags,
     activeTagsId,
     isUpdating,

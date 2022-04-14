@@ -1,18 +1,18 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { useCustomMutation } from '@lib/queries';
-import { KakaoOAuthToken } from '@react-native-seoul/kakao-login';
-import { authService, httpClient } from '~/App';
-import Storage from '@lib/storage';
+import { authService, httpClient, storage } from '~/App';
 
-const JWT_EXPIRY_TIME = 24 * 3600 * 1000;
-const storage = new Storage();
-
-const setRefreshToken = (result: any, deviceToken: any) => {
-  httpClient.client.headers['at-jwt-access-token'] = result.accessToken;
-  storage.set('jwt_refreshToken', result.refreshToken);
-  storage.set('user_id', result.userId);
+const setUserInfo = (result: any, tokens: any, deviceToken: any) => {
+  // httpClient.client.defaults.headers['at-jwt-access-token'] =
+  //   tokens.accessToken;
+  // storage.set('jwt_refreshToken', tokens.refreshToken);
+  // storage.set('jwt_accessToken', tokens.refreshToken);
+  storage.set('jwt_accessToken_expiredAt', tokens.accessTokenExpiresAt);
+  storage.set('user_id', String(result.userId));
+  storage.set('user_image_url', result.imgURL);
+  storage.set('user_email', result.email);
+  storage.set('user_name', result.username);
   storage.set('fcm_Token', deviceToken);
-  // setTimeout(useSilentRefresh, JWT_EXPIRY_TIME - 60000);
 };
 
 // 리프레시 토큰 받는 함수
@@ -34,15 +34,21 @@ const setRefreshToken = (result: any, deviceToken: any) => {
 // 로그인 하는 함수
 export const useLogin = (onSuccess: (data: any) => void): any => {
   let deviceToken = '';
+  let tokens = '';
   return useCustomMutation(
     (token: any) => {
+      tokens = token.result.accessToken;
+      console.log(token);
       deviceToken = token.deviceToken;
-      return authService.login(token);
+      return authService.login({
+        oauthToken: 'yDIW_7RS2cOVUvppixh2tEdCNYvdjwdXtLb15AopyNkAAAGAI1h5Wg',
+        deviceToken,
+      });
     },
     (result: any) => {
       console.log(result, '로그인 성공');
-      // setRefreshToken(result, deviceToken);
-      // onSuccess(result);
+      setUserInfo(result, tokens, deviceToken);
+      onSuccess(result);
     },
     (error: any) => {
       console.log(error, '에러');

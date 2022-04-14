@@ -816,7 +816,7 @@ PODS:
     - React
   - react-native-date-picker (4.2.0):
     - React-Core
-  - react-native-flipper (0.137.0):
+  - react-native-flipper (0.140.0):
     - React-Core
   - react-native-pager-view (5.4.9):
     - React-Core
@@ -1181,7 +1181,7 @@ SPEC CHECKSUMS:
   React-logger: 933f80c97c633ee8965d609876848148e3fef438
   react-native-blur: cad4d93b364f91e7b7931b3fa935455487e5c33c
   react-native-date-picker: d83ab9cccbc497642a93fdca783ae76ecd6b17b6
-  react-native-flipper: 9ce0e50fc10cb4786901de4fa4c8726b4651b1ad
+  react-native-flipper: cfc4ad1de608a27b9dd9f544b820cb1e1897aceb
   react-native-pager-view: 3ee7d4c7697fb3ef788346e834a60cca97ed8540
   react-native-safe-area-context: 584dc04881deb49474363f3be89e4ca0e854c057
   React-perflogger: 93075d8931c32cd1fce8a98c15d2d5ccc4d891bd
