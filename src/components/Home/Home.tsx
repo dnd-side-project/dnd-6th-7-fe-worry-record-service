@@ -29,36 +29,14 @@ const Home: FC<HomeProps> = ({ setBackgroundImageUrl }) => {
   const [worryInfo, setWorryInfo] = useState({
     meanlessWorryPer: 0,
     recentWorryCnt: 0,
-    imgUrl: 'worryservice.s3.s3.ap-northeast-2.amazonaws.com/homeGIF/1.gif',
+    imgUrl: '',
   });
 
   useHome(res => {
+    console.log(userInfo, '카카오 계정 인포');
     console.log(res, 'result');
-    // 이 부분 시연 위해서 하드코딩 되어있음
-    // if (res?.data?.recentWorryCnt <= 3) {
-    //   setBackgroundImageUrl('default_3');
-    // } else {
-    //   setBackgroundImageUrl('edu_4');
-    // }
     setWorryInfo({ ...res });
   });
-
-  // useEffect(() => {
-  //   axios
-  //     .get(`${process.env.HTTPS_B_URL}/worries/home?userId=${1}`)
-  //     .catch(err => console.log(err))
-  //     .then(res => {
-  //       console.log(res?.data);
-  //       // 이 부분 시연 위해서 하드코딩 되어있음
-  //       if (res?.data?.recentWorryCnt <= 3) {
-  //         setBackgroundImageUrl('default_3');
-  //       } else {
-  //         setBackgroundImageUrl('edu_4');
-  //       }
-  //       setWorryInfo({ ...res?.data });
-  //     })
-  //     .catch(err => console.log(err));
-  // }, []);
 
   return (
     <>
