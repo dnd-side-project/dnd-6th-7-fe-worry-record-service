@@ -19,7 +19,6 @@ import {
   useSubmitReview,
   useUpdateExpiredDate,
 } from '@hooks/useWorry';
-import { USER_ID } from '~/App';
 
 import { useSceneState, useSceneDispatch } from '@context/ArchiveContext';
 import { SET_CHAT_ID } from '@context/reducer/archive';
@@ -27,6 +26,7 @@ import { SET_CHAT_ID } from '@context/reducer/archive';
 import IconSubmit from '@assets/image/submit.svg';
 import { ConfirmAlert, RefRbProps } from '../Navigation';
 import DatePicker from '~/components/DatePicker';
+import { useAuth } from '~/context/AuthContext';
 
 export interface ReviewChats {
   categoryName?: string;
@@ -41,6 +41,7 @@ export interface ReviewChats {
 const ReviewChat: FC<ReviewChatProps> = ({ navigation }) => {
   const tag = '[ReviewChat]';
   const refRBSheet = useRef<RefRbProps>(null);
+  const { userInfo } = useAuth();
   const { index, activeTags, worryId, chatId, activeTagsId } = useSceneState();
   const dispatch = useSceneDispatch();
 
@@ -55,7 +56,7 @@ const ReviewChat: FC<ReviewChatProps> = ({ navigation }) => {
 
   const { isLoading, isError } = useGetWorry(
     index,
-    USER_ID,
+    userInfo.userId,
     String(worryId),
     chatId,
     activeTags,
@@ -128,7 +129,10 @@ const ReviewChat: FC<ReviewChatProps> = ({ navigation }) => {
         case '5':
           mutateExpiredDate.mutate({
             worryId,
-            expiryDate: getIsoDate(addDate(new Date(), 7)),
+            expiryDate: getDate(
+              String(addDate(new Date(), 7)),
+              'yyyy-MM-ddThh:mm:ss',
+            ),
           });
           break;
         case '6':

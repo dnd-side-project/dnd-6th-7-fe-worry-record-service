@@ -2,17 +2,17 @@
 import { useCustomMutation } from '@lib/queries';
 import { authService, httpClient, storage } from '~/App';
 
-const setUserInfo = (result: any, tokens: any, deviceToken: any) => {
+const setUserInfo = async (result: any, tokens: any, deviceToken: any) => {
   // httpClient.client.defaults.headers['at-jwt-access-token'] =
   //   tokens.accessToken;
   // storage.set('jwt_refreshToken', tokens.refreshToken);
   // storage.set('jwt_accessToken', tokens.refreshToken);
-  storage.set('jwt_accessToken_expiredAt', tokens.accessTokenExpiresAt);
-  storage.set('user_id', String(result.userId));
-  storage.set('user_image_url', result.imgURL);
-  storage.set('user_email', result.email);
-  storage.set('user_name', result.username);
-  storage.set('fcm_Token', deviceToken);
+  // await storage.set('jwt_accessToken_expiredAt', tokens.accessTokenExpiresAt);
+  await storage.set('user_id', String(result.userId));
+  await storage.set('user_image_url', result.imgURL);
+  await storage.set('user_email', result.email);
+  await storage.set('user_name', result.username);
+  await storage.set('fcm_Token', deviceToken);
 };
 
 // 리프레시 토큰 받는 함수
@@ -37,17 +37,17 @@ export const useLogin = (onSuccess: (data: any) => void): any => {
   let tokens = '';
   return useCustomMutation(
     (token: any) => {
+      const temp = 'oCSoEiRTaXN5Ew4qe8IgHkgvrdfxVkPH5myvGwo9c04AAAGANtPovw';
       tokens = token.result.accessToken;
-      console.log(token);
       deviceToken = token.deviceToken;
       return authService.login({
-        oauthToken: 'yDIW_7RS2cOVUvppixh2tEdCNYvdjwdXtLb15AopyNkAAAGAI1h5Wg',
+        oauthToken: tokens,
         deviceToken,
       });
     },
-    (result: any) => {
+    async (result: any) => {
       console.log(result, '로그인 성공');
-      setUserInfo(result, tokens, deviceToken);
+      await setUserInfo(result, tokens, deviceToken);
       onSuccess(result);
     },
     (error: any) => {

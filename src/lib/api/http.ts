@@ -50,14 +50,14 @@ export default class HttpClient {
         if (response.headers['at-jwt-access-token']) {
           this.client.defaults.headers['at-jwt-access-token'] =
             response.headers['at-jwt-access-token'];
-          this.storage.set(
+          await this.storage.set(
             'jwt_accessToken',
             response.headers['at-jwt-access-token'],
           );
         }
 
         if (response.headers['at-jwt-refresh-token']) {
-          this.storage.set(
+          await this.storage.set(
             'jwt_refreshToken',
             response.headers['at-jwt-refresh-token'],
           );

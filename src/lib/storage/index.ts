@@ -8,15 +8,15 @@ export default class Storage {
     this.storage = AsyncStorage;
   }
 
-  set(key: string, value: any) {
+  async set(key: string, value: any) {
     return this.storage.setItem(key, value);
   }
 
   async get(key: string) {
-    return await this.storage.getItem(key);
+    return this.storage.getItem(key);
   }
 
-  delete(key: string) {
+  async delete(key: string) {
     return this.storage.removeItem(key);
   }
 }

@@ -60,6 +60,8 @@ export function AuthProvider({
     const userEmail = await storage.get('user_email');
     const userName = await storage.get('user_name');
     const userImage = await storage.get('user_image_url');
+    const isLogined = await storage.get('jwt_refreshToken');
+    console.log(isLogined, 'userId');
 
     setUserInfo({
       userId,
@@ -73,13 +75,13 @@ export function AuthProvider({
     // deviceToken과 userId를 서버에 전송
     await fcm.checkPermission();
     const deviceToken = await fcm.getToken();
-    storage.set('fcm_token', String(deviceToken));
+    await storage.set('fcm_token', String(deviceToken));
 
-    if (userId) {
+    if (isLogined) {
       // 이미 로그인이 되어 있는 상황
+      console.log('이미 로그인이 되어 있는 상황');
       const result = await authService.updateFCMToken({ userId, deviceToken });
-      setUser(true);
-      console.log(result, '이미 로그인이 되어 있는 상황');
+      // setUser(true);
     }
   }, [authService]);
 
