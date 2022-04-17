@@ -38,10 +38,10 @@ export const useLogin = (onSuccess: (data: any) => void): any => {
   return useCustomMutation(
     (token: any) => {
       tokens = token.result.accessToken;
-      console.log(token);
+      console.log('토큰', token);
       deviceToken = token.deviceToken;
       return authService.login({
-        oauthToken: 'yDIW_7RS2cOVUvppixh2tEdCNYvdjwdXtLb15AopyNkAAAGAI1h5Wg',
+        oauthToken: tokens, // 'yDIW_7RS2cOVUvppixh2tEdCNYvdjwdXtLb15AopyNkAAAGAI1h5Wg',
         deviceToken,
       });
     },
