@@ -6,9 +6,12 @@ import MaskedView from '@react-native-community/masked-view';
 
 import { theme } from '@lib/styles/palette';
 import IconSchedule from '@assets/image/schedule.svg';
+import { placeholderName } from '~/../template.config';
 
 interface ChatBoxWithButtonProps {
   value: string;
+  placeholder?: string;
+  placeholderTextColor?: string;
   setValue: (text: string) => void;
   onBlur: () => void;
   setSettingMode: (a: number) => void;
@@ -17,6 +20,8 @@ interface ChatBoxWithButtonProps {
 
 const ChatBoxWithButton: FC<ChatBoxWithButtonProps> = ({
   value,
+  placeholder,
+  placeholderTextColor,
   setValue,
   onBlur,
   setSettingMode,
@@ -33,6 +38,8 @@ const ChatBoxWithButton: FC<ChatBoxWithButtonProps> = ({
       <MaskedView maskElement={<ChatTextArea multiline={true} value={value} />}>
         <GradientView colors={['#ffffff00', '#ffffff']}>
           <ChatTextAreaTransparent
+            placeholder={placeholder}
+            placeholderTextColor={placeholderTextColor}
             multiline={true}
             value={value}
             onChangeText={text => setValue(text)}

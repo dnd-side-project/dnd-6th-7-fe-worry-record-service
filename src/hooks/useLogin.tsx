@@ -39,9 +39,10 @@ export const useLogin = (onSuccess: (data: any) => void): any => {
     (token: any) => {
       const temp = 'oCSoEiRTaXN5Ew4qe8IgHkgvrdfxVkPH5myvGwo9c04AAAGANtPovw';
       tokens = token.result.accessToken;
+      console.log('토큰', token);
       deviceToken = token.deviceToken;
       return authService.login({
-        oauthToken: tokens,
+        oauthToken: tokens, // 'yDIW_7RS2cOVUvppixh2tEdCNYvdjwdXtLb15AopyNkAAAGAI1h5Wg',
         deviceToken,
       });
     },

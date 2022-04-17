@@ -65,28 +65,29 @@ const AddWorry: FC<AddWorryProps> = ({ navigation }) => {
             behavior={Platform.OS === 'ios' ? 'padding' : undefined}
           >
             <View style={style.chatBubbleContainer}>
-              {chatMode === 0 ? (
+              {/* {chatMode === 0 ? (
                 <ChatBubble
                   value={''}
-                  placeholder={'걱정이 있나요?'}
-                  placeholderTextColor={'rgba(255, 255, 255, 0.5)'}
+
                   height={42}
                   editable={true}
                   onPressIn={() => setChatMode(1)}
                 />
-              ) : (
-                <ChatBoxWithButton
-                  value={worryContents.worryText}
-                  setValue={handleWorryText}
-                  onBlur={() => {
-                    if (worryContents.worryText.length === 0) {
-                      setChatMode(0);
-                    }
-                  }}
-                  setSettingMode={setSettingMode}
-                  settingIcon={<IconSchedule />}
-                />
-              )}
+              ) : ( */}
+              <ChatBoxWithButton
+                value={worryContents.worryText}
+                setValue={handleWorryText}
+                placeholder={'걱정이 있나요?'}
+                placeholderTextColor={'rgba(255, 255, 255, 0.5)'}
+                onBlur={() => {
+                  if (worryContents.worryText.length === 0) {
+                    setChatMode(0);
+                  }
+                }}
+                setSettingMode={setSettingMode}
+                settingIcon={<IconSchedule />}
+              />
+              {/* // )} */}
             </View>
           </KeyboardAvoidingView>
         </>
