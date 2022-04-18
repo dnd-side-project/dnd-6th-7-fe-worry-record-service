@@ -94,7 +94,7 @@ const Worries: FC<WorriesProps> = ({ worries }) => {
           index: number;
         }) => <Worry key={item.worryId} item={item} index={idx} />}
         numColumns={2}
-        keyExtractor={(item, index) => String(index)}
+        keyExtractor={(item, index) => String(item.worryId)}
       />
     </WorriesWrapper>
   );

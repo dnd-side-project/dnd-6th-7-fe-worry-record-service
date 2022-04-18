@@ -136,17 +136,20 @@ export const useSubmitReview = (
   );
 };
 
-// 후기 등록 함수
+//
 export const useUpdateExpiredDate = (onSuccess: (data: any) => void): any => {
+  let expiredDate = '';
   return useCustomMutation(
     ({ worryId, expiryDate }: { worryId: string; expiryDate: string }) => {
+      expiredDate = expiryDate;
       return worriesService.updateWorryExpiredDate(
         String(worryId),
         String(expiryDate),
       );
     },
     async (result: any) => {
-      onSuccess(ChatData.getChat5(result.expiryDate));
+      console.log(result, '업데이트 성공');
+      onSuccess(ChatData.getChat5(expiredDate));
     },
     (error: any) => {
       console.log(error, '에러');
