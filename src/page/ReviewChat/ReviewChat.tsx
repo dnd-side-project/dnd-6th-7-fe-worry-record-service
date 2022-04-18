@@ -218,6 +218,7 @@ const ReviewChat: FC<ReviewChatProps> = ({ navigation }) => {
   // 채팅 종료 이벤트
   const onPressFinish = useCallback(() => {
     console.log(tag, 'onPressFinish');
+    //TODO: 몇월 몇일 알림 푸시 받을 수 있도록 로직 추가
     navigation.goBack();
   }, [navigation]);
 

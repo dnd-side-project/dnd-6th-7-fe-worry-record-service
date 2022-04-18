@@ -22,8 +22,7 @@ const ReviewEdit: FC<ReviewEditProps> = ({ navigation }) => {
 
   const onPressEdit = useCallback(() => {
     console.log(tag, 'onPressEdit');
-
-    // mutation 이용해서 업데이트
+    // TODO: 걱정 후기 수정 - 내용 API 호출
     navigation.goBack();
   }, [navigation]);
 
