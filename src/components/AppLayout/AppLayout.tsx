@@ -36,7 +36,7 @@ const AppLayout: FC<AppLayoutProps> = ({
   const setImage = (): ImageSourcePropType => {
     switch (name) {
       case 'login':
-        return require('@assets/image/bg_login.png');
+        return require('@assets/image/login.gif');
       case 'worry':
         return require('@assets/image/bg_worry.png');
       case 'chat':

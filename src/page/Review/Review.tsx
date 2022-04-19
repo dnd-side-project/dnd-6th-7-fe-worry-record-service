@@ -17,7 +17,7 @@ import {
 } from '@context/reducer/archive';
 import { useSceneDispatch, useSceneState } from '@context/ArchiveContext';
 import { Platform } from 'react-native';
-import { useReview } from '~/hooks/useWorries';
+import { useReview, useUpdateWorryRealize } from '~/hooks/useWorry';
 import { getDate } from '~/lib/util/date';
 
 const Review: FC<ReviewProps> = ({ navigation }) => {
@@ -29,6 +29,10 @@ const Review: FC<ReviewProps> = ({ navigation }) => {
   // 걱정 목록을 가져오는 함수
   const { data: review } = useReview(worryId, (data: any) => {
     console.log(data, '목록 조회 완료');
+  });
+
+  const updateWorryRealize = useUpdateWorryRealize((data: any) => {
+    console.log(data, '실현 여부 수정 완료');
   });
 
   const onPressBack = useCallback(() => {
@@ -47,10 +51,12 @@ const Review: FC<ReviewProps> = ({ navigation }) => {
     (isRealized: boolean) => {
       console.log(tag, 'onPressChangeWorry');
       dispatch({ type: CHANGE_MODE_REALIZED, values: { isRealized } });
-
-      // TODO: 걱정 후기 수정 - 실현 여부 수정 API 호출
+      updateWorryRealize.mutate({
+        worryId,
+        isRealized,
+      });
     },
-    [dispatch],
+    [dispatch, updateWorryRealize, worryId],
   );
 
   return (
@@ -115,10 +121,7 @@ const Review: FC<ReviewProps> = ({ navigation }) => {
         </RowWrapper>
         <RowReviewWrapper>
           <Label>걱정 후기를 작성해 보세요</Label>
-          <UpdateButton
-            disabled={review?.worryReview ? true : false}
-            onPress={onPressEdit}
-          >
+          <UpdateButton onPress={onPressEdit}>
             <ButtonName>편집하기</ButtonName>
           </UpdateButton>
         </RowReviewWrapper>

@@ -191,20 +191,3 @@ export const useUnlockWorry = (
     },
   );
 };
-
-// 후기 작성 되지 않은 컨텐츠 잠금 해제하는 함수
-export const useReview = (
-  worryId: number,
-  onSuccess: (data: any) => void,
-): any => {
-  return useCustomQuery(
-    worriesKeys.review(String(worryId)),
-    worriesService.getWorryReview(worryId),
-    {
-      onSuccess(data: any) {
-        console.log(data, 'ddd');
-        onSuccess(data);
-      },
-    },
-  );
-};

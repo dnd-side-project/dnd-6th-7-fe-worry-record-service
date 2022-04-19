@@ -16,7 +16,7 @@ export interface WorriesServiceClass {
   addWorryReview: (email: any, password: any) => any;
   updateWorryExpiredDate: (id: any, expiryDate: any) => any;
   getWorryReview: (id: any) => any;
-  updatePresentWorry: () => any;
+  updatePresentWorry: (worryId: any, isRealized: any) => any;
   updateWorryReview: (worryId: any, worryReview: any) => any;
 }
 
@@ -144,10 +144,13 @@ export default class WorriesService implements WorriesServiceClass {
     });
   }
 
-  async updatePresentWorry() {
-    return this.http.fetch('/worries/review/realize', {
-      method: 'PATCH',
-    });
+  async updatePresentWorry(worryId: any, isRealized: any) {
+    return this.http.fetch(
+      `/worries/review/realize?worryId=${worryId}&isRealized=${isRealized}`,
+      {
+        method: 'PATCH',
+      },
+    );
   }
 
   async updateWorryReview(worryId: any, worryReview: any) {

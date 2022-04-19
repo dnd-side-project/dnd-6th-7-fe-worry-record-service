@@ -107,6 +107,7 @@ const LoginWrapper = styled.View`
   width: 100%;
   flex: 1;
 `;
+
 const TitleWrapper = styled.View`
   margin: ${hp(1.5)}px 0;
 `;

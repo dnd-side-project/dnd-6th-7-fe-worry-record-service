@@ -108,6 +108,7 @@ const Worry: FC<WorryProps> = ({ item, index }: WorryProps) => {
   // 후기 작성 되지 않은 버튼 클릭시 이벤트
   const onLongPressNotReview = useCallback((): void => {
     console.log(tag, 'onLongPressNotReview');
+    dispatch({ type: CHANGE_MODE_REVIEW, values: { isReviewing: true } });
     dispatch({
       type: SET_WORRY_ID,
       values: { worryId: item.worryId },

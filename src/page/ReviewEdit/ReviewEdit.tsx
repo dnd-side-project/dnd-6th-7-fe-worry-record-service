@@ -1,4 +1,4 @@
-import React, { FC, useCallback } from 'react';
+import React, { FC, useCallback, useState } from 'react';
 import styled from 'styled-components/native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
@@ -11,9 +11,24 @@ import { ReviewEditProps } from '~/types/Navigation';
 import { theme } from '@lib/styles/palette';
 import ArrowLeft from '@assets/image/arrow_left.svg';
 import { Platform } from 'react-native';
+import { useSceneState } from '~/context/ArchiveContext';
+import { useReview, useUpdateWorry } from '~/hooks/useWorry';
+import { getDate } from '~/lib/util/date';
 
 const ReviewEdit: FC<ReviewEditProps> = ({ navigation }) => {
   const tag = '[ReviewEdit]';
+
+  const { worryId } = useSceneState();
+  const { data: review } = useReview(worryId, (data: any) => {
+    console.log(data, '목록 조회 완료');
+  });
+
+  const [worryContents, setWorryContents] = useState(review?.worryReview || '');
+
+  const updateWorry = useUpdateWorry((data: any) => {
+    console.log(data, '리뷰 수정 완료');
+    navigation.goBack();
+  });
 
   const onPressBack = useCallback(() => {
     console.log(tag, 'onPressBack');
@@ -22,9 +37,16 @@ const ReviewEdit: FC<ReviewEditProps> = ({ navigation }) => {
 
   const onPressEdit = useCallback(() => {
     console.log(tag, 'onPressEdit');
-    // TODO: 걱정 후기 수정 - 내용 API 호출
-    navigation.goBack();
-  }, [navigation]);
+    updateWorry.mutate({
+      worryId,
+      worryText: worryContents,
+    });
+  }, [updateWorry, worryId, worryContents]);
+
+  const onChangeText = useCallback(value => {
+    console.log(tag, 'onChangeText');
+    setWorryContents(value);
+  }, []);
 
   return (
     <AppLayout
@@ -32,7 +54,12 @@ const ReviewEdit: FC<ReviewEditProps> = ({ navigation }) => {
       noBackGroundImage={true}
       headerLeft={<ArrowLeft />}
       headerLeftSidePress={onPressBack}
-      headerTitle={<Headeritle>12/24 #관계 걱정</Headeritle>}
+      headerTitle={
+        <Headeritle>
+          {review?.worryStartDate && getDate(review?.worryStartDate, 'yy/MM')}#
+          {review?.categoryName} 걱정
+        </Headeritle>
+      }
     >
       <WithScroll
         extraHeight={300}
@@ -46,7 +73,8 @@ const ReviewEdit: FC<ReviewEditProps> = ({ navigation }) => {
           multiline={true}
           editable={true}
           bgColor={'rgba(0, 0, 0, 0.3)'}
-          value="아니 내가 뭐 뫄뫄 뫄뫄 때문에 뭐뭐뭐무머 했거든... 근데 또 아니 내가 뭐 뫄뫄 뫄뫄 때문에 뭐뭐뭐무머 했거든... 근데 또 아니 내가 뭐 뫄뫄 뫄뫄 때문에 ...아니 내가 뭐 뫄뫄 뫄뫄 때문에 뭐뭐뭐무머 했거든... 근데 또 아니 내가 뭐 뫄뫄 뫄뫄 때문에 뭐뭐뭐무머 했거든... 근데 또 아니 내가 뭐 뫄뫄 뫄뫄 때문에 ...아니 내가 뭐 뫄뫄 뫄뫄 때문에 뭐뭐뭐무머 했거든... 근데 또 아니 내가 뭐 뫄뫄 뫄뫄 때문에 뭐뭐뭐무머 했거든... 근데"
+          value={worryContents}
+          onChangeText={onChangeText}
         />
         <ButtonWrapper>
           <CustomeButton
@@ -82,7 +110,7 @@ const Label = styled.Text`
   font-size: 12px;
   color: ${theme.color.white};
   font-weight: 700;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
   margin-top: 43px;
 `;
 
