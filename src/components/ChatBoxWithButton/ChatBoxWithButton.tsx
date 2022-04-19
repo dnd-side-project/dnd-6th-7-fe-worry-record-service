@@ -10,8 +10,8 @@ import { placeholderName } from '~/../template.config';
 
 interface ChatBoxWithButtonProps {
   value: string;
-  placeholder: string;
-  placeholderTextColor: string;
+  placeholder?: string;
+  placeholderTextColor?: string;
   setValue: (text: string) => void;
   onBlur: () => void;
   setSettingMode: (a: number) => void;

@@ -138,8 +138,8 @@ export default class WorriesService implements WorriesServiceClass {
     );
   }
 
-  async getWorryReview(id: any) {
-    return this.http.fetch(`/worries/review/${id}`, {
+  async getWorryReview(worryId: any) {
+    return this.http.fetch(`/worries/review/${worryId}`, {
       method: 'GET',
     });
   }

@@ -22,7 +22,7 @@ import {
   UNLOCK_WORRY,
 } from '@context/reducer/archive';
 
-import { ArchiveScreenNavigationProp } from '~/types/Navigation';
+import { ReviewScreenNavigationProp } from '~/types/Navigation';
 import { WorryTempProps } from '~/types/Worry';
 
 import { useUnlockWorry } from '@hooks/useWorries';
@@ -47,8 +47,8 @@ const Worry: FC<WorryProps> = ({ item, index }: WorryProps) => {
     checkedWorries,
   } = useSceneState();
   const dispatch = useSceneDispatch();
-
-  const { mutate } = useUnlockWorry(tabIndex, activeTags, activeTagsId, () => {
+  const navigation = useNavigation<ReviewScreenNavigationProp>();
+  const unlockWorry = useUnlockWorry(tabIndex, activeTags, activeTagsId, () => {
     dispatch({
       type: UNLOCK_WORRY,
       values: { isUnlock: true },
@@ -102,8 +102,18 @@ const Worry: FC<WorryProps> = ({ item, index }: WorryProps) => {
       type: SET_WORRY_ID,
       values: { worryId: item.worryId },
     });
-    mutate(String(item.worryId));
-  }, [dispatch, mutate, item.worryId]);
+    unlockWorry.mutate(String(item.worryId));
+  }, [dispatch, unlockWorry, item.worryId]);
+
+  // 후기 작성 되지 않은 버튼 클릭시 이벤트
+  const onLongPressNotReview = useCallback((): void => {
+    console.log(tag, 'onLongPressNotReview');
+    dispatch({
+      type: SET_WORRY_ID,
+      values: { worryId: item.worryId },
+    });
+    navigation.navigate('Review');
+  }, [dispatch, navigation, item.worryId]);
 
   return (
     <CardWrapper index={index}>
@@ -136,7 +146,10 @@ const Worry: FC<WorryProps> = ({ item, index }: WorryProps) => {
             <Date>{getDate(item.worryStartDate, 'MM/dd')}</Date>
             <DateLeftWrapper>
               {!item.locked && item.finished && (
-                <DefaultButton disabled={isUpdating ? true : false}>
+                <DefaultButton
+                  disabled={isUpdating ? true : false}
+                  onLongPress={onLongPressNotReview}
+                >
                   <Open numberOfLines={1}>
                     {item?.worryReview || '후기가 작성되지 않았습니다.'}
                   </Open>

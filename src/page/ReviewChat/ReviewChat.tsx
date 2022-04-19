@@ -19,7 +19,6 @@ import {
   useSubmitReview,
   useUpdateExpiredDate,
 } from '@hooks/useWorry';
-import { USER_ID } from '~/App';
 
 import { useSceneState, useSceneDispatch } from '@context/ArchiveContext';
 import { SET_CHAT_ID } from '@context/reducer/archive';
@@ -27,7 +26,11 @@ import { SET_CHAT_ID } from '@context/reducer/archive';
 import IconSubmit from '@assets/image/submit.svg';
 import { ConfirmAlert, RefRbProps } from '../Navigation';
 import DatePicker from '~/components/DatePicker';
+import { useAuth } from '~/context/AuthContext';
+import Inform from '~/components/Inform';
 
+import IconFinish from '@assets/image/finish.svg';
+import IconNotFinish from '@assets/image/unFinish.svg';
 export interface ReviewChats {
   categoryName?: string;
   username?: string;
@@ -41,6 +44,7 @@ export interface ReviewChats {
 const ReviewChat: FC<ReviewChatProps> = ({ navigation }) => {
   const tag = '[ReviewChat]';
   const refRBSheet = useRef<RefRbProps>(null);
+  const { userInfo } = useAuth();
   const { index, activeTags, worryId, chatId, activeTagsId } = useSceneState();
   const dispatch = useSceneDispatch();
 
@@ -50,12 +54,15 @@ const ReviewChat: FC<ReviewChatProps> = ({ navigation }) => {
   const [setMode, setSettingMode] = useState<number>(0);
   const [initDelay, setInitDelay] = useState<boolean>(false);
   const [isFinish, setIsFinish] = useState<boolean>(false);
+  const [isReviewed, setIsReviewed] = useState<boolean>(false);
+  const [isNotReviewed, setIsNotReviewed] = useState<boolean>(false);
+  const [isCustomed, setIsCustomed] = useState<boolean>(false);
 
   const expiredDate = useRef<Date>(new Date());
 
   const { isLoading, isError } = useGetWorry(
     index,
-    USER_ID,
+    userInfo.userId,
     String(worryId),
     chatId,
     activeTags,
@@ -74,26 +81,27 @@ const ReviewChat: FC<ReviewChatProps> = ({ navigation }) => {
     activeTagsId,
     (item: ReviewChats) => {
       console.log(tag, 'ReviewChats mutation success', item);
-      navigation.goBack();
+      setIsReviewed(true);
     },
   );
 
   // 걱정 종료 시간 계산하는 함수
-  const mutateExpiredDate = useUpdateExpiredDate((item: ReviewChats) => {
+  const mutateExpiredDate = useUpdateExpiredDate((item: ReviewChats[]) => {
     console.log(tag, 'mutateExpiredDate success', item);
 
     setIsFinish(true);
-    if (expiredDate.current) {
+    if (isCustomed) {
+      // 날짜 선택하여 저장하는 경우
       const realDate = getDate(String(expiredDate.current), 'yyyy-MM-dd');
       onPressCancel();
-      updatePersonalDate(realDate);
+      updatePersonalDate(realDate, item);
       return;
     }
 
     setWorryChat((prev: any) => {
       return {
         ...prev,
-        worryChat: [...prev.worryChat, item],
+        worryChat: [...prev.worryChat, ...item],
       };
     });
   });
@@ -101,8 +109,8 @@ const ReviewChat: FC<ReviewChatProps> = ({ navigation }) => {
   // 뒤로가기 함수
   const onPressBack = useCallback(() => {
     console.log(tag, 'onPressBack');
-    navigation.goBack();
-  }, [navigation]);
+    setIsNotReviewed(true);
+  }, [setIsNotReviewed]);
 
   // 걱정 종료 달력 오픈 함수
   const onPressOpenDrawer = useCallback((): void => {
@@ -128,23 +136,34 @@ const ReviewChat: FC<ReviewChatProps> = ({ navigation }) => {
         case '5':
           mutateExpiredDate.mutate({
             worryId,
-            expiryDate: getIsoDate(addDate(new Date(), 7)),
+            expiryDate: getDate(
+              String(addDate(new Date(), 7)),
+              "yyyy-MM-dd'T'HH:mm:ss",
+            ),
           });
           break;
         case '6':
           mutateExpiredDate.mutate({
             worryId,
-            expiryDate: getIsoDate(addDate(new Date(), 14)),
+            expiryDate: getDate(
+              String(addDate(new Date(), 14)),
+              "yyyy-MM-dd'T'HH:mm:ss",
+            ),
           });
           break;
         case '7':
           mutateExpiredDate.mutate({
             worryId,
-            expiryDate: getIsoDate(addDate(new Date(), 30)),
+            expiryDate: getDate(
+              String(addDate(new Date(), 30)),
+              "yyyy-MM-dd'T'HH:mm:ss",
+            ),
           });
           break;
         case '8':
+          setIsCustomed(true);
           onPressOpenDrawer();
+
           break;
 
         default:
@@ -158,14 +177,16 @@ const ReviewChat: FC<ReviewChatProps> = ({ navigation }) => {
 
   // DatePicker 에서 선택한 날짜 저장
   const updatePersonalDate = useCallback(
-    (expiredDate: string) => {
+    (expiredDate: string, item: ReviewChats[]) => {
       console.log(tag, 'updatePersonalDate');
 
       setWorryChat((prev: any) => {
         const lastItem = prev.worryChat[prev.worryChat.length - 1];
+        lastItem.contents = expiredDate;
+        prev.worryChat[prev.worryChat.length - 1] = lastItem;
         return {
           ...prev,
-          worryChat: [...prev.worryChat, { ...lastItem, expiredDate }],
+          worryChat: [...prev.worryChat, ...item],
         };
       });
     },
@@ -177,7 +198,7 @@ const ReviewChat: FC<ReviewChatProps> = ({ navigation }) => {
     console.log(tag, 'onPressUpdateExpireDate');
     mutateExpiredDate.mutate({
       worryId,
-      expiryDate: getIsoDate(expiredDate.current),
+      expiryDate: getDate(String(expiredDate.current), "yyyy-MM-dd'T'HH:mm:ss"),
     });
   }, [mutateExpiredDate, worryId]);
 
@@ -197,11 +218,29 @@ const ReviewChat: FC<ReviewChatProps> = ({ navigation }) => {
   // 채팅 종료 이벤트
   const onPressFinish = useCallback(() => {
     console.log(tag, 'onPressFinish');
-  }, []);
+    //TODO: 몇월 몇일 알림 푸시 받을 수 있도록 로직 추가
+    navigation.goBack();
+  }, [navigation]);
+
+  const onPressConfirmIsReviewed = useCallback(() => {
+    console.log(tag, 'onPressConfirmIsReviewed');
+    setIsReviewed(false);
+    navigation.goBack();
+  }, [navigation, setIsReviewed]);
+
+  const onPressConfirmIsNotReviewed = useCallback(() => {
+    console.log(tag, 'onPressConfirmIsNotReviewed');
+    setIsNotReviewed(false);
+    navigation.goBack();
+  }, [navigation, setIsNotReviewed]);
 
   useEffect(() => {
     console.log(tag, 'init');
     setInitDelay(false);
+    setIsCustomed(false);
+    setIsFinish(false);
+    setIsNotReviewed(false);
+    setIsReviewed(false);
   }, []);
 
   return (
@@ -212,7 +251,7 @@ const ReviewChat: FC<ReviewChatProps> = ({ navigation }) => {
       headerTitle={
         <Headeritle>
           {worryChat?.worryStartDate &&
-            getDate(worryChat?.worryStartDate, 'yy/MM')}{' '}
+            getDate(worryChat?.worryStartDate, 'yy/MM')}
           #{worryChat?.categoryName} 걱정
         </Headeritle>
       }
@@ -312,6 +351,38 @@ const ReviewChat: FC<ReviewChatProps> = ({ navigation }) => {
           <DatePicker date={expiredDate.current} onDateChange={onDateChange} />
         }
       />
+      {isReviewed && (
+        <Inform
+          visible={isReviewed}
+          onPressConfirm={onPressConfirmIsReviewed}
+          icon={<IconFinish />}
+          mainTitle="걱정은 안녕!"
+          description={`${
+            worryChat?.worryStartDate &&
+            getDate(worryChat?.worryStartDate, 'MM')
+          }월 ${
+            worryChat?.worryStartDate &&
+            getDate(worryChat?.worryStartDate, 'dd')
+          }일 #${worryChat?.categoryName} 걱정`}
+          subTitle="안해도 문제 없었어요."
+        />
+      )}
+      {isNotReviewed && (
+        <Inform
+          visible={isNotReviewed}
+          onPressConfirm={onPressConfirmIsNotReviewed}
+          icon={<IconNotFinish />}
+          mainTitle="걱정은 안녕!"
+          description={`${
+            worryChat?.worryStartDate &&
+            getDate(worryChat?.worryStartDate, 'MM')
+          }월 ${
+            worryChat?.worryStartDate &&
+            getDate(worryChat?.worryStartDate, 'dd')
+          }일 #${worryChat?.categoryName} 걱정이`}
+          subTitle="걱정 데이터로 수집 되었어요."
+        />
+      )}
     </AppLayout>
   );
 };

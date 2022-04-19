@@ -4,6 +4,7 @@ export const worriesKeys = {
     [...worriesKeys.all, idx, eachTagId, tagId] as const,
   details: (worryId: string) =>
     [...worriesKeys.all, 'detail', worryId] as const,
+  review: (worryId: string) => [...worriesKeys.all, 'review', worryId] as const,
   worry: (
     idx: string,
     eachTagId: string,

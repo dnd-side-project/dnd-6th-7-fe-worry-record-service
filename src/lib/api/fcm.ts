@@ -41,7 +41,7 @@ class FCM {
     if (enabled) {
       console.log('Authorization status:', authStatus);
       // 0: denied, 1: authorized, 2: provisional
-      this.storage.set('fcm_permission', String(authStatus));
+      await this.storage.set('fcm_permission', String(authStatus));
     }
   }
 }

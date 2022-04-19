@@ -45,12 +45,6 @@ export default class AuthService {
     );
   }
 
-  async me() {
-    return this.http.fetch('/auth/me', {
-      method: 'GET',
-    });
-  }
-
   async logout() {
     return this.http.fetch('/auth/logout', {
       method: 'POST',
