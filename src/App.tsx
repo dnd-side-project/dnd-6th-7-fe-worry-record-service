@@ -1,4 +1,4 @@
-import React, { FC, Suspense, useCallback, useEffect } from 'react';
+import React, { FC, useCallback, useEffect } from 'react';
 import {
   NavigationContainer,
   useNavigationContainerRef,
@@ -8,7 +8,6 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 
 import { AfterLogin } from '@page/Navigation';
 import AuthService from '~/service/auth';
-import ErrorBoundary from 'react-native-error-boundary';
 
 import { AuthProvider, AuthErrorEventBus } from '@context/AuthContext';
 import { ArchiveProvider } from '@context/ArchiveContext';
@@ -21,6 +20,7 @@ import { HTTPS_B_URL } from '@env';
 
 import { LogBox } from 'react-native';
 import Indicator from '@components/Indicator';
+import AsyncBoundary from '@components/AsyncBoundary';
 import Error from '@components/Error';
 import Storage from '@lib/storage';
 import FCM from '@lib/api/fcm';
@@ -65,21 +65,19 @@ const App: FC = props => {
   return (
     <ThemeProvider theme={theme}>
       <NavigationContainer ref={navigationRef}>
-        <Suspense fallback={<Indicator />}>
-          <ErrorBoundary FallbackComponent={Error}>
-            <QueryClientProvider client={queryClient}>
-              <AuthProvider
-                props={props}
-                authService={authService}
-                authErrorEventBus={authErrorEventBus}
-              >
-                <ArchiveProvider>
-                  <AfterLogin />
-                </ArchiveProvider>
-              </AuthProvider>
-            </QueryClientProvider>
-          </ErrorBoundary>
-        </Suspense>
+        <AsyncBoundary pendingFallback={<Indicator />} rejectedFallback={Error}>
+          <QueryClientProvider client={queryClient}>
+            <AuthProvider
+              props={props}
+              authService={authService}
+              authErrorEventBus={authErrorEventBus}
+            >
+              <ArchiveProvider>
+                <AfterLogin />
+              </ArchiveProvider>
+            </AuthProvider>
+          </QueryClientProvider>
+        </AsyncBoundary>
       </NavigationContainer>
     </ThemeProvider>
   );
