@@ -85,7 +85,7 @@ export function AuthProvider({
 
     // 이미 로그인이 되어 있는 상황
     console.log('이미 로그인이 되어 있는 상황');
-    const result = await authService.updateFCMToken({ userId, deviceToken });
+    await authService.updateFCMToken({ userId, deviceToken });
     SplashScreen.hide();
     setUser(true);
   }, [authService]);
