@@ -19,7 +19,7 @@ const callUseQuery = (
 ) => {
   return useCustomQuery(
     worriesKeys.worries(String(tabIndex), eachTagId, tagId),
-    api,
+    () => api(),
     {
       onSuccess: onSuccess && onSuccess,
       // enabled: !isUpdating,
@@ -43,7 +43,7 @@ const fetchRecentWorries = (
         tabIndex,
         eachTagId,
         tagId,
-        worriesService.getRecentWorries(userId),
+        () => worriesService.getRecentWorries(userId),
         isUpdating,
         onSuccess,
       );
@@ -53,9 +53,10 @@ const fetchRecentWorries = (
         tabIndex,
         eachTagId,
         tagId,
-        worriesService.filterRecentWorries(
-          makeQueryString({ userId, categories: eachTagId }),
-        ),
+        () =>
+          worriesService.filterRecentWorries(
+            makeQueryString({ userId, categories: eachTagId }),
+          ),
         isUpdating,
         onSuccess,
       );
@@ -78,7 +79,7 @@ const fetchPastWorries = (
         tabIndex,
         eachTagId,
         tagId,
-        worriesService.getPastWorries(userId),
+        () => worriesService.getPastWorries(userId),
         isUpdating,
         onSuccess,
       );
@@ -87,7 +88,7 @@ const fetchPastWorries = (
         tabIndex,
         eachTagId,
         tagId,
-        worriesService.filterValuablePastWorries(userId),
+        () => worriesService.filterValuablePastWorries(userId),
         isUpdating,
         onSuccess,
       );
@@ -97,7 +98,7 @@ const fetchPastWorries = (
         tabIndex,
         eachTagId,
         tagId,
-        worriesService.filterInvaluablePastWorries(userId),
+        () => worriesService.filterInvaluablePastWorries(userId),
         isUpdating,
         onSuccess,
       );
@@ -107,9 +108,10 @@ const fetchPastWorries = (
         tabIndex,
         eachTagId,
         tagId,
-        worriesService.filterPastWorries(
-          makeQueryString({ userId, categories: eachTagId }),
-        ),
+        () =>
+          worriesService.filterPastWorries(
+            makeQueryString({ userId, categories: eachTagId }),
+          ),
         isUpdating,
         onSuccess,
       );
@@ -153,7 +155,7 @@ export const useDeleteWorry = (
   const queryClient = useQueryClient();
   return useCustomMutation(
     (worryId: string) => {
-      worriesService.deleteWorry(worryId);
+      return worriesService.deleteWorry(worryId);
     },
     (result: any) => {
       onSuccess(result);
@@ -177,7 +179,7 @@ export const useUnlockWorry = (
   const queryClient = useQueryClient();
   return useCustomMutation(
     (worryId: string) => {
-      worriesService.unlockWorry(worryId);
+      return worriesService.unlockWorry(worryId);
     },
     (result: any) => {
       console.log('잠금 해제 성공', tagId);

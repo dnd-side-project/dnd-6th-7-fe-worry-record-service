@@ -31,7 +31,6 @@ import { useUnlockWorry } from '@hooks/useWorries';
 // 일자가 다른 걱정을 삭제할때는 선택한 항목 중 가장 최근날짜가 알림에 나오도록하기
 // TODO: 알림 기능 만들기
 // TODO: 폰트 적용하기
-// TODO: immer 적용하기
 interface WorryProps {
   item: WorryTempProps;
   index: number;

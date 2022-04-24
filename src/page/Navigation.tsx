@@ -201,6 +201,7 @@ export const AfterLogin: FC = () => {
         options={{
           tabBarIconStyle: styles.leftTabBarIcon,
           tabBarItemStyle: styles.leftTabBarItem,
+          unmountOnBlur: true,
         }}
         name="Home"
         component={HomeScreens}
@@ -209,6 +210,7 @@ export const AfterLogin: FC = () => {
         options={{
           tabBarIconStyle: styles.centerTabBarIcon,
           tabBarItemStyle: styles.centerTabBarItem,
+          unmountOnBlur: true,
         }}
         component={AddWorryScreens}
         name="AddWorry"
@@ -223,6 +225,7 @@ export const AfterLogin: FC = () => {
         options={{
           tabBarIconStyle: styles.rightTabBarIcon,
           tabBarItemStyle: styles.rightTabBarItem,
+          unmountOnBlur: true,
         }}
         name="Archive"
         component={ArchiveScreens}

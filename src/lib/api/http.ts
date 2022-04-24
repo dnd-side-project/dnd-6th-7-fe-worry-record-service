@@ -1,5 +1,6 @@
 import axios from 'axios';
 import CheckErrorStatus from '~/constants/ErrorStatus';
+import CustomError from '../util/CustomError';
 
 export default class HttpClient {
   client: any;
@@ -35,6 +36,14 @@ export default class HttpClient {
         if (accessToken) {
           // 만료 토근 확인 > 만약에 지났으면 리프레시 토큰과 함께 보내기
           console.log('accessToken here', accessToken);
+          // const refreshToken = await this.storage.get('jwt_refreshToken');
+          // const result = await this.client.post('/auth/refresh', {
+          //   headers: {
+          //     oauthToken: refreshToken,
+          //     deviceToken: '',
+          //   },
+          // });
+          // const { accessToken: newAccessToken } = result.data;
         }
         return config;
       },
@@ -85,10 +94,11 @@ export default class HttpClient {
 
     try {
       const res = await this.client(req);
+      console.log(res);
       return res.data;
     } catch (err: any) {
       const { status } = err.response;
-      throw new Error(CheckErrorStatus(status));
+      throw new CustomError(CheckErrorStatus(status));
     }
   }
 }

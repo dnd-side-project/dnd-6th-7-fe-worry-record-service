@@ -56,7 +56,7 @@ const Archive: FC<ArchiveProps> = ({ navigation }) => {
   const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
 
   // 걱정 목록을 가져오는 함수
-  const { data: worries, refetch } = useGetWorries(
+  const { data: worries } = useGetWorries(
     index,
     userInfo.userId,
     activeTags,
@@ -165,8 +165,7 @@ const Archive: FC<ArchiveProps> = ({ navigation }) => {
   const onPressDeleteConfirm = useCallback((): void => {
     console.log(tag, 'onPressDeleteConfirm');
     setOpenDeleteModal(false);
-    refetch();
-  }, [refetch, setOpenDeleteModal]);
+  }, [setOpenDeleteModal]);
 
   // 걱정 잠금해제 컨펌창 확인 버튼 클릭시 이벤트
   const onPressUnlockConfirm = useCallback((): void => {
@@ -174,9 +173,8 @@ const Archive: FC<ArchiveProps> = ({ navigation }) => {
     dispatch({ type: UNLOCK_WORRY, values: { isUnlock: false } });
     dispatch({ type: CHANGE_MODE_REVIEW, values: { isReviewing: true } });
     dispatch({ type: SET_WORRY_ID, values: { worryId: worryId } });
-    refetch();
     navigation.navigate('ReviewChat');
-  }, [refetch, dispatch, worryId, navigation]);
+  }, [dispatch, worryId, navigation]);
 
   useEffect(() => {
     dispatch({ type: INIT });

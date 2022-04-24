@@ -13,6 +13,7 @@ import { BeforeLogin } from '@page/Navigation';
 import { useLogin } from '@hooks/useLogin';
 import { fcm, storage } from '~/App';
 import SplashScreen from 'react-native-splash-screen';
+import CustomError from '~/lib/util/CustomError';
 
 const AuthContext = createContext({});
 
@@ -50,11 +51,6 @@ export function AuthProvider({
   // 	});
   // }, [authErrorEventBus]);
 
-  //TODO: 추후 작업필요 (토큰 확인하는 API)
-  // useEffect(() => {
-  // 	authService.me().then(setUser).catch(console.error);
-  // }, [authService]);
-
   const checkIsLogedIn = useCallback(async () => {
     console.log(tag, 'checkIsLogedIn');
     const userId = await storage.get('user_id');
@@ -82,12 +78,16 @@ export function AuthProvider({
       SplashScreen.hide();
       return;
     }
-
     // 이미 로그인이 되어 있는 상황
     console.log('이미 로그인이 되어 있는 상황');
-    await authService.updateFCMToken({ userId, deviceToken });
-    SplashScreen.hide();
-    setUser(true);
+    try {
+      await authService.updateFCMToken({ userId, deviceToken });
+      // setUser(true);
+    } catch (error) {
+      throw new CustomError('LOGIN에서 에러 발생');
+    } finally {
+      SplashScreen.hide();
+    }
   }, [authService]);
 
   const mutation = useLogin(data => {

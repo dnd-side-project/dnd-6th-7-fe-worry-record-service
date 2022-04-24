@@ -1,4 +1,4 @@
-import React, { FC, useCallback } from 'react';
+import React, { FC, useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components/native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
@@ -19,21 +19,52 @@ import { useSceneDispatch, useSceneState } from '@context/ArchiveContext';
 import { Platform } from 'react-native';
 import { useReview, useUpdateWorryRealize } from '~/hooks/useWorry';
 import { getDate } from '~/lib/util/date';
+import { useMutation, useQueries, useQuery, useQueryClient } from 'react-query';
+import { worriesKeys } from '~/lib/queries/keys';
+import WorriesService from '~/service/archive';
+import { httpClient } from '~/App';
+import { useCustomQuery } from '~/lib/queries';
 
 const Review: FC<ReviewProps> = ({ navigation }) => {
   const tag = '[Review]';
-
+  const queryClient = useQueryClient();
+  const worriesService = new WorriesService(httpClient);
   const dispatch = useSceneDispatch();
-  const { isRealized, worryId } = useSceneState();
+  const { worryId } = useSceneState();
 
   // 걱정 목록을 가져오는 함수
   const { data: review } = useReview(worryId, (data: any) => {
-    console.log(data, '목록 조회 완료');
+    console.log(data, tag, '목록 조회 완료');
   });
 
-  const updateWorryRealize = useUpdateWorryRealize((data: any) => {
-    console.log(data, '실현 여부 수정 완료');
-  });
+  // const { data: review } = useQuery(
+  //   worriesKeys.review(String(worryId)),
+  //   () => worriesService.getWorryReview(worryId),
+  //   {
+  //     refetchOnWindowFocus: false,
+  //     suspense: true,
+  //     useErrorBoundary: true,
+  //     structuralSharing: false,
+  //     notifyOnChangeProps: 'tracked',
+  //   },
+  // );
+
+  // const updateWorryRealize = useUpdateWorryRealize((data: any) => {
+  //   console.log(data, '실현 여부 수정 완료');
+  // });
+
+  const updateWorryRealize = useMutation(
+    ({ worryId, isRealized }: { worryId: number; isRealized: boolean }) =>
+      worriesService.updatePresentWorry(worryId, isRealized),
+    {
+      onSuccess: (result: any) => {
+        queryClient.invalidateQueries(worriesKeys.review(String(worryId)));
+      },
+      onError: (error: any) => {
+        console.log(error, '에러');
+      },
+    },
+  );
 
   const onPressBack = useCallback(() => {
     console.log(tag, 'onPressBack');
@@ -50,13 +81,13 @@ const Review: FC<ReviewProps> = ({ navigation }) => {
   const onPressChangeWorry = useCallback(
     (isRealized: boolean) => {
       console.log(tag, 'onPressChangeWorry');
-      dispatch({ type: CHANGE_MODE_REALIZED, values: { isRealized } });
+      // dispatch({ type: CHANGE_MODE_REALIZED, values: { isRealized } });
       updateWorryRealize.mutate({
         worryId,
         isRealized,
       });
     },
-    [dispatch, updateWorryRealize, worryId],
+    [updateWorryRealize, worryId],
   );
 
   return (
@@ -95,12 +126,12 @@ const Review: FC<ReviewProps> = ({ navigation }) => {
             isBorderRadius
             onPress={onPressChangeWorry.bind(null, true)}
             backgroundColor={{
-              color: `${!isRealized ? 'lightWhite' : 'white'}`,
+              color: `${!review?.realized ? 'lightWhite' : 'white'}`,
             }}
             width={wp('42%')}
             height={44}
             color={{
-              color: `${!isRealized ? 'lightGray' : 'black'}`,
+              color: `${!review?.realized ? 'lightGray' : 'black'}`,
             }}
             fontSize={12}
           />
@@ -109,12 +140,12 @@ const Review: FC<ReviewProps> = ({ navigation }) => {
             isBorderRadius
             onPress={onPressChangeWorry.bind(null, false)}
             backgroundColor={{
-              color: `${isRealized ? 'lightWhite' : 'white'}`,
+              color: `${review?.realized ? 'lightWhite' : 'white'}`,
             }}
             width={wp('42%')}
             height={44}
             color={{
-              color: `${isRealized ? 'lightGray' : 'black'}`,
+              color: `${review?.realized ? 'lightGray' : 'black'}`,
             }}
             fontSize={12}
           />

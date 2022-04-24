@@ -26,7 +26,7 @@ const ReviewEdit: FC<ReviewEditProps> = ({ navigation }) => {
   const [worryContents, setWorryContents] = useState(review?.worryReview || '');
 
   const updateWorry = useUpdateWorry((data: any) => {
-    console.log(data, '리뷰 수정 완료');
+    console.log(data, tag, '리뷰 수정 완료');
     navigation.goBack();
   });
 

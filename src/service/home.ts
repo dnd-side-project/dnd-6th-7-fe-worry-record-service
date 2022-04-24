@@ -1,5 +1,4 @@
 import { storage } from '~/App';
-import CustomError from '~/lib/util/CustomError';
 
 export interface HomeServiceClass {
   http: any;
@@ -15,16 +14,9 @@ export default class HomeService implements HomeServiceClass {
 
   async getHome(): Promise<any> {
     const userId = await storage.get('user_id');
-    console.log('userId', userId);
-
-    try {
-      const result = await this.http.fetch(`/worries/home?userId=${userId}`, {
-        method: 'GET',
-      });
-      // throw new CustomError('HOME에서 에러 발생');
-      return result;
-    } catch (error) {
-      throw new CustomError('HOME에서 에러 발생');
-    }
+    const result = await this.http.fetch(`/worries/home?userId=${userId}`, {
+      method: 'GET',
+    });
+    return result;
   }
 }

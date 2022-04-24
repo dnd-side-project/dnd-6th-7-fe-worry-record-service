@@ -15,20 +15,32 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="걱정,이젠-" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="9" translatesAutoresizingMaskIntoConstraints="NO" id="MN2-I3-ftu">
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="걱정,이젠-" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="9" translatesAutoresizingMaskIntoConstraints="NO" id="MN2-I3-ftu">
                                 <rect key="frame" x="0.0" y="548" width="375" height="27"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="27" id="1qD-Zp-AK7"/>
+                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="27" id="93z-iN-FPX"/>
+                                    <constraint firstAttribute="width" constant="375" id="MPK-TT-ZAK"/>
+                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="375" id="XAu-D3-X7N"/>
+                                </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="22"/>
                                 <color key="textColor" red="1" green="1" blue="1" alpha="0.5" colorSpace="custom" customColorSpace="sRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="흐릿" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="9" translatesAutoresizingMaskIntoConstraints="NO" id="5eA-t6-NqP">
                                 <rect key="frame" x="0.0" y="581" width="375" height="35"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="35" id="6v6-KA-IAH"/>
+                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="375" id="IiP-jl-5T7"/>
+                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="35" id="OKs-nH-aHr"/>
+                                    <constraint firstAttribute="width" constant="375" id="Zj2-3p-sZf"/>
+                                </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="29"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" image="LaunchScreen" highlightedImage="LaunchScreen" adjustsImageSizeForAccessibilityContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="k3g-Vf-Wiw">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="LaunchScreen" highlightedImage="LaunchScreen" adjustsImageSizeForAccessibilityContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="k3g-Vf-Wiw">
+                                <rect key="frame" x="67.5" y="269.5" width="240" height="128"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="128" id="Dac-zu-uLK"/>
                                     <constraint firstAttribute="width" constant="240" id="JSI-Vc-LLe"/>
@@ -38,14 +50,8 @@
                         <viewLayoutGuide key="safeArea" id="Bcu-3y-fUS"/>
                         <color key="backgroundColor" red="0.098039215686274508" green="0.098039215686274508" blue="0.15294117647058825" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
-                            <constraint firstItem="5eA-t6-NqP" firstAttribute="top" secondItem="Bcu-3y-fUS" secondAttribute="top" constant="491" id="6Wl-mt-Kro"/>
-                            <constraint firstItem="Bcu-3y-fUS" firstAttribute="bottom" secondItem="MN2-I3-ftu" secondAttribute="bottom" constant="100" id="AHi-gV-Pid"/>
-                            <constraint firstItem="MN2-I3-ftu" firstAttribute="top" secondItem="Bcu-3y-fUS" secondAttribute="top" constant="500" id="DDv-0u-cAP"/>
-                            <constraint firstItem="Bcu-3y-fUS" firstAttribute="bottom" secondItem="MN2-I3-ftu" secondAttribute="bottom" constant="90" id="ExE-Vb-uj8"/>
-                            <constraint firstItem="Bcu-3y-fUS" firstAttribute="bottom" secondItem="MN2-I3-ftu" secondAttribute="bottom" constant="20" id="OZV-Vh-mqD"/>
-                            <constraint firstItem="5eA-t6-NqP" firstAttribute="top" secondItem="Bcu-3y-fUS" secondAttribute="top" constant="581" id="RLm-AJ-0RF"/>
-                            <constraint firstItem="MN2-I3-ftu" firstAttribute="centerX" secondItem="Bcu-3y-fUS" secondAttribute="centerX" id="akx-eg-2ui"/>
-                            <constraint firstItem="MN2-I3-ftu" firstAttribute="leading" secondItem="Bcu-3y-fUS" secondAttribute="leading" id="i1E-0Y-4RG"/>
+                            <constraint firstItem="k3g-Vf-Wiw" firstAttribute="centerX" secondItem="Bcu-3y-fUS" secondAttribute="centerX" id="jcg-v2-ZPA"/>
+                            <constraint firstItem="k3g-Vf-Wiw" firstAttribute="centerY" secondItem="Bcu-3y-fUS" secondAttribute="centerY" id="jzz-QI-0RB"/>
                         </constraints>
                     </view>
                 </viewController>

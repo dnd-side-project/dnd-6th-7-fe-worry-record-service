@@ -123,7 +123,7 @@ export const useSubmitReview = (
   const queryClient = useQueryClient();
   return useCustomMutation(
     ({ worryId, worryReview }: { worryId: string; worryReview: string }) => {
-      worriesService.updateWorryReview(worryId, worryReview);
+      return worriesService.updateWorryReview(worryId, worryReview);
     },
     async (result: any) => {
       await queryClient.invalidateQueries(
@@ -165,7 +165,7 @@ export const useReview = (
 ): any => {
   return useCustomQuery(
     worriesKeys.review(String(worryId)),
-    worriesService.getWorryReview(worryId),
+    () => worriesService.getWorryReview(worryId),
     {
       onSuccess(data: any) {
         onSuccess(data);
@@ -181,11 +181,13 @@ export const useUpdateWorryRealize = (onSuccess: (data: any) => void): any => {
   return useCustomMutation(
     ({ worryId, isRealized }: { worryId: number; isRealized: boolean }) => {
       id = worryId;
-      worriesService.updatePresentWorry(worryId, isRealized);
+      console.log(isRealized, ' 실현 여부');
+      return worriesService.updatePresentWorry(worryId, isRealized);
     },
-    async (result: any) => {
-      await queryClient.invalidateQueries(worriesKeys.review(String(id)));
-      onSuccess(result);
+    (result: any) => {
+      queryClient.invalidateQueries();
+      queryClient.invalidateQueries(worriesKeys.review(String(id)));
+      return onSuccess(result);
     },
     (error: any) => {
       console.log(error, '에러');
@@ -200,11 +202,11 @@ export const useUpdateWorry = (onSuccess: (data: any) => void): any => {
   return useCustomMutation(
     ({ worryId, worryText }: { worryId: number; worryText: string }) => {
       id = worryId;
-      worriesService.updateWorryReview(worryId, worryText);
+      return worriesService.updateWorryReview(worryId, worryText);
     },
-    async (result: any) => {
-      await queryClient.invalidateQueries(worriesKeys.review(String(id)));
-      onSuccess(result);
+    (result: any) => {
+      queryClient.invalidateQueries(worriesKeys.review(String(id)));
+      return onSuccess(result);
     },
     (error: any) => {
       console.log(error, '에러');

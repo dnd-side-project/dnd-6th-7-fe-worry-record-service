@@ -3,11 +3,12 @@ import { useCustomQuery } from '@lib/queries';
 import { httpClient } from '~/App';
 import HomeService from '@service/home';
 import { homekeys } from '~/lib/queries/keys';
+import { useQuery } from 'react-query';
 const homeService = new HomeService(httpClient);
 
 // 로그인 하는 함수
 export const useHome = (onSuccess: (data: any) => void): any => {
-  return useCustomQuery(homekeys.all, homeService.getHome(), {
+  return useCustomQuery(homekeys.all, () => homeService.getHome(), {
     onSuccess(result: any) {
       console.log(result, '로그인 성공');
       onSuccess(result);
