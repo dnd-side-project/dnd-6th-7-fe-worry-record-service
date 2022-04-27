@@ -15,6 +15,7 @@ import CustomeTabs from '@components/Tabs';
 import AppLayout from '@components/AppLayout';
 import Worries from '@components/Worries';
 import Inform from '@components/Inform';
+import { useIsFocused } from '@react-navigation/native';
 
 import { useSceneState, useSceneDispatch } from '@context/ArchiveContext';
 import {
@@ -42,6 +43,7 @@ const Archive: FC<ArchiveProps> = ({ navigation }) => {
   const tag = '[Archive]';
   const refRBSheet = useRef<RefRbProps>(null);
   const dispatch = useSceneDispatch();
+  const isFocused = useIsFocused();
   const { userInfo } = useAuth();
   const {
     isUpdating,
@@ -56,7 +58,7 @@ const Archive: FC<ArchiveProps> = ({ navigation }) => {
   const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
 
   // 걱정 목록을 가져오는 함수
-  const { data: worries } = useGetWorries(
+  const { data: worries, refetch } = useGetWorries(
     index,
     userInfo.userId,
     activeTags,
@@ -177,8 +179,17 @@ const Archive: FC<ArchiveProps> = ({ navigation }) => {
   }, [dispatch, worryId, navigation]);
 
   useEffect(() => {
+    console.log(tag, 'init Archvie');
     dispatch({ type: INIT });
   }, []);
+
+  useEffect(() => {
+    if (isFocused) {
+      console.log(tag, 'isFocused Archvie');
+      // dispatch({ type: INIT });
+      refetch();
+    }
+  }, [isFocused]);
 
   const firstRoute = (): ReactElement => <Worries worries={worries} />;
   const secondRoute = (): ReactElement => <Worries worries={worries} />;

@@ -42,6 +42,12 @@ if (__DEV__) {
 LogBox.ignoreLogs(['Warning: ...']);
 LogBox.ignoreAllLogs();
 
+// TODO: 뒤로가기 버튼 클릭시 데이터 갱신 안되는 문제 해결 (잠금 해제, 리뷰 수정) - 서버 확인 필요
+// TODO: 스플래시 화면 구성 제대로 하기 - 디자인팀 문의 필요
+// TODO: 리프레시 토큰 재발급 할 API 확보 및 코드 수정
+// TODO: 폰트 적용하기
+// TODO: 알림 기능 만들기
+
 const App: FC = props => {
   const tag = 'App';
   const { appState } = useAppState();

@@ -50,6 +50,9 @@
                         <viewLayoutGuide key="safeArea" id="Bcu-3y-fUS"/>
                         <color key="backgroundColor" red="0.098039215686274508" green="0.098039215686274508" blue="0.15294117647058825" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
+                            <constraint firstItem="5eA-t6-NqP" firstAttribute="top" secondItem="MN2-I3-ftu" secondAttribute="bottom" constant="6" id="Ed5-Jq-qtn"/>
+                            <constraint firstItem="MN2-I3-ftu" firstAttribute="top" secondItem="k3g-Vf-Wiw" secondAttribute="bottom" constant="150.5" id="Oof-aG-cvu"/>
+                            <constraint firstItem="Bcu-3y-fUS" firstAttribute="bottom" secondItem="5eA-t6-NqP" secondAttribute="bottom" constant="51" id="ZnI-SI-2He"/>
                             <constraint firstItem="k3g-Vf-Wiw" firstAttribute="centerX" secondItem="Bcu-3y-fUS" secondAttribute="centerX" id="jcg-v2-ZPA"/>
                             <constraint firstItem="k3g-Vf-Wiw" firstAttribute="centerY" secondItem="Bcu-3y-fUS" secondAttribute="centerY" id="jzz-QI-0RB"/>
                         </constraints>
