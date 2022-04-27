@@ -42,10 +42,11 @@ const AppLayout: FC<AppLayoutProps> = ({
       case 'chat':
         return require('@assets/image/bg_login.png');
       case 'home':
-        if (backgroundImageURL === 'default_3') {
-          return require('@assets/image/moons/default_3.gif');
-        } else if (backgroundImageURL === 'edu_4') {
-          return require('@assets/image/moons/edu_4.gif');
+        if (backgroundImageURL) {
+          console.log('bg url in app layout', backgroundImageURL);
+          return {
+            uri: backgroundImageURL,
+          };
         } else {
           return require('@assets/image/bg_home.png');
         }

@@ -34,8 +34,9 @@ const Home: FC<HomeProps> = ({ setBackgroundImageUrl }) => {
 
   useHome(res => {
     console.log(userInfo, '카카오 계정 인포');
-    console.log(res, 'result');
+    console.log(res, 'Home init load result');
     setWorryInfo({ ...res });
+    setBackgroundImageUrl(res.imgUrl);
   });
 
   return (
