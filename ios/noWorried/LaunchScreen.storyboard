@@ -39,22 +39,19 @@
                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="LaunchScreen" highlightedImage="LaunchScreen" adjustsImageSizeForAccessibilityContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="k3g-Vf-Wiw">
-                                <rect key="frame" x="67.5" y="269.5" width="240" height="128"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="128" id="Dac-zu-uLK"/>
-                                    <constraint firstAttribute="width" constant="240" id="JSI-Vc-LLe"/>
-                                </constraints>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="LaunchScreen" translatesAutoresizingMaskIntoConstraints="NO" id="8YB-Hu-eOi">
+                                <rect key="frame" x="129" y="210" width="116" height="171"/>
                             </imageView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="Bcu-3y-fUS"/>
                         <color key="backgroundColor" red="0.098039215686274508" green="0.098039215686274508" blue="0.15294117647058825" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
+                            <constraint firstItem="8YB-Hu-eOi" firstAttribute="top" secondItem="Bcu-3y-fUS" secondAttribute="top" constant="210" id="4jL-js-1IX"/>
+                            <constraint firstItem="MN2-I3-ftu" firstAttribute="top" secondItem="8YB-Hu-eOi" secondAttribute="bottom" constant="167" id="Civ-st-yE0"/>
                             <constraint firstItem="5eA-t6-NqP" firstAttribute="top" secondItem="MN2-I3-ftu" secondAttribute="bottom" constant="6" id="Ed5-Jq-qtn"/>
-                            <constraint firstItem="MN2-I3-ftu" firstAttribute="top" secondItem="k3g-Vf-Wiw" secondAttribute="bottom" constant="150.5" id="Oof-aG-cvu"/>
+                            <constraint firstItem="8YB-Hu-eOi" firstAttribute="leading" secondItem="Bcu-3y-fUS" secondAttribute="leading" constant="129" id="Ydy-HS-6OP"/>
                             <constraint firstItem="Bcu-3y-fUS" firstAttribute="bottom" secondItem="5eA-t6-NqP" secondAttribute="bottom" constant="51" id="ZnI-SI-2He"/>
-                            <constraint firstItem="k3g-Vf-Wiw" firstAttribute="centerX" secondItem="Bcu-3y-fUS" secondAttribute="centerX" id="jcg-v2-ZPA"/>
-                            <constraint firstItem="k3g-Vf-Wiw" firstAttribute="centerY" secondItem="Bcu-3y-fUS" secondAttribute="centerY" id="jzz-QI-0RB"/>
+                            <constraint firstItem="Bcu-3y-fUS" firstAttribute="trailing" secondItem="8YB-Hu-eOi" secondAttribute="trailing" constant="130" id="gOm-ZK-H69"/>
                         </constraints>
                     </view>
                 </viewController>
@@ -64,6 +61,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="LaunchScreen" width="40" height="40"/>
+        <image name="LaunchScreen" width="53.333332061767578" height="53.333332061767578"/>
     </resources>
 </document>
