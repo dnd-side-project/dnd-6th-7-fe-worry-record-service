@@ -15,11 +15,6 @@ const AddWorryComplete: FC<AddWorryCompleteProps> = ({
   worryExpiryDate,
   navigation,
 }) => {
-  // useEffect(() => {
-  //   console.log(worryExpiryDate);
-  //   console.log(worryExpiryDate.getDate());
-  //   console.log(worryExpiryDate.getMonth() + 1);
-  // }, []);
   const navigateToHome = () => {
     // navigation.navigate('Home');
     navigation.popToTop();

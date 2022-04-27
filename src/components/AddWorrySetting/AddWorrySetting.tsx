@@ -29,7 +29,10 @@ const worryTags = [
   '#기타',
 ];
 
-const AddWorrySetting: FC<AddWorrySettingProps> = ({ navigation }) => {
+const AddWorrySetting: FC<AddWorrySettingProps> = ({
+  navigation,
+  worryText,
+}) => {
   const { userInfo } = useAuth();
   const [isHidden, setIsHidden] = useState(true);
   const [expireDate, setExpireDate] = useState(0);
@@ -40,6 +43,13 @@ const AddWorrySetting: FC<AddWorrySettingProps> = ({ navigation }) => {
     worryText: '',
     worryExpiryDate: new Date(0),
   });
+
+  useEffect(() => {
+    setWorryContents({
+      ...worryContents,
+      worryText: worryText,
+    });
+  }, []);
 
   useEffect(() => {
     const isTimeSet = expireDate !== 0;
@@ -54,8 +64,8 @@ const AddWorrySetting: FC<AddWorrySettingProps> = ({ navigation }) => {
 
   const handleExpireDate = (date: number) => {
     setExpireDate(date);
-    const expireDate = new Date(Date.now() + date * 60 * 60 * 24 * 1000);
-    setWorryContents({ ...worryContents, worryExpiryDate: expireDate });
+    const expireDate_ = new Date(Date.now() + date * 60 * 60 * 24 * 1000);
+    setWorryContents({ ...worryContents, worryExpiryDate: expireDate_ });
   };
 
   const handleWorryTag = (idx: number) => {

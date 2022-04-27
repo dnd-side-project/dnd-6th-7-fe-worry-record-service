@@ -18,7 +18,6 @@ const AddWorrySettingPage: FC<AddWorrySettingProps> = ({
   navigation,
 }) => {
   const { worryText } = route?.params;
-  console.log(route.params);
   return (
     <AppLayout
       noBackGroundImage={false}

@@ -155,6 +155,11 @@ export const AddWorryCompleteScreens: FC = () => {
     >
       <AuthStack.Group>
         <AuthStack.Screen name="Home" component={HomeScreen} options={{}} />
+        <AuthStack.Screen name="AddWorry" component={AddWorryScreen} />
+        <AuthStack.Screen
+          name="AddWorrySetting"
+          component={AddWorrySettingScreen}
+        />
         <AuthStack.Screen
           name="AddWorryComplete"
           component={AddWorryCompleteScreen}

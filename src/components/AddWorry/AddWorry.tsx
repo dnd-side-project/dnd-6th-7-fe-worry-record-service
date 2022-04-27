@@ -32,9 +32,6 @@ const AddWorry: FC<AddWorryProps> = ({ navigation }) => {
   const { userInfo } = useAuth();
   const [worryText, setWorryText] = useState('');
 
-  const handleWorryText = (text: string) => {
-    setWorryText(worryText);
-  };
   const [chatMode, setChatMode] = useState(0);
   // const [settingMode, setSettingMode] = useState(0);
 
@@ -62,7 +59,7 @@ const AddWorry: FC<AddWorryProps> = ({ navigation }) => {
                 height={48}
                 // padding={16}
                 background={'rgba(0, 0, 0, 0.3);'}
-                editable={true}
+                // editable={true}
                 placeholder={'걱정이 있나요?'}
                 placeholderTextColor={'rgba(255, 255, 255, 0.5)'}
                 onPressIn={() => setChatMode(1)}
@@ -70,7 +67,7 @@ const AddWorry: FC<AddWorryProps> = ({ navigation }) => {
             ) : (
               <ChatBoxWithButton
                 value={worryText}
-                setValue={handleWorryText}
+                setValue={setWorryText}
                 placeholder={''}
                 placeholderTextColor={'rgba(255, 255, 255, 0.5)'}
                 onBlur={() => {
