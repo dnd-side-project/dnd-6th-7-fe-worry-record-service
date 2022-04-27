@@ -1,8 +1,8 @@
 import React, { FC } from 'react';
 
 import AppLayout from '@components/AppLayout';
-import AddWorry from '@components/AddWorry';
-import { AddWorryProps } from '~/types/Navigation';
+import AddWorrySetting from '@components/AddWorrySetting';
+import { AddWorrySettingProps } from '~/types/Navigation';
 import styled from 'styled-components/native';
 
 import {
@@ -13,17 +13,21 @@ import {
 import { theme } from '@lib/styles/palette';
 import ArrowLeft from '@assets/image/arrow_left.svg';
 
-const AddWorryPage: FC<AddWorryProps> = ({ navigation }) => {
-  // <Title>흐릿에 걱정 맡기기</Title>
+const AddWorrySettingPage: FC<AddWorrySettingProps> = ({
+  route,
+  navigation,
+}) => {
+  const { worryText } = route?.params;
+  console.log(route.params);
   return (
     <AppLayout
       noBackGroundImage={false}
-      name="AddWorry"
+      name="AddWorrySetting"
       headerLeft={<ArrowLeft />}
       headerLeftSidePress={() => navigation.goBack()}
       headerTitle={<Title>흐릿에 걱정 맡기기</Title>}
     >
-      <AddWorry navigation={navigation} />
+      <AddWorrySetting navigation={navigation} worryText={worryText} />
     </AppLayout>
   );
 };
@@ -35,4 +39,4 @@ const Title = styled.Text`
   font-weight: bold;
 `;
 
-export default AddWorryPage;
+export default AddWorrySettingPage;

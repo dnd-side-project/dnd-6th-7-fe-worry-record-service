@@ -10,16 +10,11 @@ import { theme } from '@lib/styles/palette';
 import { th } from 'date-fns/locale';
 import WorriesService from '@service/archive';
 import { httpClient } from '~/App';
+import { useAuth } from '~/context/AuthContext';
 
 const worriesService = new WorriesService(httpClient);
 interface AddWorrySettingProps {
-  worryContents: {
-    userId: number;
-    categoryId: number;
-    worryText: string;
-    worryExpiryDate: Date;
-  };
-  setWorryContents: any;
+  worryText: any;
   navigation: any;
 }
 
@@ -34,15 +29,17 @@ const worryTags = [
   '#기타',
 ];
 
-const AddWorrySetting: FC<AddWorrySettingProps> = ({
-  setWorryContents,
-  worryContents,
-  navigation,
-}) => {
+const AddWorrySetting: FC<AddWorrySettingProps> = ({ navigation }) => {
+  const { userInfo } = useAuth();
   const [isHidden, setIsHidden] = useState(true);
   const [expireDate, setExpireDate] = useState(0);
   const [isComplete, setIsComplete] = useState(false);
   const [datepickerUp, setDatepickerUp] = useState(false);
+  const [worryContents, setWorryContents] = useState({
+    categoryId: -1,
+    worryText: '',
+    worryExpiryDate: new Date(0),
+  });
 
   useEffect(() => {
     const isTimeSet = expireDate !== 0;
@@ -69,7 +66,6 @@ const AddWorrySetting: FC<AddWorrySettingProps> = ({
   };
 
   const postWorry = () => {
-    // .post(`${process.env.HTTPS_B_URL}/worries/write`, worryContents)
     worriesService.addWorry(worryContents).then(res => {
       console.log(worryContents);
       console.log(res?.data);

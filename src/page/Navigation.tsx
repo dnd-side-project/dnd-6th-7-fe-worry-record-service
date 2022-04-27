@@ -5,6 +5,7 @@ const HomeScreen = lazy(() => import('@page/Home'));
 const DetailScreen = lazy(() => import('@page/Detail'));
 const ArchiveScreen = lazy(() => import('@page/Archive'));
 const AddWorryScreen = lazy(() => import('@page/AddWorry'));
+const AddWorrySettingScreen = lazy(() => import('@page/AddWorrySetting'));
 const AddWorryCompleteScreen = lazy(() => import('@page/AddWorryComplete'));
 const ReviewScreen = lazy(() => import('@page/Review'));
 const ReviewEditScreen = lazy(() => import('@page/ReviewEdit'));
@@ -108,6 +109,34 @@ export const AddWorryScreens: FC = () => {
         <AuthStack.Screen name="Home" component={HomeScreen} options={{}} />
         <AuthStack.Screen name="AddWorry" component={AddWorryScreen} />
         <AuthStack.Screen
+          name="AddWorrySetting"
+          component={AddWorrySettingScreen}
+        />
+        <AuthStack.Screen
+          name="AddWorryComplete"
+          component={AddWorryCompleteScreen}
+        />
+      </AuthStack.Group>
+    </AuthStack.Navigator>
+  );
+};
+
+export const AddWorrySettingScreens: FC = () => {
+  return (
+    <AuthStack.Navigator
+      initialRouteName="AddWorrySetting"
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
+      <AuthStack.Group>
+        <AuthStack.Screen name="Home" component={HomeScreen} options={{}} />
+        <AuthStack.Screen name="AddWorry" component={AddWorryScreen} />
+        <AuthStack.Screen
+          name="AddWorrySetting"
+          component={AddWorrySettingScreen}
+        />
+        <AuthStack.Screen
           name="AddWorryComplete"
           component={AddWorryCompleteScreen}
         />
@@ -126,7 +155,6 @@ export const AddWorryCompleteScreens: FC = () => {
     >
       <AuthStack.Group>
         <AuthStack.Screen name="Home" component={HomeScreen} options={{}} />
-        <AuthStack.Screen name="AddWorry" component={AddWorryScreen} />
         <AuthStack.Screen
           name="AddWorryComplete"
           component={AddWorryCompleteScreen}

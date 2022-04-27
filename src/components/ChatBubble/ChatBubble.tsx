@@ -9,6 +9,8 @@ type ChatBubbleProps = ChatViewProps & ChatTextAreaProps & TextInputProps;
 
 interface ChatViewProps {
   width?: number;
+  background?: string;
+  padding?: number;
 }
 
 interface ChatTextAreaProps {
@@ -25,9 +27,11 @@ const ChatBubble: FC<ChatBubbleProps> = ({
   value,
   width,
   height,
+  padding,
   multiline,
   editable,
   isAnimated,
+  background,
   animation,
   delay,
   placeholder,
@@ -56,7 +60,7 @@ const ChatBubble: FC<ChatBubbleProps> = ({
   }
 
   return (
-    <ChatView width={width}>
+    <ChatView width={width} background={background} padding={padding}>
       <ChatTextArea
         height={height}
         multiline={multiline}
@@ -83,10 +87,19 @@ const ChatViewAnimated = Animatable.createAnimatableComponent(
 );
 
 const ChatView = styled.View<ChatViewProps>`
-  ${({ width }) => {
+  ${({ width, background, padding }) => {
+    let style = '';
     if (width) {
-      return 'width:' + width + 'px';
+      style += 'width:' + width + 'px\n';
     }
+    if (background) {
+      style += 'background: ' + background + '\n';
+      style += 'border-radius: 10px;\n';
+    }
+    if (padding) {
+      style += 'padding: ' + padding + 'px\n';
+    }
+    return style;
   }}
 `;
 

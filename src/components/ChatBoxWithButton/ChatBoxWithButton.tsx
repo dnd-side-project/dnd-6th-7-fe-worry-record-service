@@ -14,7 +14,8 @@ interface ChatBoxWithButtonProps {
   placeholderTextColor: string;
   setValue: (text: string) => void;
   onBlur: () => void;
-  setSettingMode: (a: number) => void;
+  onTouchStart: () => void;
+  setSettingMode?: (a: number) => void;
   settingIcon?: SVGRectElement;
 }
 
@@ -24,18 +25,20 @@ const ChatBoxWithButton: FC<ChatBoxWithButtonProps> = ({
   placeholderTextColor,
   setValue,
   onBlur,
-  setSettingMode,
+  onTouchStart,
   settingIcon,
 }) => {
   return (
     <ChatView>
-      {/* <ChatTextArea
+      <ChatTextArea
+        placeholder={placeholder}
+        placeholderTextColor={placeholderTextColor}
         multiline={true}
         value={value}
-        onTextInput={text => setValue(text)}
+        onChangeText={text => setValue(text)}
         onBlur={onBlur}
-      /> */}
-      <MaskedView maskElement={<ChatTextArea multiline={true} value={value} />}>
+      />
+      {/* <MaskedView maskElement={<ChatTextArea multiline={true} value={value} />}>
         <GradientView colors={['#ffffff00', '#ffffff']}>
           <ChatTextAreaTransparent
             placeholder={placeholder}
@@ -46,11 +49,9 @@ const ChatBoxWithButton: FC<ChatBoxWithButtonProps> = ({
             onBlur={onBlur}
           />
         </GradientView>
-      </MaskedView>
+      </MaskedView> */}
       {settingIcon && (
-        <IconView onTouchStart={() => setSettingMode(1)}>
-          {settingIcon}
-        </IconView>
+        <IconView onTouchStart={onTouchStart}>{settingIcon}</IconView>
       )}
     </ChatView>
   );

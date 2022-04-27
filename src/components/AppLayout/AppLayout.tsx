@@ -6,7 +6,15 @@ import { ImageSourcePropType } from 'react-native';
 
 interface AppLayoutProps {
   noHeader?: boolean;
-  name: 'login' | 'worry' | 'chat' | 'home' | 'review' | 'AddWorryComplete';
+  name:
+    | 'login'
+    | 'worry'
+    | 'chat'
+    | 'home'
+    | 'review'
+    | 'AddWorry'
+    | 'AddWorrySetting'
+    | 'AddWorryComplete';
   headerRight?: ReactElement;
   headerRightSidePress?: () => void;
   headerLeft?: ReactElement;

@@ -30,74 +30,65 @@ interface AddWorryProps {
 
 const AddWorry: FC<AddWorryProps> = ({ navigation }) => {
   const { userInfo } = useAuth();
-  const [worryContents, setWorryContents] = useState({
-    userId: userInfo.userId,
-    categoryId: -1,
-    worryText: '',
-    worryExpiryDate: new Date(0),
-  });
+  const [worryText, setWorryText] = useState('');
 
   const handleWorryText = (text: string) => {
-    setWorryContents({
-      ...worryContents,
-      worryText: text,
-    });
+    setWorryText(worryText);
   };
   const [chatMode, setChatMode] = useState(0);
-  const [settingMode, setSettingMode] = useState(0);
+  // const [settingMode, setSettingMode] = useState(0);
 
   return (
     <>
-      {settingMode === 0 ? (
-        <>
-          <WorriesWrapper>
-            <View style={style.chatConatiner}>
+      <>
+        <WorriesWrapper>
+          <View style={style.chatConatiner}>
+            <ChatBubble
+              value={'무슨 일 있어?'}
+              width={106}
+              height={42}
+              editable={false}
+            />
+          </View>
+        </WorriesWrapper>
+        <KeyboardAvoidingView
+          style={style.replyBoxConatiner}
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        >
+          <View style={style.chatBubbleContainer}>
+            {chatMode === 0 ? (
               <ChatBubble
-                value={'무슨 일 있어?'}
-                width={106}
-                height={42}
-                editable={false}
-              />
-            </View>
-          </WorriesWrapper>
-          <KeyboardAvoidingView
-            style={style.replyBoxConatiner}
-            behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-          >
-            <View style={style.chatBubbleContainer}>
-              {/* {chatMode === 0 ? (
-                <ChatBubble
-                  value={''}
-
-                  height={42}
-                  editable={true}
-                  onPressIn={() => setChatMode(1)}
-                />
-              ) : ( */}
-              <ChatBoxWithButton
-                value={worryContents.worryText}
-                setValue={handleWorryText}
+                value={''}
+                height={48}
+                // padding={16}
+                background={'rgba(0, 0, 0, 0.3);'}
+                editable={true}
                 placeholder={'걱정이 있나요?'}
                 placeholderTextColor={'rgba(255, 255, 255, 0.5)'}
+                onPressIn={() => setChatMode(1)}
+              />
+            ) : (
+              <ChatBoxWithButton
+                value={worryText}
+                setValue={handleWorryText}
+                placeholder={''}
+                placeholderTextColor={'rgba(255, 255, 255, 0.5)'}
                 onBlur={() => {
-                  if (worryContents.worryText.length === 0) {
+                  if (worryText.length === 0) {
                     setChatMode(0);
                   }
                 }}
-                setSettingMode={setSettingMode}
+                onTouchStart={() =>
+                  navigation.navigate('AddWorrySetting', {
+                    worryText: worryText,
+                  })
+                }
                 settingIcon={<IconSchedule />}
               />
-              {/* // )} */}
-            </View>
-          </KeyboardAvoidingView>
-        </>
-      ) : (
-        <AddWorrySetting
-          setWorryContents={setWorryContents}
-          worryContents={worryContents}
-          navigation={navigation}
-        />
-      )}
+            )}
+          </View>
+        </KeyboardAvoidingView>
+      </>
     </>
   );
 };

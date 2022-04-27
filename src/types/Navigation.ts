@@ -10,6 +10,8 @@ export type WithAuthStackParamList = {
   Home: undefined;
   Detail: undefined;
   AddWorry: undefined;
+  AddWorrySetting: undefined;
+  AddWorryComplete: undefined;
   Archive: undefined;
   Review: undefined;
   ReviewEdit: undefined;
@@ -33,6 +35,16 @@ export type ArchiveProps = {
 export type AddWorryProps = {
   route: RouteProp<WithAuthStackParamList, 'AddWorry'>;
   navigation: StackNavigationProp<WithAuthStackParamList, 'AddWorry'>;
+};
+
+export type AddWorrySettingProps = {
+  route: RouteProp<WithAuthStackParamList, 'AddWorrySetting'>;
+  navigation: StackNavigationProp<WithAuthStackParamList, 'AddWorrySetting'>;
+};
+
+export type AddWorryCompleteProps = {
+  route: RouteProp<WithAuthStackParamList, 'AddWorryComplete'>;
+  navigation: StackNavigationProp<WithAuthStackParamList, 'AddWorryComplete'>;
 };
 
 export type ReviewProps = {
@@ -73,6 +85,11 @@ export type DetailScreenNavigationProp = CompositeNavigationProp<
 export type AddWorryScreenNavigationProp = CompositeNavigationProp<
   BottomTabNavigationProp<WithAuthStackParamList, 'AddWorry'>,
   StackNavigationProp<AddWorryProps>
+>;
+
+export type AddWorrySettingScreenNavigationProp = CompositeNavigationProp<
+  BottomTabNavigationProp<WithAuthStackParamList, 'AddWorrySetting'>,
+  StackNavigationProp<AddWorrySettingProps>
 >;
 
 export type ArchiveScreenNavigationProp = CompositeNavigationProp<
