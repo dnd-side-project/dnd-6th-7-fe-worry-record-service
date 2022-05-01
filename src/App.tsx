@@ -1,4 +1,4 @@
-import React, { FC, Suspense, useCallback, useEffect } from 'react';
+import React, { FC, useCallback, useEffect } from 'react';
 import {
   NavigationContainer,
   useNavigationContainerRef,
@@ -8,7 +8,6 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 
 import { AfterLogin } from '@page/Navigation';
 import AuthService from '~/service/auth';
-import ErrorBoundary from 'react-native-error-boundary';
 
 import { AuthProvider, AuthErrorEventBus } from '@context/AuthContext';
 import { ArchiveProvider } from '@context/ArchiveContext';
@@ -21,6 +20,7 @@ import { HTTPS_B_URL } from '@env';
 
 import { LogBox } from 'react-native';
 import Indicator from '@components/Indicator';
+import AsyncBoundary from '@components/AsyncBoundary';
 import Error from '@components/Error';
 import Storage from '@lib/storage';
 import FCM from '@lib/api/fcm';
@@ -41,6 +41,12 @@ if (__DEV__) {
 
 LogBox.ignoreLogs(['Warning: ...']);
 LogBox.ignoreAllLogs();
+
+// TODO: 뒤로가기 버튼 클릭시 데이터 갱신 안되는 문제 해결 (잠금 해제, 리뷰 수정) - 완료
+// TODO: 스플래시 화면 구성 제대로 하기 - 완료
+// TODO: 리프레시 토큰 재발급 할 API 확보 및 코드 수정
+// TODO: 폰트 적용하기
+// TODO: 알림 기능 만들기
 
 const App: FC = props => {
   const tag = 'App';
@@ -65,21 +71,19 @@ const App: FC = props => {
   return (
     <ThemeProvider theme={theme}>
       <NavigationContainer ref={navigationRef}>
-        <Suspense fallback={<Indicator />}>
-          <ErrorBoundary FallbackComponent={Error}>
-            <QueryClientProvider client={queryClient}>
-              <AuthProvider
-                props={props}
-                authService={authService}
-                authErrorEventBus={authErrorEventBus}
-              >
-                <ArchiveProvider>
-                  <AfterLogin />
-                </ArchiveProvider>
-              </AuthProvider>
-            </QueryClientProvider>
-          </ErrorBoundary>
-        </Suspense>
+        <AsyncBoundary pendingFallback={<Indicator />} rejectedFallback={Error}>
+          <QueryClientProvider client={queryClient}>
+            <AuthProvider
+              props={props}
+              authService={authService}
+              authErrorEventBus={authErrorEventBus}
+            >
+              <ArchiveProvider>
+                <AfterLogin />
+              </ArchiveProvider>
+            </AuthProvider>
+          </QueryClientProvider>
+        </AsyncBoundary>
       </NavigationContainer>
     </ThemeProvider>
   );

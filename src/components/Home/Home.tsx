@@ -26,16 +26,16 @@ interface TextContainerProps {
 const Home: FC<HomeProps> = ({ setBackgroundImageUrl }) => {
   const { userInfo } = useAuth();
 
-  const [worryInfo, setWorryInfo] = useState({
-    meanlessWorryPer: 0,
-    recentWorryCnt: 0,
-    imgUrl: '',
-  });
+  // const [worryInfo, setWorryInfo] = useState({
+  //   meanlessWorryPer: 0,
+  //   recentWorryCnt: 0,
+  //   imgUrl: '',
+  // });
 
-  useHome(res => {
+  const { data: worryInfo } = useHome(res => {
     console.log(userInfo, '카카오 계정 인포');
     console.log(res, 'result');
-    setWorryInfo({ ...res });
+    // setWorryInfo({ ...res });
   });
 
   return (

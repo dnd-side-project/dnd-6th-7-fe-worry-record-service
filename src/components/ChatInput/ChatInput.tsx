@@ -9,6 +9,7 @@ interface ChatInputProps {
   height?: number;
   bgColor?: string;
   value: string;
+  onChangeText?: (value: any) => void;
 }
 
 const ChatInput: FC<ChatInputProps> = ({
@@ -17,6 +18,7 @@ const ChatInput: FC<ChatInputProps> = ({
   value,
   height,
   bgColor,
+  onChangeText,
 }) => {
   return (
     <CardTextArea
@@ -25,6 +27,7 @@ const ChatInput: FC<ChatInputProps> = ({
       multiline={multiline}
       editable={editable}
       value={value}
+      onChangeText={onChangeText}
     />
   );
 };

@@ -7,10 +7,11 @@ import { ChatData } from '~/constants/ChatData';
 import { worriesKeys } from '~/lib/queries/keys';
 import { makeQueryString } from '~/lib/util/helper';
 import { ReviewChats } from '~/page/ReviewChat/ReviewChat';
-import { useCustomMutation } from '~/lib/queries';
+import { useCustomMutation, useCustomQuery } from '~/lib/queries';
 
 const worriesService = new WorriesService(httpClient);
 
+// 후기 목록을 가져오는 함수
 export const useGetWorry = (
   tabIndex: number,
   userId: string,
@@ -122,7 +123,7 @@ export const useSubmitReview = (
   const queryClient = useQueryClient();
   return useCustomMutation(
     ({ worryId, worryReview }: { worryId: string; worryReview: string }) => {
-      worriesService.updateWorryReview(worryId, worryReview);
+      return worriesService.updateWorryReview(worryId, worryReview);
     },
     async (result: any) => {
       await queryClient.invalidateQueries(
@@ -136,7 +137,7 @@ export const useSubmitReview = (
   );
 };
 
-//
+// 후기 만료일자 업데이트
 export const useUpdateExpiredDate = (onSuccess: (data: any) => void): any => {
   let expiredDate = '';
   return useCustomMutation(
@@ -150,6 +151,62 @@ export const useUpdateExpiredDate = (onSuccess: (data: any) => void): any => {
     async (result: any) => {
       console.log(result, '업데이트 성공');
       onSuccess(ChatData.getChat5(expiredDate));
+    },
+    (error: any) => {
+      console.log(error, '에러');
+    },
+  );
+};
+
+// 후기 작성 되지 않은 컨텐츠 잠금 해제하는 함수
+export const useReview = (
+  worryId: number,
+  onSuccess: (data: any) => void,
+): any => {
+  return useCustomQuery(
+    worriesKeys.review(String(worryId)),
+    () => worriesService.getWorryReview(worryId),
+    {
+      onSuccess(data: any) {
+        onSuccess(data);
+      },
+    },
+  );
+};
+
+// 걱정 후기 수정 - 실현 여부 수정
+export const useUpdateWorryRealize = (onSuccess: (data: any) => void): any => {
+  const queryClient = useQueryClient();
+  let id = -1;
+  return useCustomMutation(
+    ({ worryId, isRealized }: { worryId: number; isRealized: boolean }) => {
+      id = worryId;
+      console.log(isRealized, ' 실현 여부');
+      return worriesService.updatePresentWorry(worryId, isRealized);
+    },
+    (result: any) => {
+      queryClient.invalidateQueries();
+      queryClient.invalidateQueries(worriesKeys.review(String(id)));
+      return onSuccess(result);
+    },
+    (error: any) => {
+      console.log(error, '에러');
+    },
+  );
+};
+
+// 걱정 후기 수정 - 걱정 내용 수정
+export const useUpdateWorry = (onSuccess: (data: any) => void): any => {
+  const queryClient = useQueryClient();
+  let id = -1;
+  return useCustomMutation(
+    ({ worryId, worryText }: { worryId: number; worryText: string }) => {
+      id = worryId;
+      return worriesService.updateWorryReview(worryId, worryText);
+    },
+    (result: any) => {
+      queryClient.invalidateQueries(worriesKeys.review(String(id)));
+      return onSuccess(result);
     },
     (error: any) => {
       console.log(error, '에러');

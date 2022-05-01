@@ -15,6 +15,7 @@ import CustomeTabs from '@components/Tabs';
 import AppLayout from '@components/AppLayout';
 import Worries from '@components/Worries';
 import Inform from '@components/Inform';
+import { useIsFocused } from '@react-navigation/native';
 
 import { useSceneState, useSceneDispatch } from '@context/ArchiveContext';
 import {
@@ -42,6 +43,7 @@ const Archive: FC<ArchiveProps> = ({ navigation }) => {
   const tag = '[Archive]';
   const refRBSheet = useRef<RefRbProps>(null);
   const dispatch = useSceneDispatch();
+  const isFocused = useIsFocused();
   const { userInfo } = useAuth();
   const {
     isUpdating,
@@ -165,8 +167,7 @@ const Archive: FC<ArchiveProps> = ({ navigation }) => {
   const onPressDeleteConfirm = useCallback((): void => {
     console.log(tag, 'onPressDeleteConfirm');
     setOpenDeleteModal(false);
-    refetch();
-  }, [refetch, setOpenDeleteModal]);
+  }, [setOpenDeleteModal]);
 
   // 걱정 잠금해제 컨펌창 확인 버튼 클릭시 이벤트
   const onPressUnlockConfirm = useCallback((): void => {
@@ -174,13 +175,21 @@ const Archive: FC<ArchiveProps> = ({ navigation }) => {
     dispatch({ type: UNLOCK_WORRY, values: { isUnlock: false } });
     dispatch({ type: CHANGE_MODE_REVIEW, values: { isReviewing: true } });
     dispatch({ type: SET_WORRY_ID, values: { worryId: worryId } });
-    refetch();
     navigation.navigate('ReviewChat');
-  }, [refetch, dispatch, worryId, navigation]);
+  }, [dispatch, worryId, navigation]);
 
   useEffect(() => {
+    console.log(tag, 'init Archvie');
     dispatch({ type: INIT });
   }, []);
+
+  useEffect(() => {
+    if (isFocused) {
+      console.log(tag, 'isFocused Archvie');
+      // dispatch({ type: INIT });
+      refetch();
+    }
+  }, [isFocused]);
 
   const firstRoute = (): ReactElement => <Worries worries={worries} />;
   const secondRoute = (): ReactElement => <Worries worries={worries} />;

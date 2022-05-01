@@ -11,7 +11,7 @@ export function useCustomQuery(
   api: any,
   options?: UseQueryOptions,
 ): UseQueryResult {
-  const queryInfo = useQuery(key, () => api, {
+  const queryInfo = useQuery(key, () => api(), {
     ...options,
     refetchOnWindowFocus: false,
     suspense: true,
@@ -29,7 +29,7 @@ export function useCustomMutation(
   onErrorCb: (data: any) => void,
   options?: any,
 ): UseMutationResult {
-  return useMutation((arg: any) => api(arg), {
+  return useMutation(api, {
     ...options,
     onSuccess: (result: any) => {
       onSuccessCb(result);

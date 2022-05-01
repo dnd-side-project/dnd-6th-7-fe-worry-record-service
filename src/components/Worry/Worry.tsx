@@ -29,9 +29,7 @@ import { useUnlockWorry } from '@hooks/useWorries';
 
 // TODO: 동일한 12월 24일 걱정을 다중으로 삭제했을때는 가능하지만,
 // 일자가 다른 걱정을 삭제할때는 선택한 항목 중 가장 최근날짜가 알림에 나오도록하기
-// TODO: 알림 기능 만들기
-// TODO: 폰트 적용하기
-// TODO: immer 적용하기
+
 interface WorryProps {
   item: WorryTempProps;
   index: number;
@@ -105,9 +103,22 @@ const Worry: FC<WorryProps> = ({ item, index }: WorryProps) => {
     unlockWorry.mutate(String(item.worryId));
   }, [dispatch, unlockWorry, item.worryId]);
 
+  // 잠금해제 버튼 클릭시 이벤트
+  const onPressUnlockReview = useCallback((): void => {
+    console.log(tag, 'onPressUnlockReview');
+    dispatch({
+      type: SET_WORRY_ID,
+      values: { worryId: item.worryId },
+    });
+    dispatch({ type: UNLOCK_WORRY, values: { isUnlock: false } });
+    dispatch({ type: CHANGE_MODE_REVIEW, values: { isReviewing: true } });
+    navigation.navigate('ReviewChat');
+  }, [dispatch, item.worryId, navigation]);
+
   // 후기 작성 되지 않은 버튼 클릭시 이벤트
   const onLongPressNotReview = useCallback((): void => {
     console.log(tag, 'onLongPressNotReview');
+    dispatch({ type: CHANGE_MODE_REVIEW, values: { isReviewing: true } });
     dispatch({
       type: SET_WORRY_ID,
       values: { worryId: item.worryId },
@@ -156,8 +167,11 @@ const Worry: FC<WorryProps> = ({ item, index }: WorryProps) => {
                 </DefaultButton>
               )}
               {!item.locked && !item.finished && (
-                <DefaultButton disabled={isUpdating ? true : false}>
-                  <Open>지난 걱정을 확인해보세요</Open>
+                <DefaultButton
+                  disabled={isUpdating ? true : false}
+                  onPress={onPressUnlockReview}
+                >
+                  <Open>걱정을 확인해보세요</Open>
                 </DefaultButton>
               )}
               {item.locked && (
