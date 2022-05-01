@@ -10,7 +10,7 @@ const AddWorryCompletePage = ({ route, navigation }) => {
   return (
     <AppLayout noBackGroundImage={false} name={'AddWorryComplete'}>
       <AddWorryComplete
-        worryExpiryDate={worryExpiryDate}
+        worryExpiryDate={new Date(worryExpiryDate)}
         navigation={navigation}
       />
     </AppLayout>

@@ -41,13 +41,15 @@ const AddWorrySetting: FC<AddWorrySettingProps> = ({
   const [worryContents, setWorryContents] = useState({
     categoryId: -1,
     worryText: '',
-    worryExpiryDate: new Date(0),
+    userId: -1,
+    worryExpiryDate: '', //new Date(0),
   });
 
   useEffect(() => {
     setWorryContents({
       ...worryContents,
       worryText: worryText,
+      userId: userInfo.userId,
     });
   }, []);
 
@@ -65,7 +67,10 @@ const AddWorrySetting: FC<AddWorrySettingProps> = ({
   const handleExpireDate = (date: number) => {
     setExpireDate(date);
     const expireDate_ = new Date(Date.now() + date * 60 * 60 * 24 * 1000);
-    setWorryContents({ ...worryContents, worryExpiryDate: expireDate_ });
+    setWorryContents({
+      ...worryContents,
+      worryExpiryDate: expireDate_.toISOString(),
+    });
   };
 
   const handleWorryTag = (idx: number) => {
@@ -78,7 +83,7 @@ const AddWorrySetting: FC<AddWorrySettingProps> = ({
   const postWorry = () => {
     worriesService.addWorry(worryContents).then(res => {
       console.log(worryContents);
-      console.log(res?.data);
+      console.log('res', res);
       navigation.navigate('AddWorryComplete', {
         worryExpiryDate: worryContents.worryExpiryDate,
       });
@@ -203,7 +208,7 @@ const AddWorrySetting: FC<AddWorrySettingProps> = ({
           setExpireDate(-1);
           setWorryContents({
             ...worryContents,
-            worryExpiryDate: date,
+            worryExpiryDate: date.toISOString(),
           });
           setDatepickerUp(false);
         }}

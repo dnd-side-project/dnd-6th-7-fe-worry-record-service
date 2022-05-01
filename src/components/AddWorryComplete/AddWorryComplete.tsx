@@ -16,7 +16,6 @@ const AddWorryComplete: FC<AddWorryCompleteProps> = ({
   navigation,
 }) => {
   const navigateToHome = () => {
-    // navigation.navigate('Home');
     navigation.popToTop();
   };
   return (
@@ -35,7 +34,6 @@ const AddWorryComplete: FC<AddWorryCompleteProps> = ({
 다시 읽어볼 수 있어요.`}
         </Text>
       </View>
-      {/* <Image source={{ uri: 'https://reactnative.dev/img/tiny_logo.png' }} /> */}
     </View>
   );
 };

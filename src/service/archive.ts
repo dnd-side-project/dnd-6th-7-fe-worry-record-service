@@ -36,7 +36,9 @@ export default class WorriesService implements WorriesServiceClass {
     });
   }
 
-  async addWorry(worryContents: any) {
+  async addWorry(worryContents: any): Promise<any> {
+    console.log('걱정 추가 ');
+
     return this.http.fetch('/worries/write', {
       method: 'POST',
       body: JSON.stringify({
