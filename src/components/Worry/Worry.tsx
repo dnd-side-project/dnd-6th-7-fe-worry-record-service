@@ -103,6 +103,18 @@ const Worry: FC<WorryProps> = ({ item, index }: WorryProps) => {
     unlockWorry.mutate(String(item.worryId));
   }, [dispatch, unlockWorry, item.worryId]);
 
+  // 잠금해제 버튼 클릭시 이벤트
+  const onPressUnlockReview = useCallback((): void => {
+    console.log(tag, 'onPressUnlockReview');
+    dispatch({
+      type: SET_WORRY_ID,
+      values: { worryId: item.worryId },
+    });
+    dispatch({ type: UNLOCK_WORRY, values: { isUnlock: false } });
+    dispatch({ type: CHANGE_MODE_REVIEW, values: { isReviewing: true } });
+    navigation.navigate('ReviewChat');
+  }, [dispatch, item.worryId, navigation]);
+
   // 후기 작성 되지 않은 버튼 클릭시 이벤트
   const onLongPressNotReview = useCallback((): void => {
     console.log(tag, 'onLongPressNotReview');
@@ -155,8 +167,11 @@ const Worry: FC<WorryProps> = ({ item, index }: WorryProps) => {
                 </DefaultButton>
               )}
               {!item.locked && !item.finished && (
-                <DefaultButton disabled={isUpdating ? true : false}>
-                  <Open>지난 걱정을 확인해보세요</Open>
+                <DefaultButton
+                  disabled={isUpdating ? true : false}
+                  onPress={onPressUnlockReview}
+                >
+                  <Open>걱정을 확인해보세요</Open>
                 </DefaultButton>
               )}
               {item.locked && (
