@@ -104,12 +104,12 @@ const styles = StyleSheet.create({
     margin: 0,
   },
   tabBarActiveTitle: {
-    fontSize: fontSizeByValue(26, heightDevice()),
+    fontSize: fontSizeByValue(23, heightDevice()),
     color: theme.color.gray,
     fontWeight: '800',
   },
   tabBarTitle: {
-    fontSize: fontSizeByValue(26, heightDevice()),
+    fontSize: fontSizeByValue(23, heightDevice()),
     color: theme.color.white,
     fontWeight: '800',
   },

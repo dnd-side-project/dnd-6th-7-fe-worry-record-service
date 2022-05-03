@@ -81,7 +81,7 @@ export function AuthProvider({
     // 이미 로그인이 되어 있는 상황
     console.log('이미 로그인이 되어 있는 상황');
     try {
-      // await authService.updateFCMToken({ userId, deviceToken });
+      await authService.updateFCMToken({ userId, deviceToken });
       setUser(true);
     } catch (error) {
       throw new CustomError('LOGIN에서 에러 발생');

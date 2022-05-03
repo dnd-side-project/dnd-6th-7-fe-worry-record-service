@@ -2,7 +2,6 @@ import React, { FC, forwardRef, memo, lazy, ReactElement } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 const LoginScreen = lazy(() => import('@page/Login'));
 const HomeScreen = lazy(() => import('@page/Home'));
-const DetailScreen = lazy(() => import('@page/Detail'));
 const ArchiveScreen = lazy(() => import('@page/Archive'));
 const AddWorryScreen = lazy(() => import('@page/AddWorry'));
 const AddWorryCompleteScreen = lazy(() => import('@page/AddWorryComplete'));
@@ -13,7 +12,7 @@ const SettingScreen = lazy(() => import('@page/Setting'));
 
 import { WithAuthStackParamList, RootStackParamList } from '~/types/Navigation';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { useSceneState } from '@context/ArchiveContext';
+import { useSceneState, useSceneDispatch } from '@context/ArchiveContext';
 
 import {
   responsiveHeight as hp,
@@ -29,6 +28,7 @@ import IconAdd from '@assets/image/add.svg';
 import { StyleSheet } from 'react-native';
 import BottomDrawer from '@components/BottomDrawer';
 import Confirm from '@components/Confirm';
+import { CHANGE_MODE_ADD } from '~/context/reducer/archive';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const AuthStack = createNativeStackNavigator<WithAuthStackParamList>();
@@ -88,8 +88,6 @@ export const HomeScreens: FC = () => {
     >
       <AuthStack.Group>
         <AuthStack.Screen name="Home" component={HomeScreen} />
-        <AuthStack.Screen name="AddWorry" component={AddWorryScreen} />
-        <AuthStack.Screen name="Detail" component={DetailScreen} />
         <AuthStack.Screen name="Setting" component={SettingScreen} />
       </AuthStack.Group>
     </AuthStack.Navigator>
@@ -105,27 +103,6 @@ export const AddWorryScreens: FC = () => {
       }}
     >
       <AuthStack.Group>
-        <AuthStack.Screen name="Home" component={HomeScreen} options={{}} />
-        <AuthStack.Screen name="AddWorry" component={AddWorryScreen} />
-        <AuthStack.Screen
-          name="AddWorryComplete"
-          component={AddWorryCompleteScreen}
-        />
-      </AuthStack.Group>
-    </AuthStack.Navigator>
-  );
-};
-
-export const AddWorryCompleteScreens: FC = () => {
-  return (
-    <AuthStack.Navigator
-      initialRouteName="AddWorryComplete"
-      screenOptions={{
-        headerShown: false,
-      }}
-    >
-      <AuthStack.Group>
-        <AuthStack.Screen name="Home" component={HomeScreen} options={{}} />
         <AuthStack.Screen name="AddWorry" component={AddWorryScreen} />
         <AuthStack.Screen
           name="AddWorryComplete"
@@ -155,23 +132,17 @@ export const ArchiveScreens: FC = () => {
   );
 };
 
-const getTabBarVisibility = (route: any) => {
-  const routeName = route.name;
-  if (routeName === 'AddWorry') {
-    return true;
-  }
-
-  return false;
-};
-
 export const AfterLogin: FC = () => {
-  const { isUpdating, isReviewing } = useSceneState();
+  const { isUpdating, isReviewing, isAdding } = useSceneState();
+  const dispatch = useSceneDispatch();
+  console.log(isUpdating, isReviewing, 'isUpdating');
+
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarStyle: [
-          getTabBarVisibility(route) || isUpdating || isReviewing
+          isAdding || isUpdating || isReviewing
             ? styles.hideTabBar
             : styles.tabBar,
         ],
@@ -217,6 +188,7 @@ export const AfterLogin: FC = () => {
         listeners={({ navigation }) => ({
           tabPress: e => {
             e.preventDefault();
+            dispatch({ type: CHANGE_MODE_ADD, values: { isAdding: true } });
             navigation.navigate('AddWorry');
           },
         })}
@@ -239,7 +211,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 0,
     paddingHorizontal: wp('18%'),
     marginBottom: hp('5%'),
-    height: 90,
+    height: hp('10%'),
     backgroundColor: 'transparent',
     position: 'absolute',
   },

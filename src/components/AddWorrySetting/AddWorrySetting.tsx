@@ -69,7 +69,6 @@ const AddWorrySetting: FC<AddWorrySettingProps> = ({
   };
 
   const postWorry = () => {
-    // .post(`${process.env.HTTPS_B_URL}/worries/write`, worryContents)
     worriesService.addWorry(worryContents).then(res => {
       console.log(worryContents);
       console.log(res?.data);
