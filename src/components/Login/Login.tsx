@@ -20,7 +20,7 @@ import IconKakao from '@assets/image/kakaotalk.svg';
 import IconApple from '@assets/image/apple.svg';
 
 import { useAuth } from '@context/AuthContext';
-import { storage } from '~/App';
+import { fcm, storage } from '~/App';
 import {
   responsiveWidth as wp,
   responsiveHeight as hp,
@@ -37,7 +37,11 @@ const Login: FC<LoginProps> = props => {
   const signInWithKakao = async (): Promise<void> => {
     try {
       const result: KakaoOAuthToken = await login();
-      const fcmToken = await storage.get('fcm_token');
+      let fcmToken = await storage.get('fcm_token');
+      if (!fcmToken) {
+        fcmToken = await fcm.getToken();
+        await storage.set('fcm_token', String(fcmToken));
+      }
       authLogin(result, fcmToken);
     } catch (err) {
       console.log(err);

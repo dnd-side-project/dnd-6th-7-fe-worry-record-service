@@ -3,11 +3,6 @@ import { useCustomMutation } from '@lib/queries';
 import { authService, httpClient, storage } from '~/App';
 
 const setUserInfo = async (result: any, tokens: any, deviceToken: any) => {
-  // httpClient.client.defaults.headers['at-jwt-access-token'] =
-  //   tokens.accessToken;
-  // storage.set('jwt_refreshToken', tokens.refreshToken);
-  // storage.set('jwt_accessToken', tokens.refreshToken);
-  // await storage.set('jwt_accessToken_expiredAt', tokens.accessTokenExpiresAt);
   await storage.set('user_id', String(result.userId));
   await storage.set('user_image_url', result.imgURL);
   await storage.set('user_email', result.email);
@@ -37,7 +32,6 @@ export const useLogin = (onSuccess: (data: any) => void): any => {
   let tokens = '';
   return useCustomMutation(
     (token: any) => {
-      const temp = 'oCSoEiRTaXN5Ew4qe8IgHkgvrdfxVkPH5myvGwo9c04AAAGANtPovw';
       tokens = token.result.accessToken;
       console.log('토큰', token);
       deviceToken = token.deviceToken;
@@ -49,7 +43,7 @@ export const useLogin = (onSuccess: (data: any) => void): any => {
     async (result: any) => {
       console.log(result, '로그인 성공');
       await setUserInfo(result, tokens, deviceToken);
-      onSuccess(result);
+      return onSuccess(result);
     },
     (error: any) => {
       console.log(error, '에러');
