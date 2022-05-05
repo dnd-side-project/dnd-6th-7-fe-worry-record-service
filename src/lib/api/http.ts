@@ -45,15 +45,13 @@ export default class HttpClient {
             isRequest = true;
             const refreshToken = await this.storage.get('jwt_refreshToken');
             const userId = await this.storage.get('user_id');
-            await this.client.put(
-              `/auth/refresh?userId=${userId}&deviceToken=`,
-              {
-                headers: {
-                  'at-jwt-access-token': accessToken,
-                  'at-jwt-refresh-token': refreshToken,
-                },
+            await this.client.put(`/auth/refresh?userId=${userId}`, {
+              headers: {
+                'at-jwt-access-token': accessToken,
+                'at-jwt-refresh-token': refreshToken,
+                deviceToken: '',
               },
-            );
+            });
           }
         }
         return config;
