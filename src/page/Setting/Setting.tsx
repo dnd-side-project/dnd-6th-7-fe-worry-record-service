@@ -1,6 +1,6 @@
 import React, { FC, useCallback, useState } from 'react';
 import styled from 'styled-components/native';
-
+import VersionCheck from 'react-native-version-check';
 import AppLayout from '@components/AppLayout';
 
 import { SettingProps } from '~/types/Navigation';
@@ -43,7 +43,7 @@ const Setting: FC<SettingProps> = ({ navigation }) => {
     >
       <RowFirstWrapper>
         <Label>앱 버전</Label>
-        <Label>1.1.0</Label>
+        <Label>{VersionCheck.getCurrentVersion()}</Label>
       </RowFirstWrapper>
       <RowWrapper>
         <Label>PUSH 설정</Label>
