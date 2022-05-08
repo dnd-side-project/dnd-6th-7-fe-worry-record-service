@@ -9,6 +9,7 @@ export type State = {
   index: number;
   isUpdating: boolean;
   isAdding: boolean;
+  isSetting: boolean;
   isReviewing: boolean;
   isRealized: boolean;
   tags: WorryTempProps[];
@@ -28,6 +29,7 @@ export type Action =
   | { type: 'CHANGE_MODE'; values: { isUpdating: boolean } }
   | { type: 'CHANGE_MODE_REVIEW'; values: { isReviewing: boolean } }
   | { type: 'CHANGE_MODE_ADD'; values: { isAdding: boolean } }
+  | { type: 'CHANGE_MODE_SETTING'; values: { isSetting: boolean } }
   | { type: 'CHANGE_MODE_REALIZED'; values: { isRealized: boolean } }
   | { type: 'CLICK_CHECKBOX'; values: { id: number } }
   | { type: 'FILTER_TAG'; values: { tag: string; tagId: string | number[] } }
@@ -41,6 +43,7 @@ export const INIT = 'INIT';
 export const CHANGE_MODE = 'CHANGE_MODE';
 export const CHANGE_MODE_REVIEW = 'CHANGE_MODE_REVIEW';
 export const CHANGE_MODE_ADD = 'CHANGE_MODE_ADD';
+export const CHANGE_MODE_SETTING = 'CHANGE_MODE_SETTING';
 export const CHANGE_MODE_REALIZED = 'CHANGE_MODE_REALIZED';
 export const CLICK_CHECKBOX = 'CLICK_CHECKBOX';
 export const FILTER_TAG = 'FILTER_TAG';
@@ -57,6 +60,7 @@ export const initialValue: State = {
   isRealized: false,
   isUpdating: false,
   isAdding: false,
+  isSetting: false,
   tags: TAG_RECENT_DATA,
   activeTags: '-1',
   activeTagsId: TAG_RECENT_DATA[0].id,
@@ -84,6 +88,7 @@ export default function ArchiveReducer(state: State, action: Action) {
         isUpdating: false,
         isReviewing: false,
         isAdding: false,
+        isSetting: false,
         isUnlock: false,
         isRealized: false,
         isDelete: false,
@@ -187,6 +192,13 @@ export default function ArchiveReducer(state: State, action: Action) {
       return {
         ...state,
         isReviewing: action.values.isAdding,
+      };
+    case CHANGE_MODE_SETTING:
+      console.log(tag, CHANGE_MODE_SETTING);
+
+      return {
+        ...state,
+        isReviewing: action.values.isSetting,
       };
   }
 }

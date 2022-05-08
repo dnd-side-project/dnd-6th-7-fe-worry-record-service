@@ -9,16 +9,19 @@ import { theme } from '@lib/styles/palette';
 import ArrowLeft from '@assets/image/arrow_left.svg';
 import { Switch } from 'react-native-elements/dist/switch/switch';
 import { useAuth } from '~/context/AuthContext';
+import { CHANGE_MODE_SETTING } from '~/context/reducer/archive';
+import { useSceneDispatch } from '~/context/ArchiveContext';
 
 const Setting: FC<SettingProps> = ({ navigation }) => {
   const tag = '[Setting]';
-
+  const dispatch = useSceneDispatch();
   const [switchPush, setSwitchPush] = useState(false);
   const { logout } = useAuth();
   const onPressBack = useCallback(() => {
     console.log(tag, 'onPressBack');
+    dispatch({ type: CHANGE_MODE_SETTING, values: { isSetting: false } });
     navigation.goBack();
-  }, [navigation]);
+  }, [navigation, dispatch]);
 
   const onChangePush = useCallback(() => {
     console.log(tag, 'onChangePush');
@@ -27,11 +30,11 @@ const Setting: FC<SettingProps> = ({ navigation }) => {
 
   const onPressLogout = useCallback(() => {
     console.log(tag, 'onPressLogout');
-
+    dispatch({ type: CHANGE_MODE_SETTING, values: { isSetting: false } });
     // mutation 이용해서 업데이트
     // 홈화면으로 보내기
     logout();
-  }, [logout]);
+  }, [logout, dispatch]);
 
   return (
     <AppLayout

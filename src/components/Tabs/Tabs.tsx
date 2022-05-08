@@ -12,6 +12,8 @@ import { useNavigation } from '@react-navigation/native';
 
 import IconSetting from '@assets/image/settings.svg';
 import { SettingScreenNavigationProp } from '~/types/Navigation';
+import { CHANGE_MODE_SETTING } from '~/context/reducer/archive';
+import { useSceneDispatch } from '~/context/ArchiveContext';
 interface TabItemsProps {
   id: string;
   title: string;
@@ -38,15 +40,16 @@ const CustomeTabs: FC<CustomeTabsProps> = ({
   const renderScene = SceneMap(converToObj);
 
   const navigation = useNavigation<SettingScreenNavigationProp>();
-
+  const dispatch = useSceneDispatch();
   const [routes] = useState(
     tabItems.map(item => ({ key: item.id, title: item.title })),
   );
 
   const onPressSetting = useCallback(() => {
     console.log(tag, 'onPressSetting');
+    dispatch({ type: CHANGE_MODE_SETTING, values: { isSetting: true } });
     navigation.navigate('Setting');
-  }, [navigation]);
+  }, [navigation, dispatch]);
 
   const renderTabBar = (props: any) => (
     <View style={styles.tabBarBox}>

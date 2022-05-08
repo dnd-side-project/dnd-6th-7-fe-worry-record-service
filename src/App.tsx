@@ -27,6 +27,7 @@ import Storage from '@lib/storage';
 import FCM from '@lib/api/fcm';
 import PushNotification from 'react-native-push-notification';
 import PushNotificationIOS from '@react-native-community/push-notification-ios';
+import messaging from '@react-native-firebase/messaging';
 
 const authErrorEventBus = new AuthErrorEventBus();
 export const storage = new Storage();
@@ -50,6 +51,10 @@ LogBox.ignoreAllLogs();
 // TODO: 리프레시 토큰 재발급 할 API 확보 및 코드 수정
 // TODO: 폰트 적용하기
 // TODO: 알림 기능 만들기
+
+messaging().setBackgroundMessageHandler(async remoteMessage => {
+  console.log('Message handled in the background!', remoteMessage);
+});
 
 PushNotification.configure({
   // (optional) 토큰이 생성될 때 실행됨(토큰을 서버에 등록할 때 쓸 수 있음)
@@ -135,7 +140,7 @@ const App: FC = props => {
 
   // forground 상태(앱이 Active 되어 있는 상태에서 알림이 오는 경우)
   const foregroundListener = useCallback(() => {
-    // fcm.getMessage();
+    fcm.getMessage();
   }, []);
 
   useEffect(() => {

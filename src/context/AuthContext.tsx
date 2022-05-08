@@ -77,6 +77,7 @@ export function AuthProvider({
     // deviceToken과 userId를 서버에 전송
     await fcm.checkPermission();
     const deviceToken = await fcm.getToken();
+    console.log(deviceToken, 'deviceToken');
     await storage.set('fcm_token', String(deviceToken));
 
     if (!isLogined) {

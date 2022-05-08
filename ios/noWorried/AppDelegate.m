@@ -5,6 +5,9 @@
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
 #import <Firebase.h>
+#import "RNSplashScreen.h"
+#import <UserNotifications/UserNotifications.h>
+#import <RNCPushNotificationIOS.h>
 
 #ifdef FB_SONARKIT_ENABLED
 #import <FlipperKit/FlipperClient.h>
@@ -13,9 +16,7 @@
 #import <FlipperKitNetworkPlugin/FlipperKitNetworkPlugin.h>
 #import <SKIOSNetworkPlugin/SKIOSNetworkAdapter.h>
 #import <FlipperKitReactPlugin/FlipperKitReactPlugin.h>
-#import "RNSplashScreen.h"
-#import <UserNotifications/UserNotifications.h>
-#import <RNCPushNotificationIOS.h>
+
 
 static void InitializeFlipper(UIApplication *application) {
   FlipperClient *client = [FlipperClient sharedClient];
@@ -87,8 +88,6 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
   }
   
   
-  [RNSplashScreen show];
-  
   self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
   UIViewController *rootViewController = [UIViewController new];
   rootViewController.view = rootView;
@@ -98,7 +97,7 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
   // Define UNUserNotificationCenter
   UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
   center.delegate = self;
- 
+  [RNSplashScreen show];
   return YES;
 }
 

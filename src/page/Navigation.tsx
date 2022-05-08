@@ -133,7 +133,7 @@ export const ArchiveScreens: FC = () => {
 };
 
 export const AfterLogin: FC = () => {
-  const { isUpdating, isReviewing, isAdding } = useSceneState();
+  const { isUpdating, isReviewing, isAdding, isSetting } = useSceneState();
   const dispatch = useSceneDispatch();
   console.log(isUpdating, isReviewing, 'isUpdating');
 
@@ -142,7 +142,7 @@ export const AfterLogin: FC = () => {
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarStyle: [
-          isAdding || isUpdating || isReviewing
+          isAdding || isUpdating || isReviewing || isSetting
             ? styles.hideTabBar
             : styles.tabBar,
         ],
