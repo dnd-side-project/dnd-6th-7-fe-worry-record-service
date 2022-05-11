@@ -20,7 +20,7 @@ import IconKakao from '@assets/image/kakaotalk.svg';
 import IconApple from '@assets/image/apple.svg';
 
 import { useAuth } from '@context/AuthContext';
-import { storage } from '~/App';
+import { fcm, storage } from '~/App';
 import {
   responsiveWidth as wp,
   responsiveHeight as hp,
@@ -37,7 +37,11 @@ const Login: FC<LoginProps> = props => {
   const signInWithKakao = async (): Promise<void> => {
     try {
       const result: KakaoOAuthToken = await login();
-      const fcmToken = await storage.get('fcm_token');
+      let fcmToken = await storage.get('fcm_token');
+      if (!fcmToken) {
+        fcmToken = await fcm.getToken();
+        await storage.set('fcm_token', String(fcmToken));
+      }
       authLogin(result, fcmToken);
     } catch (err) {
       console.log(err);
@@ -109,29 +113,36 @@ const LoginWrapper = styled.View`
 `;
 
 const TitleWrapper = styled.View`
-  margin: ${hp(1.5)}px 0;
+  margin: ${hp(0.7)}px 0;
 `;
 
 const NormalTitle = styled.Text`
-  ${Header1_normal(theme.color.white)}
+  font-size: ${hp(3.5)}px;
+  font-weight: 200;
+  font-style: normal;
+  color: ${theme.color.white};
 `;
 
 const Title = styled.Text`
-  ${Header1_bold(theme.color.white)}
+  font-size: ${hp(3.5)}px;
   font-weight: 800;
+  font-style: normal;
+  color: ${theme.color.white};
 `;
 
 const SutTitleWrapper = styled.View`
-  margin: ${hp(1.5)}px 0;
+  margin: ${hp(0.8)}px 0;
 `;
 
 const SubTitle = styled.Text`
-  ${Header5_normal(theme.color.white)}
+  font-size: ${hp(1.7)}px;
   font-weight: 300;
+  font-style: normal;
+  color: ${theme.color.white};
 `;
 
 const Space = styled.View`
-  height: 10%;
+  height: ${hp(1)}px;
 `;
 
 const ButtonWrapper = styled.View`

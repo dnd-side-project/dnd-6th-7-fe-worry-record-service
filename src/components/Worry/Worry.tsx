@@ -162,7 +162,7 @@ const Worry: FC<WorryProps> = ({ item, index }: WorryProps) => {
                   onLongPress={onLongPressNotReview}
                 >
                   <Open numberOfLines={1}>
-                    {item?.worryReview || '후기가 작성되지 않았습니다.'}
+                    {item?.worryReview || '후기를 작성해 보세요.'}
                   </Open>
                 </DefaultButton>
               )}

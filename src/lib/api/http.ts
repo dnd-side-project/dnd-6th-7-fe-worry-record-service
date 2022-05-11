@@ -25,25 +25,34 @@ export default class HttpClient {
   }
 
   setInterceptors() {
+    let isRequest = false;
     this.client.interceptors.request.use(
       async (config: any) => {
-        const accessToken = config.headers['at-jwt-access-token'];
-
-        if (!config.headers['at-jwt-access-token']) {
-          const accessTokens = await this.storage.get('jwt_accessToken');
-          config.headers['at-jwt-access-token'] = accessTokens;
+        let accessToken = config.headers['at-jwt-access-token'];
+        if (!accessToken) {
+          accessToken = await this.storage.get('jwt_accessToken');
+          config.headers['at-jwt-access-token'] = accessToken;
         }
         if (accessToken) {
           // 만료 토근 확인 > 만약에 지났으면 리프레시 토큰과 함께 보내기
-          console.log('accessToken here', accessToken);
-          // const refreshToken = await this.storage.get('jwt_refreshToken');
-          // const result = await this.client.post('/auth/refresh', {
-          //   headers: {
-          //     oauthToken: refreshToken,
-          //     deviceToken: '',
-          //   },
-          // });
-          // const { accessToken: newAccessToken } = result.data;
+
+          if (accessToken.exp < new Date() / 1000) {
+            if (isRequest) {
+              return config;
+            }
+            console.log(isRequest, 'isRequest');
+            console.log('EXPIRED');
+            isRequest = true;
+            const refreshToken = await this.storage.get('jwt_refreshToken');
+            const userId = await this.storage.get('user_id');
+            await this.client.put(`/auth/refresh?userId=${userId}`, {
+              headers: {
+                'at-jwt-access-token': accessToken,
+                'at-jwt-refresh-token': refreshToken,
+                deviceToken: '',
+              },
+            });
+          }
         }
         return config;
       },
@@ -56,6 +65,8 @@ export default class HttpClient {
     // Add a response interceptor
     this.client.interceptors.response.use(
       async (response: any) => {
+        console.log(response, 'd');
+
         if (response.headers['at-jwt-access-token']) {
           this.client.defaults.headers['at-jwt-access-token'] =
             response.headers['at-jwt-access-token'];

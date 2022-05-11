@@ -2,9 +2,10 @@ import React, { FC, useEffect } from 'react';
 import styled from 'styled-components/native';
 import { View, Image, Text, Switch, StyleSheet } from 'react-native';
 import { Button, ButtonGroup, withTheme } from 'react-native-elements';
-
 import { theme } from '@lib/styles/palette';
 import { th } from 'date-fns/locale';
+import { useSceneDispatch } from '~/context/ArchiveContext';
+import { CHANGE_MODE_ADD } from '~/context/reducer/archive';
 
 interface AddWorryCompleteProps {
   worryExpiryDate: Date;
@@ -15,17 +16,16 @@ const AddWorryComplete: FC<AddWorryCompleteProps> = ({
   worryExpiryDate,
   navigation,
 }) => {
-  // useEffect(() => {
-  //   console.log(worryExpiryDate);
-  //   console.log(worryExpiryDate.getDate());
-  //   console.log(worryExpiryDate.getMonth() + 1);
-  // }, []);
-  const navigateToHome = () => {
-    // navigation.navigate('Home');
-    navigation.popToTop();
-  };
+  const dispatch = useSceneDispatch();
+  useEffect(() => {
+    setTimeout(() => {
+      dispatch({ type: CHANGE_MODE_ADD, values: { isAdding: false } });
+      navigation.goBack();
+      navigation.navigate('Home');
+    }, 4000);
+  }, [navigation, dispatch]);
   return (
-    <View style={style.textContainer} onTouchStart={navigateToHome}>
+    <View style={style.textContainer}>
       <View style={style.textRowContainer}>
         <RegularText>오늘 걱정도 </RegularText>
         <BoldText>흐릿</BoldText>

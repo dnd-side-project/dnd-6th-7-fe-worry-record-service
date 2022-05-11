@@ -40,7 +40,7 @@ export default class WorriesService implements WorriesServiceClass {
     return this.http.fetch('/worries/write', {
       method: 'POST',
       body: JSON.stringify({
-        worryContents,
+        ...worryContents,
       }),
     });
   }

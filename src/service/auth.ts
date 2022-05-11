@@ -1,3 +1,5 @@
+import { storage } from '~/App';
+
 export default class AuthService {
   http: any;
 
@@ -37,12 +39,17 @@ export default class AuthService {
   }
 
   async updateFCMToken({ userId, deviceToken }: any): Promise<any> {
-    return this.http.fetch(
-      `/auth/refresh?userId=${userId}&deviceToken=${deviceToken}`,
-      {
-        method: 'PUT',
+    const refreshToken = await storage.get('jwt_refreshToken');
+    const accessToken = await storage.get('jwt_accessToken');
+
+    return this.http.fetch(`/auth/refresh?userId=${userId}`, {
+      method: 'PUT',
+      headers: {
+        'at-jwt-access-token': accessToken,
+        'at-jwt-refresh-token': refreshToken,
+        deviceToken,
       },
-    );
+    });
   }
 
   async logout() {

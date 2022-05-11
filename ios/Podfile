@@ -14,6 +14,8 @@ target 'noWorried' do
   
   # Add the Firebase pod for Google Analytics
   pod 'Firebase/Analytics'
+  pod 'Firebase/Messaging'
+
 
   # For Analytics without IDFA collection capability, use this pod instead
   # pod ‘Firebase/AnalyticsWithoutAdIdSupport’

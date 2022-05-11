@@ -50,9 +50,7 @@ export function AuthProvider({
   // 		setUser(undefined);
   // 	});
   // }, [authErrorEventBus]);
-
-  const checkIsLogedIn = useCallback(async () => {
-    console.log(tag, 'checkIsLogedIn');
+  const handleUserInfo = useCallback(async () => {
     const userId = await storage.get('user_id');
     const userEmail = await storage.get('user_email');
     const userName = await storage.get('user_name');
@@ -66,12 +64,20 @@ export function AuthProvider({
       userEmail,
       userImage,
     });
+
+    return { isLogined, userId, userName, userEmail, userImage };
+  }, []);
+  const checkIsLogedIn = useCallback(async () => {
+    console.log(tag, 'checkIsLogedIn');
+
+    const { isLogined, userId } = await handleUserInfo();
     // 권한 체크
     // 토큰 가져오기
     // 토큰 저장
     // deviceToken과 userId를 서버에 전송
     await fcm.checkPermission();
     const deviceToken = await fcm.getToken();
+    console.log(deviceToken, 'deviceToken');
     await storage.set('fcm_token', String(deviceToken));
 
     if (!isLogined) {
@@ -82,16 +88,17 @@ export function AuthProvider({
     console.log('이미 로그인이 되어 있는 상황');
     try {
       await authService.updateFCMToken({ userId, deviceToken });
-      // setUser(true);
+      setUser(true);
     } catch (error) {
       throw new CustomError('LOGIN에서 에러 발생');
     } finally {
       SplashScreen.hide();
     }
-  }, [authService]);
+  }, [authService, handleUserInfo]);
 
-  const mutation = useLogin(data => {
-    console.log(data);
+  const mutation = useLogin(async data => {
+    console.log(data, 'data');
+    await handleUserInfo();
     setUser(true);
   });
 
@@ -102,10 +109,16 @@ export function AuthProvider({
     [mutation],
   );
 
-  const logout = useCallback(
-    async () => authService.logout().then(() => setUser(undefined)),
-    [authService],
-  );
+  const logout = useCallback(async () => {
+    await storage.delete('user_id');
+    await storage.delete('user_email');
+    await storage.delete('user_name');
+    await storage.delete('user_image_url');
+    await storage.delete('jwt_refreshToken');
+    await storage.delete('jwt_accessToken');
+    await storage.delete('fcm_token');
+    setUser(false);
+  }, [setUser]);
 
   const context = useMemo(
     () => ({

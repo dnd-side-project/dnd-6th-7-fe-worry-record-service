@@ -10,6 +10,7 @@ class FCM {
     this.message = '';
     this.storage = storage;
   }
+
   get(): string {
     return this.message;
   }
@@ -26,10 +27,17 @@ class FCM {
   }
 
   async checkPermission(): Promise<any> {
-    const enabled = await messaging().hasPermission();
-    if (!enabled) {
-      await this.requestPermission();
+    try {
+      if (!this.messaging().isDeviceRegisteredForRemoteMessages) {
+        await this.messaging().registerDeviceForRemoteMessages();
+      }
+    } catch (error) {
+      console.log('Error:', error);
     }
+    // const enabled = await messaging().hasPermission();
+    // if (!enabled) {
+    //   await this.requestPermission();
+    // }
   }
 
   async requestPermission(): Promise<any> {
