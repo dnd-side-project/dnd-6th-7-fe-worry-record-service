@@ -24,14 +24,14 @@ interface AddWorrySettingProps {
 }
 
 const worryTags = [
-  '#학업',
-  '#진로',
-  '#관계',
-  '#건강',
-  '#직장',
-  '#가족',
-  '#경제',
-  '#기타',
+  { name: '#학업', id: 5 },
+  { name: '#진로', id: 1 },
+  { name: '#관계', id: 2 },
+  { name: '#건강', id: 7 },
+  { name: '#직장', id: 3 },
+  { name: '#가족', id: 6 },
+  { name: '#경제', id: 4 },
+  { name: '#기타', id: 8 },
 ];
 
 const AddWorrySetting: FC<AddWorrySettingProps> = ({
@@ -69,6 +69,8 @@ const AddWorrySetting: FC<AddWorrySettingProps> = ({
   };
 
   const postWorry = () => {
+    console.log(worryContents, 'worryContents');
+
     worriesService.addWorry(worryContents).then(res => {
       console.log(worryContents);
       console.log(res?.data);
@@ -85,12 +87,12 @@ const AddWorrySetting: FC<AddWorrySettingProps> = ({
           {/* <Text style={style.titleText2}>추가하기</Text> */}
         </View>
         <View style={style.tagContainer}>
-          {worryTags.map((name, idx) => {
+          {worryTags.map((item, idx) => {
             return (
               <TextButton
-                key={idx}
-                name={name}
-                idx={idx}
+                key={item.id}
+                name={item.name}
+                idx={item.id}
                 categoryId={worryContents.categoryId}
                 handleWorryTag={handleWorryTag}
               />
